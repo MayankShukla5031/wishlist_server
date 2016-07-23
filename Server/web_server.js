@@ -113,7 +113,7 @@ app.get('/search_by_actor', function (req, res) {
    
   var query= $.urlParam('search_query',req.url);
 
-   var queryString= "select moviescollection.title from moviescollection  join actorscollection where moviescollection.cast LIKE actorscollection.uid && actorscollection.title LIKE '%"+ query+"%'";
+   var queryString= "select moviescollection.title from moviescollection  join actorscollection where moviescollection.cast LIKE CONCAT('%', actorscollection.uid ,'%') && actorscollection.title LIKE '%"+ query+"%'";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; console.log("Errror"); throw err;}
@@ -126,7 +126,7 @@ app.get('/search_by_director', function (req, res) {
    
   var query= $.urlParam('search_query',req.url);
 
-   var queryString= "select moviescollection.title from moviescollection join directorscollection where moviescollection.director LIKE directorscollection.uid && directorscollection.title LIKE '%"+ query+"%'";
+   var queryString= "select moviescollection.title from moviescollection join directorscollection where moviescollection.director LIKE CONCAT('%', directorscollection.uid ,'%')  && directorscollection.title LIKE '%"+ query+"%'";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; console.log("Errror"); throw err;}
@@ -139,7 +139,7 @@ app.get('/search_by_producer', function (req, res) {
    
   var query= $.urlParam('search_query',req.url);
 
-   var queryString= "select moviescollection.title from moviescollection join producerscollection where moviescollection.producer LIKE producerscollection.uid && producerscollection.title LIKE '%"+ query+"%'";
+   var queryString= "select moviescollection.title from moviescollection join producerscollection where moviescollection.producer LIKE CONCAT('%', producerscollection.uid ,'%')  && producerscollection.title LIKE '%"+ query+"%'";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; console.log("Errror"); throw err;}
@@ -152,7 +152,7 @@ app.get('/search_by_music_director', function (req, res) {
    
   var query= $.urlParam('search_query',req.url);
 
-   var queryString= "select moviescollection.title from moviescollection join musicdirectorscollection where moviescollection.music_director LIKE musicdirectorscollection.uid && musicdirectorscollection.title LIKE '%"+ query+"%'";
+   var queryString= "select moviescollection.title from moviescollection join musicdirectorscollection where moviescollection.music_director LIKE CONCAT('%', musicdirectorscollection.uid ,'%')  && musicdirectorscollection.title LIKE '%"+ query+"%'";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; console.log("Errror"); throw err;}
@@ -165,7 +165,7 @@ app.get('/search_by_production_house', function (req, res) {
    
   var query= $.urlParam('search_query',req.url);
 
-   var queryString= "select moviescollection.title from moviescollection join productionscollection where moviescollection.production LIKE productionscollection.uid && productionscollection.title LIKE '%"+ query+"%'";
+   var queryString= "select moviescollection.title from moviescollection join productionscollection where moviescollection.production LIKE CONCAT('%', productionscollection.uid ,'%')  && productionscollection.title LIKE '%"+ query+"%'";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; console.log("Errror"); throw err;}
