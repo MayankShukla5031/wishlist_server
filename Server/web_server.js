@@ -24,13 +24,12 @@ connection.connect(function(err){
 
 app.get('/', function (req, res) {
    
-   res.end("<html><head><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script></head><title>Wishlist</title><body><p>Welcome</p><a href='http://localhost:8081/list_movies'>List of Movies</a><br/><a href='http://localhost:8081/list_actors'>List of Actors</a><br/><a href='http://localhost:8081/list_producers'>List of Producers</a><br/><a href='http://localhost:8081/list_directors'>List of Directors</a><br/><a href='http://localhost:8081/list_music_directors'>List of Music Directors</a><br/><a href='http://localhost:8081/list_productions'>List of Productions</a><br/><br/><input type='text' id='search_string' onchange='showResult()'><br/><p id='search_output'>result</p><script>function showResult(){  var searchUrl='http://localhost:8081/search_movies?search_query='+ document.getElementById('search_string').value; $.ajax({type: 'GET', url: searchUrl, success:function(result){ $('#search_output').html(result); }});}</script></body></html>");
-
+res.end("<html><head><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script></head><title>Wishlist</title><body><p>Welcome</p><a href='http://localhost:8081/list_movies'>List of Movies</a><br/><a href='http://localhost:8081/list_actors'>List of Actors</a><br/><a href='http://localhost:8081/list_producers'>List of Producers</a><br/><a href='http://localhost:8081/list_directors'>List of Directors</a><br/><a href='http://localhost:8081/list_music_directors'>List of Music Directors</a><br/><a href='http://localhost:8081/list_productions'>List of Productions</a><br/><br/><input type='text'  onchange='searchByTitle(this)' placeholder='Search By Movie Title'><br/><br/><input type='text'  onchange='searchByActor(this)' placeholder='Search By Actor'><br/><br/><input type='text'  onchange='searchByDirector(this)' placeholder='Search By Director'><br/><br/><input type='text'  onchange='searchByProducer(this)' placeholder='Search By Producer'><br/><br/><input type='text'  onchange='searchByMusicDirector(this)' placeholder='Search By Music Director'><br/><br/><input type='text'  onchange='searchByProductionHouse(this)' placeholder='Search By Production House'><br/><br/><p id='search_output'>result</p><script>function searchByTitle(obj){ showResult ('search_by_title', obj.value);}function searchByActor(obj){ showResult ('search_by_actor', obj.value);}function searchByDirector(obj){ showResult ('search_by_director', obj.value);}function searchByProducer(obj){ showResult ('search_by_producer', obj.value);}function searchByMusicDirector(obj){ showResult ('search_by_music_director', obj.value);}function searchByProductionHouse(obj){ showResult ('search_by_production_house', obj.value);}function showResult( searchType, searchString){  var searchUrl='http://localhost:8081/'+searchType+'?search_query='+ searchString; $.ajax({type: 'GET', url: searchUrl, success:function(result){ $('#search_output').html(result); }});}</script></body></html>");
 })
 
 app.get('/list_movies', function (req, res) {
    
-    var queryString= "select * from moviescollection";
+    var queryString= "select moviescollection.title from moviescollection";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; throw err;}
@@ -41,7 +40,7 @@ app.get('/list_movies', function (req, res) {
 
 app.get('/list_actors', function (req, res) {
    
-   var queryString= "select * from actorscollection";
+   var queryString= "select actorscollection.title from actorscollection";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; throw err;}
@@ -52,7 +51,7 @@ app.get('/list_actors', function (req, res) {
 
 app.get('/list_directors', function (req, res) {
 
-   var queryString= "select * from directorscollection";
+   var queryString= "select directorscollection.title from directorscollection";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; throw err;}
@@ -63,7 +62,7 @@ app.get('/list_directors', function (req, res) {
 
 app.get('/list_music_directors', function (req, res) {
    
-   var queryString= "select * from musicdirectorscollection";
+   var queryString= "select musicdirectorscollection.title from musicdirectorscollection";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; throw err;}
@@ -74,7 +73,7 @@ app.get('/list_music_directors', function (req, res) {
 
 app.get('/list_producers', function (req, res) {
    
-   var queryString= "select * from producerscollection";
+   var queryString= "select producerscollection.title from producerscollection";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; throw err;}
@@ -85,7 +84,7 @@ app.get('/list_producers', function (req, res) {
 
 app.get('/list_productions', function (req, res) {
    
-   var queryString= "select * from productionscollection";
+   var queryString= "select productionscollection.title from productionscollection";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; throw err;}
@@ -94,16 +93,83 @@ app.get('/list_productions', function (req, res) {
     
 })
 
-app.get('/search_movies', function (req, res) {
+app.get('/search_by_title', function (req, res) {
    
   var query= $.urlParam('search_query',req.url);
 
-   var queryString= "select * from moviescollection where title LIKE '%"+ query+"%'";
+   var queryString= "select moviescollection.title from moviescollection where moviescollection.title LIKE '%"+ query+"%'";
 
    connection.query(queryString, function(err, rows, fields) {
     if (err)  { res="Error"; console.log("Errror"); throw err;}
 
-     //console.log(JSON.stringify(rows));
+     res.end(JSON.stringify(rows));
+    });
+    
+})
+
+
+
+app.get('/search_by_actor', function (req, res) {
+   
+  var query= $.urlParam('search_query',req.url);
+
+   var queryString= "select moviescollection.title from moviescollection  join actorscollection where moviescollection.cast LIKE actorscollection.uid && actorscollection.title LIKE '%"+ query+"%'";
+
+   connection.query(queryString, function(err, rows, fields) {
+    if (err)  { res="Error"; console.log("Errror"); throw err;}
+
+     res.end(JSON.stringify(rows));
+    });
+    
+})
+app.get('/search_by_director', function (req, res) {
+   
+  var query= $.urlParam('search_query',req.url);
+
+   var queryString= "select moviescollection.title from moviescollection join directorscollection where moviescollection.director LIKE directorscollection.uid && directorscollection.title LIKE '%"+ query+"%'";
+
+   connection.query(queryString, function(err, rows, fields) {
+    if (err)  { res="Error"; console.log("Errror"); throw err;}
+
+     res.end(JSON.stringify(rows));
+    });
+    
+})
+app.get('/search_by_producer', function (req, res) {
+   
+  var query= $.urlParam('search_query',req.url);
+
+   var queryString= "select moviescollection.title from moviescollection join producerscollection where moviescollection.producer LIKE producerscollection.uid && producerscollection.title LIKE '%"+ query+"%'";
+
+   connection.query(queryString, function(err, rows, fields) {
+    if (err)  { res="Error"; console.log("Errror"); throw err;}
+
+     res.end(JSON.stringify(rows));
+    });
+    
+})
+app.get('/search_by_music_director', function (req, res) {
+   
+  var query= $.urlParam('search_query',req.url);
+
+   var queryString= "select moviescollection.title from moviescollection join musicdirectorscollection where moviescollection.music_director LIKE musicdirectorscollection.uid && musicdirectorscollection.title LIKE '%"+ query+"%'";
+
+   connection.query(queryString, function(err, rows, fields) {
+    if (err)  { res="Error"; console.log("Errror"); throw err;}
+
+     res.end(JSON.stringify(rows));
+    });
+    
+})
+app.get('/search_by_production_house', function (req, res) {
+   
+  var query= $.urlParam('search_query',req.url);
+
+   var queryString= "select moviescollection.title from moviescollection join productionscollection where moviescollection.production LIKE productionscollection.uid && productionscollection.title LIKE '%"+ query+"%'";
+
+   connection.query(queryString, function(err, rows, fields) {
+    if (err)  { res="Error"; console.log("Errror"); throw err;}
+
      res.end(JSON.stringify(rows));
     });
     
