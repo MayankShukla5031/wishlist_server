@@ -1,0 +1,18 @@
+
+# [START runtime]
+runtime: nodejs
+vm: true
+api_version: 1
+# [END runtime]
+
+health_check:
+  enable_health_check: false
+
+skip_files:
+ - ^(.*/)?#.*#$
+ - ^(.*/)?.*~$
+ - ^(.*/)?.*\.py[co]$
+ - ^(.*/)?.*/RCS/.*$
+ - ^(.*/)?\..*$
+ - ^(.*/)?.*/node_modules/.*$
+ - ^(.*/)?.*\.log$
