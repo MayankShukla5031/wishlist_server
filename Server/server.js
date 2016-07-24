@@ -16,6 +16,7 @@ var server = app.listen(process.env.PORT || 8080, function () {
 /*
 var pg = require('pg');
 pg.defaults.ssl = true;
+var client = new pg.Client(); 
 pg.connect(process.env.DATABASE_URL, function(err, client) {
   if (err) throw err;
   console.log('Connected to postgres! Getting schemas...');
