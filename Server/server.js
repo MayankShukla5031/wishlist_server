@@ -7,7 +7,7 @@ res.end("<html><head><script src='https://ajax.googleapis.com/ajax/libs/jquery/1
 })
 
 
-var server = app.listen(process.env.PORT || 8080,'0.0.0.0', function () {
+var server = app.listen(process.env.PORT || 8080, function () {
 
   console.log("Wishlist app listening ")
 
