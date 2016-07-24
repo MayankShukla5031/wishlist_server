@@ -1,5 +1,7 @@
 
 var express    = require("express");
+
+/*
 var mysql      = require('mysql');
 var $ = require('jQuery');
 var handleRequest = require('supertest');
@@ -12,10 +14,6 @@ var connection = mysql.createConnection({
   password : 'onshivay',
   database : 'ContentDatabase'
 });
-
-// set the port of our application
-// process.env.PORT lets the port be set by Heroku
-var port = process.env.PORT || 8080;
 
 
 connection.connect(function(err){
@@ -184,6 +182,9 @@ $.urlParam = function(name , url){
   return results[1] || 0;
 }
 
+*/
+
+var port = process.env.PORT || 8080;
 
 var server = app.listen(port, function () {
 
