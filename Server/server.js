@@ -3,9 +3,9 @@ var express    = require("express");
 
 var app = express();
 var $ = require('jQuery');
+/*
 var handleRequest = require('supertest');
 var fs = require("fs");
-/*
 var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
