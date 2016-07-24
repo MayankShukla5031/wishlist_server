@@ -3,7 +3,10 @@
   "description": "wishlist app",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.10.6"
+    "express": "*",
+    "mysql": "*",
+    "jquery": "*",
+    "supertest": "*"
   },
   "scripts": {
     "start": "node server.js"
