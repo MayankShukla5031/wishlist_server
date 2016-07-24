@@ -7,7 +7,7 @@ res.end("<html><head><script src='https://ajax.googleapis.com/ajax/libs/jquery/1
 })
 
 
-var server = app.listen(process.env.PORT || 8080, function () {
+var server = app.listen(process.env.PORT || 8080,'0.0.0.0', function () {
 
   console.log("Wishlist app listening ")
 
@@ -29,6 +29,7 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
 
 
 /*
+
 var $ = require('jQuery');
 var handleRequest = require('supertest');
 var fs = require("fs");
