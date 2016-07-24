@@ -13,7 +13,7 @@ var server = app.listen(process.env.PORT || 8080, function () {
 
 })
 
-
+/*
 var pg = require('pg');
 pg.defaults.ssl = true;
 pg.connect(process.env.DATABASE_URL, function(err, client) {
@@ -26,7 +26,7 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
       console.log(JSON.stringify(row));
     });
 });
-
+*/
 
 /*
 
