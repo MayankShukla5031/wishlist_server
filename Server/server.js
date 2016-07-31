@@ -9,8 +9,6 @@ var server = app.listen(port, function () {
 
 })
 
-var handleRequest = require('supertest');
-var fs = require("fs");
 var mysql      = require('mysql');
 
 var connection = mysql.createConnection({
