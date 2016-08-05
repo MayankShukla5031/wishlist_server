@@ -1,35 +1,51 @@
-
-var express    = require("express");
+var express = require("express");
 var app = express();
-var port=process.env.PORT || 8080;
 
-var server = app.listen(port, function () {
+var server = app.listen(process.env.PORT || 8080, function () {
+    var port = server.address().port;
+    console.log("App now running on port", port);
+  });
 
-  console.log("Wishlist app listening ")
+var mongoose = require('mongoose');
+var mongodbUri = 'mongodb://skverma:skverma@ds139425.mlab.com:39425/wishlist';
+mongoose.connect(mongodbUri);
+var db = mongoose.connection;
 
-})
+db.on('error', console.error.bind(console, 'connection error:'));
 
-var mysql      = require('mysql');
+db.once('open', function callback () {});
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'onshivay',
-  database : 'ContentDatabase'
-});
+  var movieSchema = mongoose.Schema({
+    uid: String,
+    title: String,
+    cast: String,
+    director: String,
+    producer: String,
+    music_director: String,
+    poduction_house: String
+  });
 
-connection.connect(function(err){
-  if(!err) {
-      console.log("Database is connected ... ");    
-  } else {
-      console.log("Error connecting database ... " + err); 
-  }
-});
+  var Movie = mongoose.model('moviescollection', movieSchema);
+
+  var kkhh = new Movie({
+    uid: 'MVI100000',
+    title: 'Kuch Kuch Hota Hai',
+    cast: 'Shahrukh; Kajol; Rani ',
+    director: 'Karan Johar',
+    producer: 'Hiroo Johar',
+    music_director: 'Jatin Lalit',
+    poduction_house: 'Dharma Productions'
+  });
+
+  kkhh.save();
+  
+  
+
+/*
 
 app.get('/', function (req, res) {
 
-res.end('<html><body><a href="/home">Home</a></body></html>');
-
+  res.end('<html><body><a href="/home">Home</a></body></html>');
 });
 
 app.get('/:action', function (req, res) {
@@ -161,5 +177,6 @@ app.get('/:action', function (req, res) {
             });            
         }
     }
-
 })
+
+*/
