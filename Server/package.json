@@ -3,8 +3,9 @@
   "description": "wishlist app",
   "main": "server.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.13.3",
-    "mongodb":"^2.1.6"
+    "mongodb": "^2.1.6"
   },
   "scripts": {
     "start": "node server.js"
