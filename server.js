@@ -33,7 +33,6 @@ db.once('open', function callback () {});
     dob: { type : Date, default: Date.now },
     tags: String
   } , {collection : 'actorcollection'});
-
   
   var directorSchema = new mongoose.Schema({
     uid: String,
@@ -63,7 +62,6 @@ db.once('open', function callback () {});
     tags: String
   } , {collection : 'productionhousecollection'});
 
-
   var countSchema = new mongoose.Schema({
     movie: Number,
     actor: Number,
@@ -72,7 +70,6 @@ db.once('open', function callback () {});
     musicdirector: Number,
     productionhouse: Number
   } , {collection : 'countcollection'});
-
 
   var Movie = mongoose.model('moviecollection', movieSchema);
   var Actor = mongoose.model('actorcollection', actorSchema);
@@ -319,7 +316,6 @@ app.post("/add", function (req, res) {
     
     Count.findOne({}, function (err, count) { 
 
-
     if(req.body["Actor"]!= undefined)
     {
         var actor = new Actor({
@@ -394,4 +390,3 @@ app.post("/add", function (req, res) {
     }
   });
 });
-
