@@ -82,6 +82,13 @@ db.once('open', function callback () {});
   var ProductionHouse = mongoose.model('productionhousecollection', productionHouseSchema);
   var Count = mongoose.model('countcollection', countSchema);
 
+app.get('/', function (req, res) {
+
+    res.end("<html><body><h1>Welcome to wishlist app...</h1><br/>\
+                          <a href='/add' />Add Items to Database</a>\
+                   <body></html>");
+});
+
 app.get('/:action', function (req, res) {
    
    var action= req.params.action;
