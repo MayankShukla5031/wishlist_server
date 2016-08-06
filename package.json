@@ -1,0 +1,19 @@
+{
+  "name": "node-mysql",
+  "description": "wishlist app",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.13.3",
+    "mongodb": "^2.1.6"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+      "node": "4.1.2",
+      "npm": "3.4.0"
+    },
+
+
+}
