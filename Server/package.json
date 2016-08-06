@@ -9,5 +9,7 @@
   },
   "scripts": {
     "start": "node server.js"
-  }
+  },
+  "engines" : { "npm" : "*" }
+
 }
