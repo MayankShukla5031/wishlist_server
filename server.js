@@ -217,7 +217,7 @@ app.get('/:action', function (req, res) {
                                     obj.MovieProducer=getValue("movieProducer");\
                                     obj.MovieMusicDirector=getValue("movieMusicDirector");\
                                     obj.MovieProductionHouse=getValue("movieProductionHouse");\
-                                    $.post( "/add", obj ,function(result){ alert(result);});\
+                                    $.post( "/add", obj ,function(result){ alert(result);refresh();});\
                                  }\
                                  function getValue(selectId)\
                                  {\
@@ -268,6 +268,17 @@ app.get('/:action', function (req, res) {
                                                                                                                   addSelectOption( "movieProductionHouse", list[k]);\
                                                                                                                   }\
                                                                                                              }});\
+                                    document.getElementById("actorName").value="";\
+                                    document.getElementById("directorName").value="";\
+                                    document.getElementById("producerName").value="";\
+                                    document.getElementById("musicDirectorName").value="";\
+                                    document.getElementById("productionHouseName").value="";\
+                                    document.getElementById("movieName").value="";\
+                                    $("#movieActor").val([]);\
+                                    $("#movieDirector").val([]);\
+                                    $("#movieProducer").val([]);\
+                                    $("#movieMusicDirector").val([]);\
+                                    $("#movieProductionHouse").val([]);\
                                  }\
                                  function addSelectOption(selectList, addItem)\
                                  {\
