@@ -428,130 +428,158 @@ app.post("/add", function (req, res) {
 
     if(req.body["Actor"]!= undefined)
     {
-        var actor = new Actor({
-              uid: "ACT100000" + count.actor,
-              title: req.body["Actor"]
-              });
-          actor.save(function(err, user) {
-                if (err)
-                    console.log(err);
-                  });
 
-          count.actor= count.actor+1;
-          count.save(function(err, user) {
-                if (err)
-                    console.log(err);
-                  });
+      if(req.body["Actor"]!="")
+        {
+          var actor = new Actor({
+                uid: "ACT100000" + count.actor,
+                title: req.body["Actor"]
+                });
+            actor.save(function(err, user) {
+                  if (err)
+                      console.log(err);
+                    });
 
-        res.end("Added Actor: "+ req.body["Actor"]);
+            count.actor= count.actor+1;
+            count.save(function(err, user) {
+                  if (err)
+                      console.log(err);
+                    });
+
+          res.end("Added Actor: "+ req.body["Actor"]);
+        }
+      else
+            res.end("Can not add BLANK Actor");
 
     }
     else if(req.body["Director"]!= undefined)
     {
-        var director = new Director({
-              uid: "DIR100000" + count.director,
-              title: req.body["Director"]
-              });
-          director.save(function(err, user) {
-                if (err)
-                    console.log(err);
-                  });
+      if(req.body["Director"]!="")
+        {
+          var director = new Director({
+                uid: "DIR100000" + count.director,
+                title: req.body["Director"]
+                });
+            director.save(function(err, user) {
+                  if (err)
+                      console.log(err);
+                    });
 
-          count.director= count.director+1;
-          count.save(function(err, user) {
-                if (err)
-                    console.log(err);
-                  });
+            count.director= count.director+1;
+            count.save(function(err, user) {
+                  if (err)
+                      console.log(err);
+                    });
 
-        res.end("Added Director: "+ req.body["Director"]);
+          res.end("Added Director: "+ req.body["Director"]);
+        }
+      else
+            res.end("Can not add BLANK Director");
 
     }
     else if(req.body["Producer"]!= undefined)
     {
-
-      var producer = new Producer({
-              uid: "PRO100000" + count.producer,
-              title: req.body["Producer"]
-              });
-          producer.save(function(err, user) {
-                if (err)
-                    console.log(err);
+      if(req.body["Producer"]!="")
+        {
+          var producer = new Producer({
+                  uid: "PRO100000" + count.producer,
+                  title: req.body["Producer"]
                   });
+              producer.save(function(err, user) {
+                    if (err)
+                        console.log(err);
+                      });
 
-          count.producer= count.producer+1;
-          count.save(function(err, user) {
-                if (err)
-                    console.log(err);
-                  });
+              count.producer= count.producer+1;
+              count.save(function(err, user) {
+                    if (err)
+                        console.log(err);
+                      });
 
-        res.end("Added Producer: "+ req.body["Producer"]);
-
+            res.end("Added Producer: "+ req.body["Producer"]);
+        }
+              else
+                    res.end("Can not add BLANK Producer");
+    
     }
     else if(req.body["MusicDirector"]!= undefined)
     {
-      var musicdirector = new MusicDirector({
-              uid: "MDR100000" + count.musicdirector,
-              title: req.body["MusicDirector"]
-              });
-          musicdirector.save(function(err, user) {
-                if (err)
-                    console.log(err);
+
+      if(req.body["MusicDirector"]!="")
+        {
+          var musicdirector = new MusicDirector({
+                  uid: "MDR100000" + count.musicdirector,
+                  title: req.body["MusicDirector"]
                   });
+              musicdirector.save(function(err, user) {
+                    if (err)
+                        console.log(err);
+                      });
 
-          count.musicdirector= count.musicdirector+1;
-          count.save(function(err, user) {
-                if (err)
-                    console.log(err);
-                  });
+              count.musicdirector= count.musicdirector+1;
+              count.save(function(err, user) {
+                    if (err)
+                        console.log(err);
+                      });
 
-        
-        res.end("Added Music Director: "+ req.body["MusicDirector"]);
-
+            
+            res.end("Added Music Director: "+ req.body["MusicDirector"]);
+        }
+              else
+                    res.end("Can not add BLANK Music Director");
     }
     else if(req.body["ProductionHouse"]!= undefined)
     {
-      var productionhouse = new ProductionHouse({
-              uid: "PRH100000" + count.productionhouse,
-              title: req.body["ProductionHouse"]
-              });
-          productionhouse.save(function(err, user) {
-                if (err)
-                    console.log(err);
+      if(req.body["ProductionHouse"]!="")
+        {
+          var productionhouse = new ProductionHouse({
+                  uid: "PRH100000" + count.productionhouse,
+                  title: req.body["ProductionHouse"]
                   });
+              productionhouse.save(function(err, user) {
+                    if (err)
+                        console.log(err);
+                      });
 
-          count.productionhouse= count.productionhouse+1;
-          count.save(function(err, user) {
-                if (err)
-                    console.log(err);
-                  });
+              count.productionhouse= count.productionhouse+1;
+              count.save(function(err, user) {
+                    if (err)
+                        console.log(err);
+                      });
 
-        res.end("Added Production House: "+ req.body["ProductionHouse"]);
-
+            res.end("Added Production House: "+ req.body["ProductionHouse"]);
+        }
+              else
+                    res.end("Can not add BLANK Production House");
     }
     else if(req.body["MovieName"]!= undefined)
     {
-      var movie = new Movie({
-              uid: "MVI100000" + count.movie,
-              title: req.body["MovieName"],
-              cast: JSON.stringify(req.body["MovieCast"]),
-              director: JSON.stringify(req.body["MovieDirector"]),
-              producer: JSON.stringify(req.body["MovieProducer"]),
-              music_director: JSON.stringify(req.body["MovieMusicDirector"]),
-              poduction_house: JSON.stringify(req.body["MovieProductionHouse"])
-              });
-          movie.save(function(err, user) {
-                if (err)
-                    console.log(err);                
-            });
-
-          count.movie= count.movie+1;
-          count.save(function(err, user) {
-                if (err)
-                    console.log(err);
+      if(req.body["MovieName"]!="")
+        {
+          var movie = new Movie({
+                  uid: "MVI100000" + count.movie,
+                  title: req.body["MovieName"],
+                  cast: JSON.stringify(req.body["MovieCast"]),
+                  director: JSON.stringify(req.body["MovieDirector"]),
+                  producer: JSON.stringify(req.body["MovieProducer"]),
+                  music_director: JSON.stringify(req.body["MovieMusicDirector"]),
+                  poduction_house: JSON.stringify(req.body["MovieProductionHouse"])
                   });
-        
-        res.end("Added Movie: "+ req.body["MovieName"]);
+              movie.save(function(err, user) {
+                    if (err)
+                        console.log(err);                
+                });
 
+              count.movie= count.movie+1;
+              count.save(function(err, user) {
+                    if (err)
+                        console.log(err);
+                      });
+            
+            res.end("Added Movie: "+ req.body["MovieName"]);
+        }
+              else
+                    res.end("Can not add BLANK Movie Name");
     }
   });
 });
