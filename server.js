@@ -24,7 +24,7 @@ db.once('open', function callback () {});
     director: String,
     producer: String,
     music_director: String,
-    poduction_house: String
+    production_house: String
   } , {collection : 'moviecollection'});
 
   var actorSchema = new mongoose.Schema({
@@ -82,19 +82,19 @@ db.once('open', function callback () {});
 app.get('/', function (req, res) {
 
     res.end("<html><body><h1>Welcome to wishlist app...</h1><br/>\
-                          <a href='/add' />Add Items to Database</a>\
+                          <a href='/add' />Add Items to Database</a><br/>\
+                          <a href='/home' />Search Movies</a>\
                    <body></html>");
 });
 
 app.get('/:action', function (req, res) {
    
    var action= req.params.action;
-/*
+
      if(action== "home")
     {
        res.end("<html><head><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script></head>\
-                  <title>Wishlist</title>\
-                  <body><p>Welcome</p>\
+                  <body>\
                     <input type='text'  onchange='searchByTitle(this)' placeholder='Search By Movie Title'><br/><br/>\
                     <input type='text'  onchange='searchByActor(this)' placeholder='Search By Actor'><br/><br/>\
                     <input type='text'  onchange='searchByDirector(this)' placeholder='Search By Director'><br/><br/>\
@@ -123,66 +123,66 @@ app.get('/:action', function (req, res) {
      {
         if( req.query.title != undefined)
         {
-            var queryString= "select moviescollection.title from moviescollection where moviescollection.title LIKE '%"+ req.query.title+"%'";
 
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; console.log("Errror"); throw err;}
-
-             res.end(JSON.stringify(rows));
+          Movie.find({'title' : new RegExp(req.query.title, 'i')}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list.sort()));
             });
+
         }
         if( req.query.actor != undefined)
         {
-            var queryString= "select moviescollection.title from moviescollection  join actorscollection where moviescollection.cast LIKE CONCAT('%', actorscollection.uid ,'%') && actorscollection.title LIKE '%"+ req.query.actor+"%'";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; console.log("Errror"); throw err;}
-
-             res.end(JSON.stringify(rows));
-            });            
+           
+          Movie.find({'cast' : new RegExp(req.query.actor, 'i')}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list.sort()));
+            });
+           
         }
         if( req.query.director != undefined)
         {
-           var queryString= "select moviescollection.title from moviescollection join directorscollection where moviescollection.director LIKE CONCAT('%', directorscollection.uid ,'%')  && directorscollection.title LIKE '%"+ req.query.director+"%'";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; console.log("Errror"); throw err;}
-
-             res.end(JSON.stringify(rows));
+           
+          Movie.find({'director' : new RegExp(req.query.director, 'i')}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list.sort()));
             });
+
         }
         if( req.query.producer != undefined)
         {
-           var queryString= "select moviescollection.title from moviescollection join producerscollection where moviescollection.producer LIKE CONCAT('%', producerscollection.uid ,'%')  && producerscollection.title LIKE '%"+ req.query.producer+"%'";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; console.log("Errror"); throw err;}
-
-             res.end(JSON.stringify(rows));
+           
+          Movie.find({'producer' : new RegExp(req.query.producer, 'i')}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list.sort()));
             });
+
         }
         if( req.query.music_director != undefined)
         {
-           var queryString= "select moviescollection.title from moviescollection join musicdirectorscollection where moviescollection.music_director LIKE CONCAT('%', musicdirectorscollection.uid ,'%')  && musicdirectorscollection.title LIKE '%"+ req.query.music_director+"%'";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; console.log("Errror"); throw err;}
-
-             res.end(JSON.stringify(rows));
+           
+          Movie.find({'music_director' : new RegExp(req.query.music_director, 'i')}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list.sort()));
             });
+
         }
         if( req.query.production_house != undefined)
         {
-            var queryString= "select moviescollection.title from moviescollection join productionscollection where moviescollection.production LIKE CONCAT('%', productionscollection.uid ,'%')  && productionscollection.title LIKE '%"+ req.query.production_house+"%'";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; console.log("Errror"); throw err;}
-
-             res.end(JSON.stringify(rows));
-            });            
+            
+          Movie.find({'production_house' : new RegExp(req.query.production_house, 'i')}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list.sort()));
+            });
+           
         }
     }
-    else*/ if(action== "add")
+    else if(action== "add")
     {
           res.end('<html><head><style>select{onmousedown="if(this.options.length>8){this.size=8;}"  onchange="this.size=0;" onblur="this.size=0;"}</style>\
                               <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>\
@@ -563,7 +563,7 @@ app.post("/add", function (req, res) {
                   director: JSON.stringify(req.body["MovieDirector"]),
                   producer: JSON.stringify(req.body["MovieProducer"]),
                   music_director: JSON.stringify(req.body["MovieMusicDirector"]),
-                  poduction_house: JSON.stringify(req.body["MovieProductionHouse"])
+                  production_house: JSON.stringify(req.body["MovieProductionHouse"])
                   });
               movie.save(function(err, user) {
                     if (err)
