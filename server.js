@@ -193,21 +193,45 @@ app.get('/:action', function (req, res) {
                                  }\
                                  function addDirector()\
                                  {\
-                                   $.post( "/add", {"Director": document.getElementById("directorName").value} ,function(result){ alert(result);refreshSelects();});\
+                                   $.post( "/add", {"Director": document.getElementById("directorName").value} ,function(result){ alert(result);refresh();});\
                                  }\
                                  function addProducer()\
                                  {\
-                                  $.post( "/add", {"Producer": document.getElementById("producerName").value} ,function(result){ alert(result);refreshSelects();});\
+                                  $.post( "/add", {"Producer": document.getElementById("producerName").value} ,function(result){ alert(result);refresh();});\
                                  }\
                                  function addMusicDirector()\
                                  {\
-                                   $.post( "/add", {"MusicDirector": document.getElementById("musicDirectorName").value} ,function(result){ alert(result);refreshSelects();});\
+                                   $.post( "/add", {"MusicDirector": document.getElementById("musicDirectorName").value} ,function(result){ alert(result);refresh();});\
                                  }\
                                  function addProductionHouse()\
                                  {\
-                                   $.post( "/add", {"ProductionHouse": document.getElementById("productionHouseName").value} ,function(result){ alert(result);refreshSelects();});\
+                                   $.post( "/add", {"ProductionHouse": document.getElementById("productionHouseName").value} ,function(result){ alert(result);refresh();});\
                                  }\
-                                 function refresh()\
+                                 function addMovie()\
+                                 {\
+                                    var obj={};\
+                                    \
+                                    obj.MovieName=document.getElementById("movieName").value;\
+                                    obj.MovieCast=getValue("movieActor");\
+                                    obj.MovieDirector=getValue("movieDirector");\
+                                    obj.MovieProducer=getValue("movieProducer");\
+                                    obj.MovieMusicDirector=getValue("movieMusicDirector");\
+                                    obj.MovieProductionHouse=getValue("movieProductionHouse");\
+                                    $.post( "/add", obj ,function(result){ alert(result);});\
+                                 }\
+                                 function getValue(selectId)\
+                                 {\
+                                  var obj=[];\
+                                  var x=document.getElementById(selectId);\
+                                  if(x!=null)\
+                                  for (var i = 0; i < x.options.length; i++) {\
+                                     if(x.options[i].selected ==true)\
+                                          obj.push(x.options[i].value);\
+                                      }\
+                                  else alert("ID:"+ selectId + "is null");\
+                                  return obj;\
+                                  }\
+                                function refresh()\
                                  {\
                                     removeOptions(movieActor);\
                                     $.ajax({type:"GET", url:"/getdbvalues?get=actors", success:function(result){\
@@ -397,10 +421,16 @@ app.post("/add", function (req, res) {
               uid: "ACT100000" + count.actor,
               title: req.body["Actor"]
               });
-          actor.save();
+          actor.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
           count.actor= count.actor+1;
-          count.save();
+          count.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
         res.end("Added Actor: "+ req.body["Actor"]);
 
@@ -411,10 +441,16 @@ app.post("/add", function (req, res) {
               uid: "DIR100000" + count.director,
               title: req.body["Director"]
               });
-          director.save();
+          director.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
           count.director= count.director+1;
-          count.save();
+          count.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
         res.end("Added Director: "+ req.body["Director"]);
 
@@ -426,10 +462,16 @@ app.post("/add", function (req, res) {
               uid: "PRO100000" + count.producer,
               title: req.body["Producer"]
               });
-          producer.save();
+          producer.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
           count.producer= count.producer+1;
-          count.save();
+          count.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
         res.end("Added Producer: "+ req.body["Producer"]);
 
@@ -440,10 +482,16 @@ app.post("/add", function (req, res) {
               uid: "MDR100000" + count.musicdirector,
               title: req.body["MusicDirector"]
               });
-          musicdirector.save();
+          musicdirector.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
           count.musicdirector= count.musicdirector+1;
-          count.save();
+          count.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
         
         res.end("Added Music Director: "+ req.body["MusicDirector"]);
@@ -455,12 +503,43 @@ app.post("/add", function (req, res) {
               uid: "PRH100000" + count.productionhouse,
               title: req.body["ProductionHouse"]
               });
-          productionhouse.save();
+          productionhouse.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
 
           count.productionhouse= count.productionhouse+1;
-          count.save();
-        
+          count.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
+
         res.end("Added Production House: "+ req.body["ProductionHouse"]);
+
+    }
+    else if(req.body["MovieName"]!= undefined)
+    {
+      var movie = new Movie({
+              uid: "MVI100000" + count.movie,
+              title: req.body["MovieName"],
+              cast: JSON.stringify(req.body["MovieCast"]),
+              director: JSON.stringify(req.body["MovieDirector"]),
+              producer: JSON.stringify(req.body["MovieProducer"]),
+              music_director: JSON.stringify(req.body["MovieMusicDirector"]),
+              poduction_house: JSON.stringify(req.body["MovieProductionHouse"])
+              });
+          movie.save(function(err, user) {
+                if (err)
+                    console.log(err);                
+            });
+
+          count.movie= count.movie+1;
+          count.save(function(err, user) {
+                if (err)
+                    console.log(err);
+                  });
+        
+        res.end("Added Movie: "+ req.body["MovieName"]);
 
     }
   });
