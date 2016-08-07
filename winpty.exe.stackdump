@@ -1,7 +1,0 @@
-Exception: STATUS_ACCESS_VIOLATION at eip=641358A0
-eax=40011788 ebx=40011788 ecx=FFCACDAC edx=40011780 esi=20043B48 edi=20000000
-ebp=FFCACCD8 esp=FFCACC50 program=C:\Program Files (x86)\Git\usr\bin\winpty.exe, pid 6728, thread unknown (0x4FF8)
-cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
-Stack trace:
-Frame     Function  Args
-End of stack trace

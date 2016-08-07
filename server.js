@@ -95,12 +95,6 @@ app.get('/:action', function (req, res) {
        res.end("<html><head><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script></head>\
                   <title>Wishlist</title>\
                   <body><p>Welcome</p>\
-                    <a href='/list_movies'>List of Movies</a><br/>\
-                    <a href='/list_actors'>List of Actors</a><br/>\
-                    <a href='/list_producers'>List of Producers</a><br/>\
-                    <a href='/list_directors'>List of Directors</a><br/>\
-                    <a href='/list_music_directors'>List of Music Directors</a><br/>\
-                    <a href='/list_productions'>List of Productions</a><br/><br/>\
                     <input type='text'  onchange='searchByTitle(this)' placeholder='Search By Movie Title'><br/><br/>\
                     <input type='text'  onchange='searchByActor(this)' placeholder='Search By Actor'><br/><br/>\
                     <input type='text'  onchange='searchByDirector(this)' placeholder='Search By Director'><br/><br/>\
@@ -125,66 +119,8 @@ app.get('/:action', function (req, res) {
                         }\
                     </script></body></html>");
     }
-     else if(action== "list_movies")
-    {
-       var queryString= "select moviescollection.title from moviescollection";
-
-       connection.query(queryString, function(err, rows, fields) {
-        if (err)  { res="Error"; throw err;}
-         res.end(JSON.stringify(rows));
-        });    
-     }
-     else if(action== "list_actors")
+     else if(action== "search")
      {
-        var queryString= "select actorscollection.title from actorscollection";
-
-         connection.query(queryString, function(err, rows, fields) {
-          if (err)  { res="Error"; throw err;}
-           res.end(JSON.stringify(rows));
-          });    
-     }
-     else if(action== "list_directors")
-     {
-        var queryString= "select directorscollection.title from directorscollection";
-
-         connection.query(queryString, function(err, rows, fields) {
-          if (err)  { res="Error"; throw err;}
-           res.end(JSON.stringify(rows));
-          });  
-     }
-    else if(action== "list_music_directors")
-     {
-        var queryString= "select musicdirectorscollection.title from musicdirectorscollection";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; throw err;}
-             res.end(JSON.stringify(rows));
-            });
-     }
-
-    else if(action== "list_producers")
-     {
-        var queryString= "select producerscollection.title from producerscollection";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; throw err;}
-             res.end(JSON.stringify(rows));
-            });
-        
-     }
-
-     else if(action== "list_productions")
-     {
-         var queryString= "select productionscollection.title from productionscollection";
-
-           connection.query(queryString, function(err, rows, fields) {
-            if (err)  { res="Error"; throw err;}
-             res.end(JSON.stringify(rows));
-            });
-    }
-    else if(action== "search")
-     {
-
         if( req.query.title != undefined)
         {
             var queryString= "select moviescollection.title from moviescollection where moviescollection.title LIKE '%"+ req.query.title+"%'";
@@ -248,31 +184,91 @@ app.get('/:action', function (req, res) {
     }
     else*/ if(action== "add")
     {
-          res.end('<html><head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>\
+          res.end('<html><head><style>select{onmousedown="if(this.options.length>8){this.size=8;}"  onchange="this.size=0;" onblur="this.size=0;"}</style>\
+                              <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>\
                               <script>\
                                  function addActor()\
                                  {\
-                                  $.post( "/add", {"Actor": document.getElementById("actorName").value} ,function(result){ alert(result);});\
+                                  $.post( "/add", {"Actor": document.getElementById("actorName").value} ,function(result){ alert(result);refresh();});\
                                  }\
                                  function addDirector()\
                                  {\
-                                   $.post( "/add", {"Director": document.getElementById("directorName").value} ,function(result){ alert(result);});\
+                                   $.post( "/add", {"Director": document.getElementById("directorName").value} ,function(result){ alert(result);refreshSelects();});\
                                  }\
                                  function addProducer()\
                                  {\
-                                  $.post( "/add", {"Producer": document.getElementById("producerName").value} ,function(result){ alert(result);});\
+                                  $.post( "/add", {"Producer": document.getElementById("producerName").value} ,function(result){ alert(result);refreshSelects();});\
                                  }\
                                  function addMusicDirector()\
                                  {\
-                                   $.post( "/add", {"MusicDirector": document.getElementById("musicDirectorName").value} ,function(result){ alert(result);});\
+                                   $.post( "/add", {"MusicDirector": document.getElementById("musicDirectorName").value} ,function(result){ alert(result);refreshSelects();});\
                                  }\
                                  function addProductionHouse()\
                                  {\
-                                   $.post( "/add", {"ProductionHouse": document.getElementById("productionHouseName").value} ,function(result){ alert(result);});\
+                                   $.post( "/add", {"ProductionHouse": document.getElementById("productionHouseName").value} ,function(result){ alert(result);refreshSelects();});\
                                  }\
-                              </script>\</head>\
+                                 function refresh()\
+                                 {\
+                                    removeOptions(movieActor);\
+                                    $.ajax({type:"GET", url:"/getdbvalues?get=actors", success:function(result){\
+                                                                                                                var list=JSON.parse(result);\
+                                                                                                               for(var k in list) {\
+                                                                                                                  addSelectOption( "movieActor", list[k]);\
+                                                                                                                  }\
+                                                                                                             }});\
+                                    removeOptions(movieDirector);\
+                                    $.ajax({type:"GET", url:"/getdbvalues?get=directors", success:function(result){\
+                                                                                                                var list=JSON.parse(result);\
+                                                                                                               for(var k in list) {\
+                                                                                                                  addSelectOption( "movieDirector", list[k]);\
+                                                                                                                  }\
+                                                                                                             }});\
+                                    removeOptions(movieProducer);\
+                                    $.ajax({type:"GET", url:"/getdbvalues?get=producers", success:function(result){\
+                                                                                                                var list=JSON.parse(result);\
+                                                                                                               for(var k in list) {\
+                                                                                                                  addSelectOption( "movieProducer", list[k]);\
+                                                                                                                  }\
+                                                                                                             }});\
+                                    removeOptions(movieMusicDirector);\
+                                    $.ajax({type:"GET", url:"/getdbvalues?get=musicdirectors", success:function(result){\
+                                                                                                                var list=JSON.parse(result);\
+                                                                                                               for(var k in list) {\
+                                                                                                                  addSelectOption( "movieMusicDirector", list[k]);\
+                                                                                                                  }\
+                                                                                                             }});\
+                                    removeOptions(movieProductionHouse);\
+                                    $.ajax({type:"GET", url:"/getdbvalues?get=productionhouses", success:function(result){\
+                                                                                                                var list=JSON.parse(result);\
+                                                                                                               for(var k in list) {\
+                                                                                                                  addSelectOption( "movieProductionHouse", list[k]);\
+                                                                                                                  }\
+                                                                                                             }});\
+                                 }\
+                                 function addSelectOption(selectList, addItem)\
+                                 {\
+                                    var x = document.getElementById(selectList);\
+                                    var option = document.createElement("option");\
+                                    option.text = addItem;\
+                                    x.add(option);\
+                                 }\
+                                 function removeOptions(selectbox)\
+                                  {\
+                                      var i;\
+                                      for(i = selectbox.options.length - 1 ; i >= 0 ; i--)\
+                                      {\
+                                          selectbox.remove(i);\
+                                      }\
+                                  }\
+                                  $(function() {\
+                                      refresh();\
+                                    });\
+                              </script>\
+                          </head>\
                           <body>\
-                            <div style="width:350px;">\
+                          <table>\
+                          <tr><td>\
+                            <div style="width:auto;">\
                                <fieldset>\
                                   <legend style="color:blue;font-weight:bold;">Add New Entries in Database</legend>\
                                   <table>\
@@ -303,9 +299,88 @@ app.get('/:action', function (req, res) {
                                      </tr>\
                                   </table>\
                                </fieldset>\
-                            </div>\
-                          </body></html>');
-        
+                            </div></td><td>\
+                            <div style="width:auto;">\
+                               <fieldset>\
+                                  <legend style="color:blue;font-weight:bold;">Add New Movie in Database</legend>\
+                                  <table>\
+                                     <tr>\
+                                        <td>Movie Name:</td>\
+                                        <td><input type="text" id="movieName" placeholder="Movie Name"/></td>\
+                                        </tr>\
+                                     <tr>\
+                                        <td>Select Actor:</td>\
+                                        <td><select id="movieActor" multiple/></td>\
+                                     </tr>\
+                                     <tr>\
+                                        <td>Select Director:</td>\
+                                        <td><select id="movieDirector" multiple multiple/></td>\
+                                     </tr>\
+                                     <tr>\
+                                        <td>Select Producer:</td>\
+                                        <td><select id="movieProducer" multiple/></td>\
+                                     </tr>\
+                                     <tr>\
+                                        <td>Select Music Director:</td>\
+                                        <td><select id="movieMusicDirector" multiple/></td>\
+                                     </tr>\
+                                     <tr>\
+                                        <td>Select Production House:</td>\
+                                        <td><select id="movieProductionHouse" multiple/></td>\
+                                        <td><input type="button" value="Add Movie" onclick="addMovie()"/></td>\
+                                     </tr>\
+                                  </table>\
+                               </fieldset>\
+                            </div></td>\
+                          </table>\
+                          </body></html>');        
+    }
+    else if(action== "getdbvalues")
+    {
+      if( req.query.get == "actors")
+        {
+          Actor.find({}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list));
+            });
+        }
+
+      if( req.query.get == "directors")
+        {
+          Director.find({}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list));
+            });
+        }
+
+      if( req.query.get == "producers")
+        {
+          Producer.find({}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list));
+            });
+        }
+
+      if( req.query.get == "musicdirectors")
+        {
+          MusicDirector.find({}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list));
+            });
+        }
+
+      if( req.query.get == "productionhouses")
+        {
+          ProductionHouse.find({}, function (err, str) {
+          var list=[];
+          list= str.map(function(a) {return a.title;});
+          res.end(JSON.stringify(list));
+            });
+        }
     }
 })
 
