@@ -377,7 +377,7 @@ app.get('/:action', function (req, res) {
           Actor.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(list));
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -386,7 +386,7 @@ app.get('/:action', function (req, res) {
           Director.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(list));
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -395,7 +395,7 @@ app.get('/:action', function (req, res) {
           Producer.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(list));
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -404,7 +404,7 @@ app.get('/:action', function (req, res) {
           MusicDirector.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(list));
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -413,7 +413,7 @@ app.get('/:action', function (req, res) {
           ProductionHouse.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(list));
+          res.end(JSON.stringify(list.sort()));
             });
         }
     }
