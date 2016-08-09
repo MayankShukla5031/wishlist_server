@@ -1,6 +1,7 @@
 var express = require("express");
 var app = express();
 var bodyParser = require('body-parser')
+var fs = require('fs');
 
 var server = app.listen(process.env.PORT || 8080, function () {
     var port = server.address().port;
@@ -81,10 +82,10 @@ db.once('open', function callback () {});
 
 app.get('/', function (req, res) {
 
-    res.end("<html><body><h1>Welcome to wishlist app...</h1><br/>\
-                          <a href='/add' />Add Items to Database</a><br/>\
-                          <a href='/home' />Search Movies</a>\
-                   <body></html>");
+fs.readFile('public/index.html', 'utf8', function(err, contents) {
+    res.end(contents);
+});
+    
 });
 
 app.get('/:action', function (req, res) {

@@ -1,0 +1,77 @@
+.cardGallery{
+	cursor: pointer;
+	margin: 0 auto;
+	padding: 40px;
+	transition: all .2s ease-in-out !important;
+    transform: scale(0.95) !important; 
+}
+
+.cardGallery:hover{
+  transform: scale(1.0) !important;
+}
+/* .cardAction .material-icons{
+	transition: all .2s ease-in-out !important;
+    transform: scale(0.95) !important; 
+}
+.cardAction .material-icons:hover{
+	transform: scale(1.0) !important; 
+} */
+.Select--multi .Select-value-icon{
+  cursor: pointer;
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+  border-right: 1px solid #c2e0ff;
+   border-right: 1px solid rgba(0, 126, 255, 0.24);
+  padding: 1px 5px 3px;
+   display: inline-block;
+  vertical-align: middle;
+}
+
+.padding-10{
+  padding: 10px !important;
+}
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.center-container {
+  position: relative;
+}
+
+.bg-light-blue{
+  background-color: #D9EDF7;
+  border: 1px solid #D9EDF7;
+  border-radius: 4px;
+}
+
+.center-align{
+  text-align: center;
+}
+
+.card-media{
+  background-color: #D9EDF7;
+  min-height: 177px;
+}
+
+.order-card-title {
+  white-space: normal;
+  overflow: hidden;
+}
+
+.order-card-title span:last-child{
+  width: 250px;
+  height: 25px;
+}
+
+/*.react-bs-table table td, .react-bs-table table th{
+  white-space: normal;
+  word-wrap: break-word;
+}*/
+
+.react-bs-table-container tbody td{
+  vertical-align: middle !important;
+}
