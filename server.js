@@ -82,7 +82,7 @@ db.once('open', function callback () {});
 
 app.get('/', function (req, res) {
 
-fs.readFile('public/index.html', 'utf8', function(err, contents) {
+fs.readFile('index.html', 'utf8', function(err, contents) {
     res.end(contents);
 });
     
