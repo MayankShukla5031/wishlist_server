@@ -429,7 +429,11 @@ app.get('/:action', function (req, res) {
 app.use(bodyParser.json() );  
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.post("/add", function (req, res) {
+app.post("/:action", function (req, res) {
+  var action= req.params.action;
+
+  if(action=="add")
+  {
     
     Count.findOne({}, function (err, count) { 
 
@@ -589,4 +593,5 @@ app.post("/add", function (req, res) {
                     res.end("Can not add BLANK Movie Name");
     }
   });
+}
 });
