@@ -693,7 +693,7 @@ app.post("/:action", function (req, res) {
 					if(err) res.end("Error");
 			        else  
 			        {
-			        	item.wishlist.push(req.query.movieid);
+			        	item.wishlist.push(req.body["movieid"]);
 			        	item.save();
 			        	res.end("Added movie to wishlist");
 			         }
