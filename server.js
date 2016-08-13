@@ -136,7 +136,7 @@ app.get('/:action', function (req, res) {
     else if(action=="index")
     {
     	console.log(req.session.userid);
-      fs.readFile('index.html', 'utf8', function(err, contents) {
+      fs.readFile('public/index.html', 'utf8', function(err, contents) {
         res.end(contents);
       });
     }
