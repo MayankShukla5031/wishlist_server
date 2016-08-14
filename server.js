@@ -175,8 +175,8 @@ app.get('/:action', function (req, res) {
 
           Movie.find({'title' : new RegExp(req.query.title, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(str));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          res.end(JSON.stringify(list));
             });
 
         }
@@ -185,8 +185,8 @@ app.get('/:action', function (req, res) {
            
           Movie.find({'cast' : new RegExp(req.query.actor, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(str));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          res.end(JSON.stringify(list));
             });
            
         }
@@ -195,8 +195,8 @@ app.get('/:action', function (req, res) {
            
           Movie.find({'director' : new RegExp(req.query.director, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(str));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          res.end(JSON.stringify(list));
             });
 
         }
@@ -205,8 +205,8 @@ app.get('/:action', function (req, res) {
            
           Movie.find({'producer' : new RegExp(req.query.producer, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(str));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          res.end(JSON.stringify(list));
             });
 
         }
@@ -215,8 +215,8 @@ app.get('/:action', function (req, res) {
            
           Movie.find({'music_director' : new RegExp(req.query.music_director, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(str));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          res.end(JSON.stringify(list));
             });
 
         }
@@ -225,8 +225,8 @@ app.get('/:action', function (req, res) {
             
           Movie.find({'production_house' : new RegExp(req.query.production_house, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return a.title;});
-          res.end(JSON.stringify(str));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          res.end(JSON.stringify(list));
             });
            
         }
