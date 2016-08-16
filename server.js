@@ -114,7 +114,8 @@ res.end();
 app.get('/login', function (req, res) {
 res.end("<html>\
 		<body><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>\
-			  <a href='javascript:DoPost()'>Sign in as SK</a> \
+			  <h1>User is not Signed in...</h1>\
+        <a href='javascript:DoPost()'>Sign in as SK</a> \
 			  <script language='javascript'>\
 			  		function DoPost(){ \
 			  			 $.post('/login', { user: 'SK', password: 'onshivay'} ,function( data ) {  if(data!='Unauthorized') window.location.assign( data); else alert(data);}); \
@@ -495,7 +496,7 @@ app.get('/:action', function (req, res) {
 			            
 			         });
 	    }
-	    else  res.end('{}');
+	    else  res.end('/login');
 			       
     }
     else
@@ -682,23 +683,29 @@ app.post("/:action", function (req, res) {
       //res.writeHead(301, {'Location': '/home'});
       res.end('/index');
     } else {
-      res.end('/loginregister');
+      res.end('/login');
     }
   }
 
   else if (action=="addtowishlist")
   {
-    User.find({'uid' : req.session.userid}, function (err, item) {		          
-			          
-					if(err) res.end("Error");
-			        else  
-			        {
-			        	item.wishlist.push(req.body["movieid"]);
-			        	item.save();
-			        	res.end("Added movie to wishlist");
-			         }
-			         });
-  }
+
+    if(req.session.userid!= undefined)
+    {
+        User.find({'uid' : req.session.userid}, function (err, item) {		          
+    			          
+    					if(err) res.end("Error");
+    			        else  
+    			        {
+    			        	item.wishlist.push(req.body["movieid"]);
+    			        	item.save();
+    			        	res.end("Added movie to wishlist");
+    			         }
+    			         });
+      }
+    }
+    else
+      res.end('/login');
 
 });
 
