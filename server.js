@@ -496,7 +496,9 @@ app.get('/:action', function (req, res) {
 			            
 			         });
 	    }
-	    else  res.end('/login');
+    else {
+      res.writeHead(301, {'Location': '/login'});
+    }
 			       
     }
     else
@@ -682,8 +684,9 @@ app.post("/:action", function (req, res) {
       req.session.userid = 'SK';
       //res.writeHead(301, {'Location': '/home'});
       res.end('/index');
-    } else {
-      res.end('/login');
+    } 
+    else {
+      res.writeHead(301, {'Location': '/login'});
     }
   }
 
@@ -705,7 +708,9 @@ app.post("/:action", function (req, res) {
       }
     }
     else
-      res.end('/login');
+    {
+      res.writeHead(301, {'Location': '/login'});
+    }
 
 });
 
