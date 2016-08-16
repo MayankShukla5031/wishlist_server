@@ -721,6 +721,7 @@ app.post("/:action", function (req, res) {
     else
     {
       res.writeHead(301, {'Location': '/login'});
+      res.end(); 
     }
 
 });
