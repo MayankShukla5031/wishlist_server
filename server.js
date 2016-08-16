@@ -127,6 +127,7 @@ res.end("<html>\
 app.get('/:action', function (req, res) {
    
    var action= req.params.action;
+   console.log('Received GET Req:' + action);
 
     if(action== "logout")
     {
@@ -487,18 +488,27 @@ app.get('/:action', function (req, res) {
     }
     else if(action== "getmywishlist")
     {
+
+      console.log('Entered getmywishlist:');
+
     	if( req.session.userid != undefined)
         {
-			User.find({'uid' : req.session.userid}, function (err, item) {		          
+
+        console.log('User present:'+req.session.userid);
+
+			   User.find({'uid' : req.session.userid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item.wishlist));
 			            
 			         });
-	    }
-    else {
-      res.writeHead(301, {'Location': '/login'});
-    }
+  	    }
+      else 
+      {
+        console.log('User not present, redirecting to login');
+        res.writeHead(301, {'Location': '/login'});
+        res.end(); 
+      }
 			       
     }
     else
@@ -687,6 +697,7 @@ app.post("/:action", function (req, res) {
     } 
     else {
       res.writeHead(301, {'Location': '/login'});
+      res.end(); 
     }
   }
 
