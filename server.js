@@ -714,11 +714,20 @@ app.post("/:action", function (req, res) {
 
     if(req.session.userid!= undefined)
     {
+
+  		console.log('Adding to wishlist of user:' + req.session.userid);
+
         User.find({'uid' : req.session.userid}, function (err, item) {		          
     			          
-    					if(err) res.end("Error");
+    					if(err) 
+    						{
+    							console.log("Error getting wishlist");
+    							res.end("Error");
+    						}
     			        else  
     			        {
+
+    			        	console.log("Added movie to wishlist");
     			        	item.wishlist.push(req.body["movieid"]);
     			        	item.save();
     			        	res.end("Added movie to wishlist");
@@ -728,6 +737,8 @@ app.post("/:action", function (req, res) {
     }
     else
     {
+  		
+  	  console.log('User not available');
       res.writeHead(301, {'Location': '/login'});
       res.end(); 
     }
