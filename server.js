@@ -530,6 +530,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.post("/:action", function (req, res) {
   var action= req.params.action;
 
+  console.log('Received POST Req:' + action);
+
   if(action=="add")
   {    
     Count.findOne({}, function (err, count) { 
