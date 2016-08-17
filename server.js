@@ -725,7 +725,7 @@ app.post("/:action", function (req, res) {
 
   		console.log('Adding to wishlist of user:' + req.session.userid);
 
-        User.find({'uid' : req.session.userid}, function (err, item) {		          
+        User.find({'username' : req.session.userid}, function (err, item) {		          
     			          
     					if(err) 
     						{
@@ -736,9 +736,9 @@ app.post("/:action", function (req, res) {
     			        {
 
     			        	console.log("Added movie to wishlist");
-    			        	console.log(JSON.stringify(item));
-    			        	//item.wishlist.push(req.body["movieid"]);
-    			        	//item.save();
+    			        	//console.log(JSON.stringify(item));
+    			        	item.wishlist.push(req.body["movieid"]);
+    			        	item.save();
     			        	res.end("Added movie to wishlist");
     			         }
     			         });
