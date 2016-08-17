@@ -511,7 +511,7 @@ app.get('/:action', function (req, res) {
       }
 			       
     }
-    else if(action.endsWith(".css") ||action.endsWith(".js"))
+    else if(action.endsWith(".css") ||action.endsWith(".js")||action.endsWith(".map"))
     {
     	fs.readFile('public/'+ action, 'utf8', function(err, contents) {
         res.end(contents);
