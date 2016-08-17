@@ -102,7 +102,7 @@ db.once('open', function callback () {});
     uid: String,
     username: String,
     wishlist: String
-  } , {collection : 'countcollection'});
+  } , {collection : 'usercollection'});
 
   var Movie = mongoose.model('moviecollection', movieSchema);
   var Actor = mongoose.model('actorcollection', actorSchema);
