@@ -4,8 +4,16 @@ var bodyParser = require('body-parser')
 var fs = require('fs');
 var expressSession = require('express-session');
 var cookieParser = require('cookie-parser');
+var session = require('client-sessions');
+
 app.use(cookieParser('secret'));    
 app.use(expressSession());
+app.use(session({
+  cookieName: 'session',
+  secret: '',
+  duration: 30 * 60 * 1000,
+  activeDuration: 5 * 60 * 1000,
+}));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -712,7 +720,7 @@ app.post("/:action", function (req, res) {
   else if (action=="addtowishlist")
   {
 
-    if(req.session.userid!= undefined)
+    if (req.session && req.session.userid)
     {
 
   		console.log('Adding to wishlist of user:' + req.session.userid);
