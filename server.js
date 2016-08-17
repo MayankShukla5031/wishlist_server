@@ -535,14 +535,16 @@ app.get('/:action', function (req, res) {
 app.use(bodyParser.json() );  
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.post("/:action", function (req, res) {
+app.post("/:action", function (req, res) 
+{
   var action= req.params.action;
 
   console.log('Received POST Req:' + action);
 
   if(action=="add")
   {    
-    Count.findOne({}, function (err, count) { 
+    Count.findOne({}, function (err, count) 
+    { 
 
 	    if(req.body["Actor"]!= undefined)
 	    {
@@ -736,7 +738,7 @@ app.post("/:action", function (req, res) {
     			        {
 
     			        	console.log("Added movie to wishlist");
-    			        	//console.log(JSON.stringify(item));
+    			        	console.log('Item:'+JSON.stringify(item));
     			        	item.wishlist.push(req.body["movieid"]);
     			        	item.save();
     			        	res.end("Added movie to wishlist");
