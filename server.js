@@ -504,7 +504,7 @@ app.get('/:action', function (req, res) {
 
         console.log('User present:'+req.session.userid);
 
-			   User.find({'uid' : req.session.userid}, function (err, item) {		          
+			   User.find({'username' : req.session.userid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item.wishlist));
