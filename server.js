@@ -10,7 +10,7 @@ app.use(cookieParser('secret'));
 app.use(expressSession());
 app.use(session({
   cookieName: 'session',
-  secret: '',
+  secret: 'onshivay',
   duration: 30 * 60 * 1000,
   activeDuration: 5 * 60 * 1000,
 }));
