@@ -730,6 +730,8 @@ app.post("/:action", function (req, res)
 
 	    if (req.session && req.session.userid)
 	    {
+	    	try
+	    	{
 
 	  		console.log('Adding to wishlist of user:' + req.session.userid);
 
@@ -750,6 +752,12 @@ app.post("/:action", function (req, res)
 	    			        	res.end("Added movie to wishlist");
 	    			         }
 	    			         });
+	    	}
+	    	catch(e)
+	    	{
+	    		console.log('Error caught:'+ e);
+	    	}
+
 	      }
 	    }
 	    else
