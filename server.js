@@ -747,7 +747,9 @@ app.post("/:action", function (req, res)
 
 	    			        	console.log("Added movie to wishlist");
 	    			        	console.log('Item:'+JSON.stringify(item));
-	    			        	item.wishlist.push(req.body["movieid"]);
+
+	    			        	var wish= item.wishlist;
+	    			        	wish.push(req.body["movieid"]);
 	    			        	item.save();
 	    			        	res.end("Added movie to wishlist");
 	    			         }
