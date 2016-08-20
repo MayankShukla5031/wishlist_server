@@ -736,8 +736,6 @@ app.post("/:action", function (req, res)
   else if (action=="addtowishlist")
   {
 
-		console.log('Adding to wishlist');
-
 	    if (req.session!=undefined && req.session.userid!=undefined)
 	    {
 	    	try
@@ -754,20 +752,18 @@ app.post("/:action", function (req, res)
 	    						}
 	    			        else  
 	    			        {
-
-	    			        	console.log("Adding movie to wishlist");
-	    			        	console.log('Item Wishlist:'+ item['wishlist']);
+	    			        	console.log('Item Wishlist before:'+ item['wishlist']);
 
 	    			        	var movie = req.body["movieid"];
 
 	    			        	movie = "MVI1000009";
-
 								
 								(item['wishlist']).push(movie);
+	    			        	console.log('Item Wishlist after:'+ item['wishlist']);
 	    			        	
 	    			        	item.save(function(err, item2) {
 				                  if (err)
-				                      console.log(err);
+				                      console.log('save error:'+err);
 	    			        	  else res.end("Added movie to wishlist");
 				                    });
 	    			         }
