@@ -783,7 +783,7 @@ app.post("/:action", function (req, res)
 					                      console.log('save error:'+err);
 		    			        	  else res.end("Added movie to wishlist");
 					                    });
-					                    /*
+					                    */
 	    			        	}
 						    	catch(e)
 						    	{
