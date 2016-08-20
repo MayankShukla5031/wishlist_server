@@ -493,7 +493,7 @@ app.get('/:action', function (req, res) {
     {
     	if( req.query.movieid != undefined)
         {
-			Movie.findOne({'uid' : req.query.movieid}, function (err, item) {		          
+			Movie.find({'uid' : req.query.movieid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item));
