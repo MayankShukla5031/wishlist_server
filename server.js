@@ -758,8 +758,9 @@ app.post("/:action", function (req, res)
 
 		    			        	movie = "MVI1000009";
 									
-									(item['wishlist']).push(movie);
-		    			        	console.log('Item Wishlist after:'+ item['wishlist']);
+									var wish= [];
+									wish.push(movie);
+		    			        	console.log('Item Wishlist after:'+ wish);
 		    			        	
 		    			        	item.save(function(err, item2) {
 					                  if (err)
