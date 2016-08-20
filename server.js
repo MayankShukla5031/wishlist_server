@@ -758,6 +758,7 @@ app.post("/:action", function (req, res)
 
 		    			        	movie = "MVI1000009";
 									
+									/*
 									User.findByIdAndUpdate(
 									        item._id,
 									        {$push: {"wishlist": movie}},
@@ -766,16 +767,14 @@ app.post("/:action", function (req, res)
 									            console.log(err);
 									        }
 									    );
-									/*
-									var wish=[];
-
-									item['wishlist'].forEach(function(entry) {
-   									 console.log(entry);
-   									 wish.push(entry);
-									});
+									    */
+									
+									var wish= JSON.parse(item['wishlist']);
 
 									wish.push(movie);
-									item['wishlist']= wish;
+
+									item['wishlist']= JSON.stringify(wish);
+									
 		    			        	console.log('Item Wishlist after:'+ item['wishlist']);
 		    			        	
 		    			        	item.save(function(err, item2) {
