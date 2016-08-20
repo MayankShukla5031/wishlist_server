@@ -728,7 +728,9 @@ app.post("/:action", function (req, res)
   else if (action=="addtowishlist")
   {
 
-	    if (req.session && req.session.userid)
+		console.log('Adding to wishlist');
+
+	    if (req.session!=undefined && req.session.userid!=undefined)
 	    {
 	    	try
 	    	{
