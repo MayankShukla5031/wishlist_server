@@ -743,7 +743,7 @@ app.post("/:action", function (req, res)
 
 		  		console.log('Adding to wishlist of user:' + req.session.userid);
 
-		        User.findOne({username : req.session.userid}, function (err, item) {		          
+		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
 		    			          
 	    					if(err) 
 	    						{
