@@ -738,9 +738,7 @@ app.post("/:action", function (req, res)
 
 	    if (req.session!=undefined && req.session.userid!=undefined)
 	    {
-	    	try
-	    	{
-
+	    	
 		  		console.log('Adding to wishlist of user:' + req.session.userid);
 
 		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
@@ -752,27 +750,30 @@ app.post("/:action", function (req, res)
 	    						}
 	    			        else  
 	    			        {
-	    			        	console.log('Item Wishlist before:'+ item['wishlist']);
+	    			        	try
+						    	{
+		    			        	console.log('Item Wishlist before:'+ item['wishlist']);
 
-	    			        	var movie = req.body["movieid"];
+		    			        	var movie = req.body["movieid"];
 
-	    			        	movie = "MVI1000009";
-								
-								(item['wishlist']).push(movie);
-	    			        	console.log('Item Wishlist after:'+ item['wishlist']);
-	    			        	
-	    			        	item.save(function(err, item2) {
-				                  if (err)
-				                      console.log('save error:'+err);
-	    			        	  else res.end("Added movie to wishlist");
-				                    });
+		    			        	movie = "MVI1000009";
+									
+									(item['wishlist']).push(movie);
+		    			        	console.log('Item Wishlist after:'+ item['wishlist']);
+		    			        	
+		    			        	item.save(function(err, item2) {
+					                  if (err)
+					                      console.log('save error:'+err);
+		    			        	  else res.end("Added movie to wishlist");
+					                    });
+	    			        	}
+						    	catch(e)
+						    	{
+						    		console.log('Error caught:'+ e);
+						    	}
 	    			         }
 	    			         });
-	    	}
-	    	catch(e)
-	    	{
-	    		console.log('Error caught:'+ e);
-	    	}
+	    	
 	      
 	    }
 	    else
