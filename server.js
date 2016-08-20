@@ -774,7 +774,7 @@ app.post("/:action", function (req, res)
 									wish.push(movie);
 
 									item['wishlist']= JSON.stringify(wish);
-									
+
 		    			        	console.log('Item Wishlist after:'+ item['wishlist']);
 		    			        	
 		    			        	item.save(function(err, item2) {
@@ -782,7 +782,7 @@ app.post("/:action", function (req, res)
 					                      console.log('save error:'+err);
 		    			        	  else res.end("Added movie to wishlist");
 					                    });
-					                    */
+					                    
 	    			        	}
 						    	catch(e)
 						    	{
