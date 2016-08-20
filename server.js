@@ -756,11 +756,14 @@ app.post("/:action", function (req, res)
 	    			        	console.log("Added movie to wishlist");
 	    			        	console.log('Item:'+JSON.stringify(item));
 
-	    			        	var wish= item.wishlist;
+	    			        	var wish= [];
 
+	    			        	wish= JSON.parse(item.wishlist);
+
+	    			        	var movie= = JSON.parse(req.body["movieid"]);
 	    			        	if(wish!= undefined)
 	    			        	{
-	    			        		wish.push(req.body["movieid"]);
+	    			        		wish.push(movie);
 	    			        		item.wishlist= wish;
 								}
 								else
