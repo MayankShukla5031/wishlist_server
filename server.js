@@ -756,7 +756,7 @@ app.post("/:action", function (req, res)
 	    			        {
 
 	    			        	console.log("Adding movie to wishlist");
-	    			        	console.log('Item Wishlist:'+JSON.stringify(item.wishlist));
+	    			        	//console.log('Item Wishlist:'+JSON.stringify(item.wishlist));
 
 	    			        	var movie = req.body["movieid"];
 
