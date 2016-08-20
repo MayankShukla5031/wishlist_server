@@ -7,12 +7,14 @@ var cookieParser = require('cookie-parser');
 var session = require('client-sessions');
 
 app.use(cookieParser('secret'));
-app.use(expressSession());
+//app.use(expressSession());
 app.use(session({
   cookieName: 'session',
   secret: 'onshivay',
   duration: 30 * 60 * 1000,
   activeDuration: 5 * 60 * 1000,
+  resave: true,
+  saveUninitialized: true
 }));
 
 app.use(function(req, res, next) {
@@ -753,31 +755,20 @@ app.post("/:action", function (req, res)
 	    			        else  
 	    			        {
 
-	    			        	console.log("Added movie to wishlist");
+	    			        	console.log("Adding movie to wishlist");
 	    			        	console.log('Item:'+JSON.stringify(item));
 
-	    			        	var wish= [];
-
-	    			        	wish= item.wishlist;
-
-	    			        	console.log('wish='+JSON.stringify(wish));
 	    			        	var movie = req.body["movieid"];
 
-	    			        	console.log('movie='+JSON.stringify(movie));
+	    			        	movie = "MVI1000009";
 
-	    			        	if(wish!= undefined)
-	    			        	{
-	    			        		wish.push(movie);
-	    			        		item.wishlist= wish;
-								}
-								else
-									console.log('wishlist is undefined');
-
+								item.wishlist.push(movie);
+	    			        	
 	    			        	item.save(function(err, item2) {
 				                  if (err)
 				                      console.log(err);
+	    			        	  else res.end("Added movie to wishlist");
 				                    });
-	    			        	res.end("Added movie to wishlist");
 	    			         }
 	    			         });
 	    	}
