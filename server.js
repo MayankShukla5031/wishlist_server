@@ -113,7 +113,13 @@ db.once('open', function callback () {});
   var User = mongoose.model('usercollection', userSchema);
 
 app.get('/', function (req, res) {
-res.writeHead(301, {'Location': '/login'});
+
+	if (req.session!=undefined && req.session.userid!=undefined)	    
+		res.writeHead(301, {'Location': '/index'});
+	else
+		res.writeHead(301, {'Location': '/login'});
+
+
 res.end();
 });
 
@@ -735,10 +741,10 @@ app.post("/:action", function (req, res)
 	    	try
 	    	{
 
-	  		console.log('Adding to wishlist of user:' + req.session.userid);
+		  		console.log('Adding to wishlist of user:' + req.session.userid);
 
-	        User.findOne({username : req.session.userid}, function (err, item) {		          
-	    			          
+		        User.findOne({username : req.session.userid}, function (err, item) {		          
+		    			          
 	    					if(err) 
 	    						{
 	    							console.log("Error getting wishlist");
@@ -772,8 +778,7 @@ app.post("/:action", function (req, res)
 	    	{
 	    		console.log('Error caught:'+ e);
 	    	}
-
-	      }
+	      
 	    }
 	    else
 	    {
@@ -781,4 +786,5 @@ app.post("/:action", function (req, res)
 	      res.writeHead(301, {'Location': '/login'});
 	      res.end(); 
 	    }
+ }
 });
