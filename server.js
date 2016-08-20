@@ -493,7 +493,7 @@ app.get('/:action', function (req, res) {
     {
     	if( req.query.movieid != undefined)
         {
-			Movie.find({'uid' : req.query.movieid}, function (err, item) {		          
+			Movie.findOne({'uid' : req.query.movieid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item));
@@ -756,7 +756,7 @@ app.post("/:action", function (req, res)
 	    			        {
 
 	    			        	console.log("Adding movie to wishlist");
-	    			        	console.log('Item:'+JSON.stringify(item));
+	    			        	console.log('Item Wishlist:'+JSON.stringify(item.wishlist));
 
 	    			        	var movie = req.body["movieid"];
 
