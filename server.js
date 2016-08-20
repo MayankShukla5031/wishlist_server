@@ -758,7 +758,7 @@ app.post("/:action", function (req, res)
 
 		    			        	movie = "MVI1000009";
 									
-									var wish= [];
+									var wish= item['wishlist'];
 									wish.push(movie);
 		    			        	console.log('Item Wishlist after:'+ wish);
 		    			        	
