@@ -758,6 +758,15 @@ app.post("/:action", function (req, res)
 
 		    			        	movie = "MVI1000009";
 									
+									User.findByIdAndUpdate(
+									        item._id,
+									        {$push: {"wishlist": movie}},
+									        {safe: true, upsert: true, new : true},
+									        function(err, model) {
+									            console.log(err);
+									        }
+									    );
+									/*
 									var wish=[];
 
 									item['wishlist'].forEach(function(entry) {
@@ -774,6 +783,7 @@ app.post("/:action", function (req, res)
 					                      console.log('save error:'+err);
 		    			        	  else res.end("Added movie to wishlist");
 					                    });
+					                    /*
 	    			        	}
 						    	catch(e)
 						    	{
