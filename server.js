@@ -735,7 +735,7 @@ app.post("/:action", function (req, res)
 
 	  		console.log('Adding to wishlist of user:' + req.session.userid);
 
-	        User.find({'username' : req.session.userid}, function (err, item) {		          
+	        User.findOne({username : req.session.userid}, function (err, item) {		          
 	    			          
 	    					if(err) 
 	    						{
@@ -749,8 +749,19 @@ app.post("/:action", function (req, res)
 	    			        	console.log('Item:'+JSON.stringify(item));
 
 	    			        	var wish= item.wishlist;
-	    			        	wish.push(req.body["movieid"]);
-	    			        	item.save();
+
+	    			        	if(wish!= undefined)
+	    			        	{
+	    			        		wish.push(req.body["movieid"]);
+	    			        		item.wishlist= wish;
+								}
+								else
+									console.log('wishlist is undefined');
+
+	    			        	item.save(function(err, item2) {
+				                  if (err)
+				                      console.log(err);
+				                    });
 	    			        	res.end("Added movie to wishlist");
 	    			         }
 	    			         });
