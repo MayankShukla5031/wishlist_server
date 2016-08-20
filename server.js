@@ -758,8 +758,9 @@ app.post("/:action", function (req, res)
 
 	    			        	var wish= [];
 
-	    			        	wish= JSON.parse(item.wishlist);
+	    			        	wish= item.wishlist;
 
+	    			        	console.log('wish='+JSON.stringify(wish));
 	    			        	var movie = JSON.parse(req.body["movieid"]);
 	    			        	if(wish!= undefined)
 	    			        	{
