@@ -772,17 +772,16 @@ app.post("/:action", function (req, res)
 						                      console.log('save error:'+err);
 			    			        	  else 
 			    			        	  {
-			    			        	  	alert('success');
 			    			        	  	res.end("success");
 			    			        	  }
 						                    });   
 		    			        	}
 		    			        	else
-										alert('Movie is already present in wishlit');
+										console.log('Movie is already present in wishlit');
 								}
 								catch(e)
 								{
-									alert(e);
+									console.log(e);
 								}
 			    			        	
 					        }	
