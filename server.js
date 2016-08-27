@@ -46,7 +46,8 @@ db.once('open', function callback () {});
     producer: { type : Array , default : [] },
     music_director: { type : Array , default : [] },
     production_house: { type : Array , default : [] },
-    poster_url: String
+    poster_url: String,
+    inmywishlist:Boolean
   } , {collection : 'moviecollection'});
 
   var actorSchema = new mongoose.Schema({
@@ -499,8 +500,8 @@ app.get('/:action', function (req, res) {
 					if(err) res.end("{}");
 			        else  
 			        	{
-			        		item.inmywishlist= 'true';
-			        		console.log(item.inmywishlist);
+			        		item.inmywishlist= true;
+			        		console.log(item);
 			        		res.end(JSON.stringify(item));
 			        	}
 			            
