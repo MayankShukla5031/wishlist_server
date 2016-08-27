@@ -500,7 +500,7 @@ app.get('/:action', function (req, res) {
 			        else  
 			        	{
 			        		item.inmywishlist= 'true';
-			        		console.log(item);
+			        		console.log(item.inmywishlist);
 			        		res.end(JSON.stringify(item));
 			        	}
 			            
