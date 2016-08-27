@@ -18,7 +18,39 @@
 		<link type="text/css" rel="stylesheet" href="styles.css">
 		<link type="text/css" rel="stylesheet" href="bootstrap.min.css">
 		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
 		<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+		<script type="text/css">
+			html,body{
+				overflow-x: hidden!important;
+			    -webkit-font-smoothing: antialiased;
+			    min-height: 100%;
+			    background: #f9f9f9;
+			    height: 100%;
+	    		width: 100%;
+			}
+			.hidden-scrollbar{
+				padding: 0px !important;
+				position: absolute;
+				color:white;  
+			  	overflow:hidden;
+			  	text-align:justify; 
+			}
+			.hidden-scrollbar .inner {
+			  	overflow:auto;
+			  	position: fixed;
+			  	margin:15px -300px 15px 15px;
+			  	padding: 0px !important;
+			  	padding-right:30px !important; /* Samakan dengan besar margin negatif */
+			}
+			.inner::-webkit-scrollbar { 
+		    	display: none; 
+			}
+			input:-webkit-autofill{
+				background-color: transparent !important;
+				-webkit-box-shadow: 0 0 0px 1000px #fefefe inset !important;
+			}
+		</script>
 	
 </head>
 <body>
