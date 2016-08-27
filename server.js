@@ -117,7 +117,7 @@ db.once('open', function callback () {});
 app.get('/', function (req, res) {
 
 	req.session.userid = 'SK';
-	if (true)//req.session!=undefined && req.session.userid!=undefined)	    
+	if (req.session!=undefined && req.session.userid!=undefined)	    
 		res.writeHead(301, {'Location': '/index'});
 	else
 		res.writeHead(301, {'Location': '/login'});
