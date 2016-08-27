@@ -514,7 +514,7 @@ app.get('/:action', function (req, res) {
 
 								try
 								{
-									if(wish.indexOf(movie) != -1)
+									if(wish.indexOf(req.query.movieid) != -1)
 									{
 										moviePresent= true;
 		    			        	}
