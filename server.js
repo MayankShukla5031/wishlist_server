@@ -757,6 +757,8 @@ app.post("/:action", function (req, res)
 									
 									var wish= item['wishlist'];
 
+								try
+								{
 									if(wish.indexOf(movie) != -1)
 									{
 										wish.push(movie);
@@ -768,11 +770,20 @@ app.post("/:action", function (req, res)
 			    			        	item.save(function(err, item2) {
 						                  if (err)
 						                      console.log('save error:'+err);
-			    			        	  else res.end("success");
+			    			        	  else 
+			    			        	  {
+			    			        	  	alert('success');
+			    			        	  	res.end("success");
+			    			        	  }
 						                    });   
 		    			        	}
 		    			        	else
 										alert('Movie is already present in wishlit');
+								}
+								catch(e)
+								{
+									alert(e);
+								}
 			    			        	
 					        }	
 					    });
