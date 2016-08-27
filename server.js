@@ -500,8 +500,33 @@ app.get('/:action', function (req, res) {
 					if(err) res.end("{}");
 			        else  
 			        	{
-			        		item.inmywishlist= true;
-			        		console.log(item);
+			        		var moviePresent = false;
+			        		User.findOne({'username' : req.session.userid}, function (err, item) {		          
+		    			          
+	    					if(err) 
+	    						{
+	    							console.log("Error getting wishlist");
+	    							res.end("Error");
+	    						}
+	    			        else  
+	    			        {	    			        	
+		    			        	var wish= item['wishlist'];
+
+								try
+								{
+									if(wish.indexOf(movie) != -1)
+									{
+										moviePresent= true;
+		    			        	}
+								}
+								catch(e)
+								{
+									console.log(e);
+								}
+			    			        	
+					        }	
+					    });
+			        		item.inmywishlist= moviePresent;
 			        		res.end(JSON.stringify(item));
 			        	}
 			            
