@@ -768,7 +768,7 @@ app.post("/:action", function (req, res)
 									
 									var wish= JSON.parse(item['wishlist']);
 
-									if(wish..indexOf(movie) != -1)
+									if(wish.indexOf(movie) != -1)
 									{
 										wish.push(movie);
 
@@ -783,7 +783,7 @@ app.post("/:action", function (req, res)
 						                    });   
 		    			        	}
 		    			        	else
-										alert('Movie is already present in wishlit']);
+										alert('Movie is already present in wishlit');
 			    			        	
 					        }	
 					    });
