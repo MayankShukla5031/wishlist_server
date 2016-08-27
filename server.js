@@ -505,6 +505,7 @@ app.get('/:action', function (req, res) {
 
       console.log('Entered getmywishlist:');
 
+		req.session.userid = 'SK';
     	if( req.session.userid != undefined)
         {
 
@@ -734,7 +735,7 @@ app.post("/:action", function (req, res)
   }
   else if (action=="addtowishlist")
   {
-
+		req.session.userid = 'SK';
 	    if (req.session!=undefined && req.session.userid!=undefined)
 	    {
 	    	
