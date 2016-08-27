@@ -102,7 +102,7 @@ db.once('open', function callback () {});
   var userSchema = new mongoose.Schema({
     uid: String,
     username: String,
-    wishlist: String
+    wishlist: { type : Array , default : [] }
   } , {collection : 'usercollection'});
 
   var Movie = mongoose.model('moviecollection', movieSchema);
@@ -754,8 +754,6 @@ app.post("/:action", function (req, res)
 	    			        {	    			        	
 		    			        	console.log('Item Wishlist before:'+ item['wishlist']);
 		    			        	var movie = req.body["movieid"];
-
-		    			        	//movie = "MVI1000009";
 									
 									/*
 									User.findByIdAndUpdate(
@@ -770,17 +768,23 @@ app.post("/:action", function (req, res)
 									
 									var wish= JSON.parse(item['wishlist']);
 
-									wish.push(movie);
+									if(wish..indexOf(movie) != -1)
+									{
+										wish.push(movie);
 
-									item['wishlist']= JSON.stringify(wish);
+										item['wishlist']= wish;
 
-		    			        	console.log('Item Wishlist after:'+ item['wishlist']);
-		    			        	
-		    			        	item.save(function(err, item2) {
-					                  if (err)
-					                      console.log('save error:'+err);
-		    			        	  else res.end("success");
-					                    });   
+			    			        	console.log('Item Wishlist after:'+ item['wishlist']);
+			    			        	
+			    			        	item.save(function(err, item2) {
+						                  if (err)
+						                      console.log('save error:'+err);
+			    			        	  else res.end("success");
+						                    });   
+		    			        	}
+		    			        	else
+										alert('Movie is already present in wishlit']);
+			    			        	
 					        }	
 					    });
 	    }
