@@ -499,7 +499,7 @@ app.get('/:action', function (req, res) {
 					if(err) res.end("{}");
 			        else  
 			        	{
-			        		item.inmywishlist= true;
+			        		item.inmywishlist= 'true';
 			        		res.end(JSON.stringify(item));
 			        	}
 			            
