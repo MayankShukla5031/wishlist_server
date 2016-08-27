@@ -494,12 +494,12 @@ app.get('/:action', function (req, res) {
     {
     	if( req.query.movieid != undefined)
         {
-			Movie.find({'uid' : req.query.movieid}, function (err, item) {		          
+			Movie.findOne({'uid' : req.query.movieid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  
 			        	{
-			        		item[0].inmywishlist= true;
+			        		item.inmywishlist= true;
 			        		res.end(JSON.stringify(item));
 			        	}
 			            
