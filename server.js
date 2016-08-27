@@ -540,7 +540,6 @@ app.get('/:action', function (req, res) {
     }
     else if(action== "getmywishlist")
     {
-
       console.log('Entered getmywishlist:');
 
     	if( req.session.userid != undefined)
@@ -592,7 +591,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/:action", function (req, res)
 {
-
   req.session.userid = 'SK';
   var action= req.params.action;
 
@@ -810,6 +808,60 @@ app.post("/:action", function (req, res)
 		    			        	}
 		    			        	else
 										console.log('Movie is already present in wishlist');
+								}
+								catch(e)
+								{
+									console.log(e);
+								}
+			    			        	
+					        }	
+					    });
+	    }
+	    else
+	    {
+	  	  console.log('User not available');
+	      res.writeHead(301, {'Location': '/login'});
+	      res.end(); 
+	    }
+ }
+  else if (action=="removefromwishlist")
+  {
+	    if (req.session!=undefined && req.session.userid!=undefined)
+	    {
+	    	
+		  		console.log('Removing from wishlist of user:' + req.session.userid);
+
+		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
+		    			          
+	    					if(err) 
+	    						{
+	    							console.log("Error getting wishlist");
+	    							res.end("Error");
+	    						}
+	    			        else  
+	    			        {	    			        	
+		    			        	var movie = req.body["movieid"];									
+									var wish= item['wishlist'];
+
+								try
+								{
+									if(wish.indexOf(movie) != -1)
+									{
+										wish.pop(movie);
+										item['wishlist']= wish;
+			    			        	
+			    			        	item.save(function(err, item2) {
+						                  if (err)
+						                      console.log('save error:'+err);
+			    			        	  else 
+			    			        	  {
+			    			        	  	console.log('Movie removed from wishlist');
+			    			        	  	res.end("success");
+			    			        	  }
+						                    });   
+		    			        	}
+		    			        	else
+										console.log('Movie is not present in wishlist');
 								}
 								catch(e)
 								{
