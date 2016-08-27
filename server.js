@@ -4,15 +4,24 @@ var bodyParser = require('body-parser')
 var fs = require('fs');
 var expressSession = require('express-session');
 var cookieParser = require('cookie-parser');
-app.use(cookieParser('secret'));    
-app.use(expressSession());
+var session = require('client-sessions');
+
+app.use(cookieParser('secret'));
+//app.use(expressSession());
+app.use(session({
+  cookieName: 'session',
+  secret: 'onshivay',
+  duration: 30 * 60 * 1000,
+  activeDuration: 5 * 60 * 1000,
+  resave: true,
+  saveUninitialized: true
+}));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
 
 var server = app.listen(process.env.PORT || 8080, function () {
     var port = server.address().port;
@@ -94,7 +103,7 @@ db.once('open', function callback () {});
     uid: String,
     username: String,
     wishlist: String
-  } , {collection : 'countcollection'});
+  } , {collection : 'usercollection'});
 
   var Movie = mongoose.model('moviecollection', movieSchema);
   var Actor = mongoose.model('actorcollection', actorSchema);
@@ -105,27 +114,30 @@ db.once('open', function callback () {});
   var Count = mongoose.model('countcollection', countSchema);
   var User = mongoose.model('usercollection', userSchema);
 
-
 app.get('/', function (req, res) {
-res.writeHead(301, {'Location': '/login'});
-res.end();    
+
+	if (req.session!=undefined && req.session.userid!=undefined)	    
+		res.writeHead(301, {'Location': '/index'});
+	else
+		res.writeHead(301, {'Location': '/login'});
+
+	res.end();
 });
 
 app.get('/login', function (req, res) {
-res.end("<html>\
-		<body><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>\
-			  <h1>User is not Signed in...</h1>\
-        <a href='javascript:DoPost()'>Sign in as SK</a> \
-			  <script language='javascript'>\
-			  		function DoPost(){ \
-			  			 $.post('/login', { user: 'SK', password: 'onshivay'} ,function( data ) {  if(data!='Unauthorized') window.location.assign( data); else alert(data);}); \
-			  				}\
-			  </script></body></html>");   
+res.end( "<html>\
+			<body><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>\
+				  <h1>User is not Signed in...</h1>\
+	        <a href='javascript:DoPost()'>Sign in as SK</a>\
+				  <script language='javascript'>\
+				  		function DoPost(){\
+				  			 $.post('/login', { user: 'SK', password: 'onshivay'} ,function( data ) {  if(data!='Unauthorized') window.location.assign( data); else alert(data);});\
+				  				}\
+				  </script></body></html>");
 });
 
-
 app.get('/:action', function (req, res) {
-   
+
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
@@ -138,7 +150,9 @@ app.get('/:action', function (req, res) {
     else if(action=="index")
     {
     	console.log(req.session.userid);
-      fs.readFile('public/index.html', 'utf8', function(err, contents) {
+        fs.readFile('public/index.html' , function(err, contents) {
+
+		res.writeHead(200, {'Content-Type': 'text/html'});
         res.end(contents);
       });
     }
@@ -171,7 +185,7 @@ app.get('/:action', function (req, res) {
                     </script></body></html>");
     }
     else if(action== "search")
-    {  
+    {
     	if( req.query.title != undefined)
         {
 
@@ -478,7 +492,7 @@ app.get('/:action', function (req, res) {
     {
     	if( req.query.movieid != undefined)
         {
-			Movie.find({'uid' : req.query.movieid}, function (err, item) {		          
+			Movie.findOne({'uid' : req.query.movieid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item));
@@ -494,9 +508,9 @@ app.get('/:action', function (req, res) {
     	if( req.session.userid != undefined)
         {
 
-        console.log('User present:'+req.session.userid);
+        	   console.log('User present:'+req.session.userid);
 
-			   User.find({'uid' : req.session.userid}, function (err, item) {		          
+			   User.findOne({'username' : req.session.userid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item.wishlist));
@@ -508,8 +522,25 @@ app.get('/:action', function (req, res) {
         console.log('User not present, redirecting to login');
         res.writeHead(301, {'Location': '/login'});
         res.end(); 
-      }
-			       
+      }			       
+    }
+    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".ico") )
+    {
+    	fs.readFile('public/'+ action, function(err, contents) {
+
+	        if (err) console.log(err);
+	        else 
+	        	{
+			        if(action.endsWith(".css") || action.endsWith("css.map"))
+			        	res.writeHead(200, {'Content-Type': 'text/css'});
+
+			        else if(action.endsWith(".js"))
+			        	res.writeHead(200, {'Content-Type': 'text/javascript'});
+
+			        res.write(contents);
+			        res.end();
+	    		}
+        });	
     }
     else
     {
@@ -518,218 +549,244 @@ app.get('/:action', function (req, res) {
 
 })
 
-app.use(bodyParser.json() );  
+app.use(bodyParser.json() );
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.post("/:action", function (req, res) {
+app.post("/:action", function (req, res)
+{
   var action= req.params.action;
 
+  console.log('Received POST Req:' + action);
+
   if(action=="add")
-  {    
-    Count.findOne({}, function (err, count) { 
-
-	    if(req.body["Actor"]!= undefined)
+  {
+	    Count.findOne({}, function (err, count) 
 	    {
+		    if(req.body["Actor"]!= undefined)
+		    {
+		      if(req.body["Actor"]!="")
+		        {
+		          var actor = new Actor({
+		                uid: "ACT100000" + count.actor,
+		                title: req.body["Actor"]
+		                });
+		            actor.save(function(err, user) {
+		                  if (err)
+		                      console.log(err);
+		                    });
 
-	      if(req.body["Actor"]!="")
-	        {
-	          var actor = new Actor({
-	                uid: "ACT100000" + count.actor,
-	                title: req.body["Actor"]
-	                });
-	            actor.save(function(err, user) {
-	                  if (err)
-	                      console.log(err);
-	                    });
+		            count.actor= count.actor+1;
+		            count.save(function(err, user) {
+		                  if (err)
+		                      console.log(err);
+		                    });
 
-	            count.actor= count.actor+1;
-	            count.save(function(err, user) {
-	                  if (err)
-	                      console.log(err);
-	                    });
+		          res.end("Added Actor: "+ req.body["Actor"]);
+		        }
+		      else
+		            res.end("Can not add BLANK Actor");
 
-	          res.end("Added Actor: "+ req.body["Actor"]);
-	        }
-	      else
-	            res.end("Can not add BLANK Actor");
+		    }
+		    else if(req.body["Director"]!= undefined)
+		    {
+		      if(req.body["Director"]!="")
+		        {
+		          var director = new Director({
+		                uid: "DIR100000" + count.director,
+		                title: req.body["Director"]
+		                });
+		            director.save(function(err, user) {
+		                  if (err)
+		                      console.log(err);
+		                    });
 
-	    }
-	    else if(req.body["Director"]!= undefined)
-	    {
-	      if(req.body["Director"]!="")
-	        {
-	          var director = new Director({
-	                uid: "DIR100000" + count.director,
-	                title: req.body["Director"]
-	                });
-	            director.save(function(err, user) {
-	                  if (err)
-	                      console.log(err);
-	                    });
+		            count.director= count.director+1;
+		            count.save(function(err, user) {
+		                  if (err)
+		                      console.log(err);
+		                    });
 
-	            count.director= count.director+1;
-	            count.save(function(err, user) {
-	                  if (err)
-	                      console.log(err);
-	                    });
+		          res.end("Added Director: "+ req.body["Director"]);
+		        }
+		      else
+		            res.end("Can not add BLANK Director");
 
-	          res.end("Added Director: "+ req.body["Director"]);
-	        }
-	      else
-	            res.end("Can not add BLANK Director");
+		    }
+		    else if(req.body["Producer"]!= undefined)
+		    {
+		      if(req.body["Producer"]!="")
+		        {
+		          var producer = new Producer({
+		                  uid: "PRO100000" + count.producer,
+		                  title: req.body["Producer"]
+		                  });
+		              producer.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);
+		                      });
 
-	    }
-	    else if(req.body["Producer"]!= undefined)
-	    {
-	      if(req.body["Producer"]!="")
-	        {
-	          var producer = new Producer({
-	                  uid: "PRO100000" + count.producer,
-	                  title: req.body["Producer"]
-	                  });
-	              producer.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);
-	                      });
+		              count.producer= count.producer+1;
+		              count.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);
+		                      });
 
-	              count.producer= count.producer+1;
-	              count.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);
-	                      });
+		            res.end("Added Producer: "+ req.body["Producer"]);
+		        }
+		              else
+		                    res.end("Can not add BLANK Producer");
+		    
+		    }
+		    else if(req.body["MusicDirector"]!= undefined)
+		    {
 
-	            res.end("Added Producer: "+ req.body["Producer"]);
-	        }
-	              else
-	                    res.end("Can not add BLANK Producer");
-	    
-	    }
-	    else if(req.body["MusicDirector"]!= undefined)
-	    {
+		      if(req.body["MusicDirector"]!="")
+		        {
+		          var musicdirector = new MusicDirector({
+		                  uid: "MDR100000" + count.musicdirector,
+		                  title: req.body["MusicDirector"]
+		                  });
+		              musicdirector.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);
+		                      });
 
-	      if(req.body["MusicDirector"]!="")
-	        {
-	          var musicdirector = new MusicDirector({
-	                  uid: "MDR100000" + count.musicdirector,
-	                  title: req.body["MusicDirector"]
-	                  });
-	              musicdirector.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);
-	                      });
+		              count.musicdirector= count.musicdirector+1;
+		              count.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);
+		                      });
 
-	              count.musicdirector= count.musicdirector+1;
-	              count.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);
-	                      });
+		            
+		            res.end("Added Music Director: "+ req.body["MusicDirector"]);
+		        }
+		              else
+		                    res.end("Can not add BLANK Music Director");
+		    }
+		    else if(req.body["ProductionHouse"]!= undefined)
+		    {
+		      if(req.body["ProductionHouse"]!="")
+		        {
+		          var productionhouse = new ProductionHouse({
+		                  uid: "PRH100000" + count.productionhouse,
+		                  title: req.body["ProductionHouse"]
+		                  });
+		              productionhouse.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);
+		                      });
 
-	            
-	            res.end("Added Music Director: "+ req.body["MusicDirector"]);
-	        }
-	              else
-	                    res.end("Can not add BLANK Music Director");
-	    }
-	    else if(req.body["ProductionHouse"]!= undefined)
-	    {
-	      if(req.body["ProductionHouse"]!="")
-	        {
-	          var productionhouse = new ProductionHouse({
-	                  uid: "PRH100000" + count.productionhouse,
-	                  title: req.body["ProductionHouse"]
-	                  });
-	              productionhouse.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);
-	                      });
+		              count.productionhouse= count.productionhouse+1;
+		              count.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);
+		                      });
 
-	              count.productionhouse= count.productionhouse+1;
-	              count.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);
-	                      });
+		            res.end("Added Production House: "+ req.body["ProductionHouse"]);
+		        }
+		              else
+		                    res.end("Can not add BLANK Production House");
+		    }
+		    else if(req.body["MovieName"]!= undefined)
+		    {
+		      if(req.body["MovieName"]!="")
+		        {
+		          var movie = new Movie({
+		                  uid: "MVI100000" + count.movie,
+		                  title: req.body["MovieName"],
+		                  cast: JSON.stringify(req.body["MovieCast"]),
+		                  director: JSON.stringify(req.body["MovieDirector"]),
+		                  producer: JSON.stringify(req.body["MovieProducer"]),
+		                  music_director: JSON.stringify(req.body["MovieMusicDirector"]),
+		                  production_house: JSON.stringify(req.body["MovieProductionHouse"]),
+		                  poster_url: JSON.stringify(req.body["MoviePoster"])
+		                  });
+		              movie.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);                
+		                });
 
-	            res.end("Added Production House: "+ req.body["ProductionHouse"]);
-	        }
-	              else
-	                    res.end("Can not add BLANK Production House");
-	    }
-	    else if(req.body["MovieName"]!= undefined)
-	    {
-	      if(req.body["MovieName"]!="")
-	        {
-	          var movie = new Movie({
-	                  uid: "MVI100000" + count.movie,
-	                  title: req.body["MovieName"],
-	                  cast: JSON.stringify(req.body["MovieCast"]),
-	                  director: JSON.stringify(req.body["MovieDirector"]),
-	                  producer: JSON.stringify(req.body["MovieProducer"]),
-	                  music_director: JSON.stringify(req.body["MovieMusicDirector"]),
-	                  production_house: JSON.stringify(req.body["MovieProductionHouse"]),
-	                  poster_url: JSON.stringify(req.body["MoviePoster"])
-	                  });
-	              movie.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);                
-	                });
-
-	              count.movie= count.movie+1;
-	              count.save(function(err, user) {
-	                    if (err)
-	                        console.log(err);
-	                      });
-	            
-	            res.end("Added Movie: "+ req.body["MovieName"]);
-	        }
-	              else
-	                    res.end("Can not add BLANK Movie Name");
-	    }
-  	});
-
+		              count.movie= count.movie+1;
+		              count.save(function(err, user) {
+		                    if (err)
+		                        console.log(err);
+		                      });
+		            
+		            res.end("Added Movie: "+ req.body["MovieName"]);
+		        }
+		              else
+		                    res.end("Can not add BLANK Movie Name");
+		    }
+	  	});
   }
   else if (action=="login")
   {
-    var post = req.body;
-    if (post.user === 'SK' && post.password === 'onshivay') {
-      req.session.userid = 'SK';
-      //res.writeHead(301, {'Location': '/home'});
-      res.end('/index');
-    } 
-    else {
-      res.writeHead(301, {'Location': '/login'});
-      res.end(); 
-    }
+	    var post = req.body;
+	    if (post.user === 'SK' && post.password === 'onshivay') {
+	      req.session.userid = 'SK';
+	      //res.writeHead(301, {'Location': '/home'});
+	      res.end('/index');
+	    } 
+	    else {
+	      res.writeHead(301, {'Location': '/login'});
+	      res.end(); 
+	    }
   }
-
   else if (action=="addtowishlist")
   {
 
-    if(req.session.userid!= undefined)
-    {
-        User.find({'uid' : req.session.userid}, function (err, item) {		          
-    			          
-    					if(err) res.end("Error");
-    			        else  
-    			        {
-    			        	item.wishlist.push(req.body["movieid"]);
-    			        	item.save();
-    			        	res.end("Added movie to wishlist");
-    			         }
-    			         });
-      }
-    }
-    else
-    {
-      res.writeHead(301, {'Location': '/login'});
-      res.end(); 
-    }
+	    if (req.session!=undefined && req.session.userid!=undefined)
+	    {
+	    	
+		  		console.log('Adding to wishlist of user:' + req.session.userid);
 
+		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
+		    			          
+	    					if(err) 
+	    						{
+	    							console.log("Error getting wishlist");
+	    							res.end("Error");
+	    						}
+	    			        else  
+	    			        {
+	    			        	try
+						    	{
+		    			        	console.log('Item Wishlist before:'+ item['wishlist']);
+
+		    			        	var movie = req.body["movieid"];
+
+		    			        	//movie = "MVI1000009";
+									
+									/*
+									User.findByIdAndUpdate(
+									        item._id,
+									        {$push: {"wishlist": movie}},
+									        {safe: true, upsert: true, new : true},
+									        function(err, model) {
+									            console.log(err);
+									        }
+									    );
+									    */
+									
+									var wish= JSON.parse(item['wishlist']);
+
+									wish.push(movie);
+
+									item['wishlist']= JSON.stringify(wish);
+
+		    			        	console.log('Item Wishlist after:'+ item['wishlist']);
+		    			        	
+		    			        	item.save(function(err, item2) {
+					                  if (err)
+					                      console.log('save error:'+err);
+		    			        	  else res.end("success");
+					                    });   	
+	    }
+	    else
+	    {
+	  	  console.log('User not available');
+	      res.writeHead(301, {'Location': '/login'});
+	      res.end(); 
+	    }
+ }
 });
-
-function checkAuth(req, res, next) {
-  if ( !req.session.userid) {
-    res.send('You are not authorized to view this page');
-  } else {
-    next();
-  }
-}
