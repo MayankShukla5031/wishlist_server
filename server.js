@@ -42,10 +42,10 @@ db.once('open', function callback () {});
     title: String,
     release:{ type : Date, default: Date.now },
     cast: { type : Array , default : [] },
-    director: String,
-    producer: String,
-    music_director: String,
-    production_house: String,
+    director: { type : Array , default : [] },
+    producer: { type : Array , default : [] },
+    music_director: { type : Array , default : [] },
+    production_house: { type : Array , default : [] },
     poster_url: String
   } , {collection : 'moviecollection'});
 
@@ -698,12 +698,12 @@ app.post("/:action", function (req, res)
 		          var movie = new Movie({
 		                  uid: "MVI100000" + count.movie,
 		                  title: req.body["MovieName"],
-		                  cast: JSON.stringify(req.body["MovieCast"]),
-		                  director: JSON.stringify(req.body["MovieDirector"]),
-		                  producer: JSON.stringify(req.body["MovieProducer"]),
-		                  music_director: JSON.stringify(req.body["MovieMusicDirector"]),
-		                  production_house: JSON.stringify(req.body["MovieProductionHouse"]),
-		                  poster_url: JSON.stringify(req.body["MoviePoster"])
+		                  cast: req.body["MovieCast"],
+		                  director: req.body["MovieDirector"],
+		                  producer: req.body["MovieProducer"],
+		                  music_director: req.body["MovieMusicDirector"],
+		                  production_house: req.body["MovieProductionHouse"],
+		                  poster_url: req.body["MoviePoster"]
 		                  });
 		              movie.save(function(err, user) {
 		                    if (err)
