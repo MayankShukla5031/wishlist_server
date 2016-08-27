@@ -516,7 +516,13 @@ app.get('/:action', function (req, res) {
 								{
 									if(wish.indexOf(req.query.movieid) != -1)
 									{
-										moviePresent= true;
+										item.inmywishlist= true;
+			        					res.end(JSON.stringify(item));
+		    			        	}
+		    			        	else
+		    			        	{
+		    			        		item.inmywishlist= false;
+			        					res.end(JSON.stringify(item));
 		    			        	}
 								}
 								catch(e)
@@ -525,9 +531,8 @@ app.get('/:action', function (req, res) {
 								}
 			    			        	
 					        }	
-					    });
-			        		item.inmywishlist= moviePresent;
-			        		res.end(JSON.stringify(item));
+					    	});
+			        		
 			        	}
 			            
 			         });
