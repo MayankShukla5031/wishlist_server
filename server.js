@@ -121,8 +121,7 @@ app.get('/', function (req, res) {
 	else
 		res.writeHead(301, {'Location': '/login'});
 
-
-res.end();
+	res.end();
 });
 
 app.get('/login', function (req, res) {
@@ -493,7 +492,7 @@ app.get('/:action', function (req, res) {
     {
     	if( req.query.movieid != undefined)
         {
-			Movie.find({'uid' : req.query.movieid}, function (err, item) {		          
+			Movie.findOne({'uid' : req.query.movieid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item));
@@ -509,9 +508,9 @@ app.get('/:action', function (req, res) {
     	if( req.session.userid != undefined)
         {
 
-        console.log('User present:'+req.session.userid);
+        	   console.log('User present:'+req.session.userid);
 
-			   User.find({'username' : req.session.userid}, function (err, item) {		          
+			   User.findOne({'username' : req.session.userid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
 			        else  res.end(JSON.stringify(item.wishlist));
@@ -756,7 +755,7 @@ app.post("/:action", function (req, res)
 
 		    			        	var movie = req.body["movieid"];
 
-		    			        	movie = "MVI1000009";
+		    			        	//movie = "MVI1000009";
 									
 									/*
 									User.findByIdAndUpdate(
@@ -780,18 +779,8 @@ app.post("/:action", function (req, res)
 		    			        	item.save(function(err, item2) {
 					                  if (err)
 					                      console.log('save error:'+err);
-		    			        	  else res.end("Added movie to wishlist");
-					                    });
-					                    
-	    			        	}
-						    	catch(e)
-						    	{
-						    		console.log('Error caught:'+ e);
-						    	}
-	    			         }
-	    			         });
-	    	
-	      
+		    			        	  else res.end("success");
+					                    });   	
 	    }
 	    else
 	    {
