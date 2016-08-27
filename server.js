@@ -755,18 +755,7 @@ app.post("/:action", function (req, res)
 		    			        	console.log('Item Wishlist before:'+ item['wishlist']);
 		    			        	var movie = req.body["movieid"];
 									
-									/*
-									User.findByIdAndUpdate(
-									        item._id,
-									        {$push: {"wishlist": movie}},
-									        {safe: true, upsert: true, new : true},
-									        function(err, model) {
-									            console.log(err);
-									        }
-									    );
-									*/
-									
-									var wish= JSON.parse(item['wishlist']);
+									var wish= item['wishlist'];
 
 									if(wish.indexOf(movie) != -1)
 									{
