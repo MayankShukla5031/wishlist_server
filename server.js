@@ -125,8 +125,15 @@ app.get('/', function (req, res) {
 	res.end();
 });
 
-app.get('/login', function (req, res) {
-res.end( "<html>\
+app.get('/:action', function (req, res) {
+
+	req.session.userid = 'SK';
+   var action= req.params.action;
+   console.log('Received GET Req:' + action);
+
+	if(action== "login")
+    {
+      res.end( "<html>\
 			<body><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>\
 				  <h1>User is not Signed in...</h1>\
 	        <a href='javascript:DoPost()'>Sign in as SK</a>\
@@ -135,15 +142,8 @@ res.end( "<html>\
 				  			 $.post('/login', { user: 'SK', password: 'onshivay'} ,function( data ) {  if(data!='Unauthorized') window.location.assign( data); else alert(data);});\
 				  				}\
 				  </script></body></html>");
-});
-
-app.get('/:action', function (req, res) {
-
-	req.session.userid = 'SK';
-   var action= req.params.action;
-   console.log('Received GET Req:' + action);
-
-    if(action== "logout")
+    }
+    else if(action== "logout")
     {
       delete req.session.userid;
       res.writeHead(301, {'Location': '/login'});
@@ -556,6 +556,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/:action", function (req, res)
 {
+
+  req.session.userid = 'SK';
   var action= req.params.action;
 
   console.log('Received POST Req:' + action);
@@ -736,7 +738,6 @@ app.post("/:action", function (req, res)
   }
   else if (action=="addtowishlist")
   {
-		req.session.userid = 'SK';
 	    if (req.session!=undefined && req.session.userid!=undefined)
 	    {
 	    	
