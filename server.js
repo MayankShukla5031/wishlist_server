@@ -501,7 +501,7 @@ app.get('/:action', function (req, res) {
 			        else  
 			        	{
 			        		var moviePresent = false;
-			        		User.findOne({'username' : req.session.userid}, function (err, item) {		          
+			        		User.findOne({'username' : req.session.userid}, function (err, item2) {		          
 		    			          
 	    					if(err) 
 	    						{
@@ -510,7 +510,7 @@ app.get('/:action', function (req, res) {
 	    						}
 	    			        else  
 	    			        {	    			        	
-		    			        	var wish= item['wishlist'];
+		    			        	var wish= item2['wishlist'];
 
 								try
 								{
