@@ -46,8 +46,7 @@ db.once('open', function callback () {});
     producer: { type : Array , default : [] },
     music_director: { type : Array , default : [] },
     production_house: { type : Array , default : [] },
-    poster_url: String,
-    inmywishlist: Boolean
+    poster_url: String
   } , {collection : 'moviecollection'});
 
   var actorSchema = new mongoose.Schema({
@@ -304,35 +303,35 @@ app.get('/:action', function (req, res) {
                                  {\
                                     removeOptions(movieActor);\
                                     $.ajax({type:"GET", url:"/getlist?get=actors", success:function(result){\
-                                                                                                                var list=result;\
+                                                                                                                var list=JSON.parse(result);\
                                                                                                                for(var k in list) {\
                                                                                                                   addSelectOption( "movieActor", list[k]);\
                                                                                                                   }\
                                                                                                              }});\
                                     removeOptions(movieDirector);\
                                     $.ajax({type:"GET", url:"/getlist?get=directors", success:function(result){\
-                                                                                                                var list=result;\
+                                                                                                                var list=JSON.parse(result);\
                                                                                                                for(var k in list) {\
                                                                                                                   addSelectOption( "movieDirector", list[k]);\
                                                                                                                   }\
                                                                                                              }});\
                                     removeOptions(movieProducer);\
                                     $.ajax({type:"GET", url:"/getlist?get=producers", success:function(result){\
-                                                                                                                var list=result;\
+                                                                                                                var list=JSON.parse(result);\
                                                                                                                for(var k in list) {\
                                                                                                                   addSelectOption( "movieProducer", list[k]);\
                                                                                                                   }\
                                                                                                              }});\
                                     removeOptions(movieMusicDirector);\
                                     $.ajax({type:"GET", url:"/getlist?get=musicdirectors", success:function(result){\
-                                                                                                                var list=result;\
+                                                                                                                var list=JSON.parse(result);\
                                                                                                                for(var k in list) {\
                                                                                                                   addSelectOption( "movieMusicDirector", list[k]);\
                                                                                                                   }\
                                                                                                              }});\
                                     removeOptions(movieProductionHouse);\
                                     $.ajax({type:"GET", url:"/getlist?get=productionhouses", success:function(result){\
-                                                                                                                var list=result;\
+                                                                                                                var list=JSON.parse(result);\
                                                                                                                for(var k in list) {\
                                                                                                                   addSelectOption( "movieProductionHouse", list[k]);\
                                                                                                                   }\
@@ -451,7 +450,7 @@ app.get('/:action', function (req, res) {
           Actor.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(list.sort());
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -460,7 +459,7 @@ app.get('/:action', function (req, res) {
           Director.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(list.sort());
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -469,7 +468,7 @@ app.get('/:action', function (req, res) {
           Producer.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(list.sort());
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -478,7 +477,7 @@ app.get('/:action', function (req, res) {
           MusicDirector.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(list.sort());
+          res.end(JSON.stringify(list.sort()));
             });
         }
 
@@ -487,7 +486,7 @@ app.get('/:action', function (req, res) {
           ProductionHouse.find({}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return a.title;});
-          res.end(list.sort());
+          res.end(JSON.stringify(list.sort()));
             });
         }
     }
@@ -498,17 +497,11 @@ app.get('/:action', function (req, res) {
 			Movie.find({'uid' : req.query.movieid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
-			        else 
-			        { 
-			        	try{
-				        	item.inmywishlist=true;
-				        	res.end(item);
-			        	}
-			        	catch(e)
+			        else  
 			        	{
-			        		console.log(e);
+			        		item.inmywishlist= true;
+			        		res.end(JSON.stringify(item));
 			        	}
-			        }
 			            
 			         });
 	    }
@@ -520,12 +513,13 @@ app.get('/:action', function (req, res) {
 
     	if( req.session.userid != undefined)
         {
+
         	   console.log('User present:'+req.session.userid);
 
 			   User.findOne({'username' : req.session.userid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
-			        else  res.end(item.wishlist);
+			        else  res.end(JSON.stringify(item.wishlist));
 			            
 			         });
   	    }
@@ -777,13 +771,13 @@ app.post("/:action", function (req, res)
 						                      console.log('save error:'+err);
 			    			        	  else 
 			    			        	  {
-			    			        	  	console.log('Movie added to wishlit');
+			    			        	  	console.log('Movie added to wishlist');
 			    			        	  	res.end("success");
 			    			        	  }
 						                    });   
 		    			        	}
 		    			        	else
-										console.log('Movie is already present in wishlit');
+										console.log('Movie is already present in wishlist');
 								}
 								catch(e)
 								{
