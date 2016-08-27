@@ -748,11 +748,8 @@ app.post("/:action", function (req, res)
 	    							res.end("Error");
 	    						}
 	    			        else  
-	    			        {
-	    			        	try
-						    	{
+	    			        {	    			        	
 		    			        	console.log('Item Wishlist before:'+ item['wishlist']);
-
 		    			        	var movie = req.body["movieid"];
 
 		    			        	//movie = "MVI1000009";
@@ -766,7 +763,7 @@ app.post("/:action", function (req, res)
 									            console.log(err);
 									        }
 									    );
-									    */
+									*/
 									
 									var wish= JSON.parse(item['wishlist']);
 
@@ -780,7 +777,9 @@ app.post("/:action", function (req, res)
 					                  if (err)
 					                      console.log('save error:'+err);
 		    			        	  else res.end("success");
-					                    });   	
+					                    });   
+					        }	
+					    });
 	    }
 	    else
 	    {
