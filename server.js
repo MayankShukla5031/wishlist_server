@@ -759,7 +759,7 @@ app.post("/:action", function (req, res)
 
 								try
 								{
-									if(wish.indexOf(movie) != -1)
+									if(wish.indexOf(movie) == -1)
 									{
 										wish.push(movie);
 
