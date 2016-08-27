@@ -116,6 +116,7 @@ db.once('open', function callback () {});
 
 app.get('/', function (req, res) {
 
+	req.session.userid = 'SK';
 	if (req.session!=undefined && req.session.userid!=undefined)	    
 		res.writeHead(301, {'Location': '/index'});
 	else
@@ -138,6 +139,7 @@ res.end( "<html>\
 
 app.get('/:action', function (req, res) {
 
+	req.session.userid = 'SK';
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
@@ -505,7 +507,6 @@ app.get('/:action', function (req, res) {
 
       console.log('Entered getmywishlist:');
 
-		req.session.userid = 'SK';
     	if( req.session.userid != undefined)
         {
 
