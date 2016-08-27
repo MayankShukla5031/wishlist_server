@@ -41,7 +41,7 @@ db.once('open', function callback () {});
     uid: String,
     title: String,
     release:{ type : Date, default: Date.now },
-    cast: String,
+    cast: { type : Array , default : [] },
     director: String,
     producer: String,
     music_director: String,
