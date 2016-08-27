@@ -752,9 +752,7 @@ app.post("/:action", function (req, res)
 	    						}
 	    			        else  
 	    			        {	    			        	
-		    			        	console.log('Item Wishlist before:'+ item['wishlist']);
-		    			        	var movie = req.body["movieid"];
-									
+		    			        	var movie = req.body["movieid"];									
 									var wish= item['wishlist'];
 
 								try
@@ -762,16 +760,14 @@ app.post("/:action", function (req, res)
 									if(wish.indexOf(movie) == -1)
 									{
 										wish.push(movie);
-
 										item['wishlist']= wish;
-
-			    			        	console.log('Item Wishlist after:'+ item['wishlist']);
 			    			        	
 			    			        	item.save(function(err, item2) {
 						                  if (err)
 						                      console.log('save error:'+err);
 			    			        	  else 
 			    			        	  {
+			    			        	  	console.log('Movie added to wishlit');
 			    			        	  	res.end("success");
 			    			        	  }
 						                    });   
