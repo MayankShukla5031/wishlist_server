@@ -556,14 +556,11 @@ app.get('/:action', function (req, res) {
 			   {		          			          
 					if(err) res.end("{}");
 			        else 
-			        { 
-			        	
+			        { 			        	
 			        	res.end(JSON.stringify(list.wishlist));
-			        }
-			        	
+			        }			        	
 			        	console.log(list.wishlist);
-			        	
-			         
+			        				         
 			         });
   	    }
 	      else 
