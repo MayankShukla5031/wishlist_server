@@ -570,8 +570,8 @@ app.get('/:action', function (req, res) {
 						        	console.log('errrrrrrrr');
 					    	});
 
-			        	}
 			        				console.log(list);
+			        	}
 			        	res.end(JSON.stringify(list));
 			        	
 			         }
