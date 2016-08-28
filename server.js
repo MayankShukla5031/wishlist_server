@@ -561,7 +561,7 @@ app.get('/:action', function (req, res) {
 			        	res.end(JSON.stringify(list));
 			        }
 			        	
-			        	console.log(item);
+			        	console.log(list);
 			        	
 			         
 			         });
