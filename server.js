@@ -32,7 +32,7 @@ var mongodbUri = 'mongodb://skverma:skverma@ds139425.mlab.com:39425/wishlist';
 mongoose.connect(mongodbUri);
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
-var ObjectId= mongoose.Types.ObjectId;
+var ObjectId= Schema.Types.ObjectId;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -118,7 +118,7 @@ db.once('open', function callback () {});
   var userSchema = new Schema({
     uid: String,
     username: String,
-    wishlist: [{ type : ObjectId, ref: 'Movie' }]
+    wishlist: { type : Array , default : [] }//[{ type : ObjectId, ref: 'Movie' }]
   } , {collection : 'usercollection'});
 
   var User = mongoose.model('usercollection', userSchema);
@@ -808,7 +808,7 @@ app.post("/:action", function (req, res)
   }
   else if (action=="addtowishlist")
   {
-	    if (req.session!=undefined && req.session.userid!=undefined)
+	    if (req.session!=undefined && req.session.userid !=undefined)
 	    {
 	    	
 		  		console.log('Adding to wishlist of user:' + req.session.userid);
@@ -827,12 +827,16 @@ app.post("/:action", function (req, res)
 
 								try
 								{
-									var movieObject= ObjectId(movie);
-									console.log('movieObject:'+ movieObject);
+									//var movieObject= ObjectId(movie);
+									console.log('movieObject:'+ movie);
 
-									if(wish.indexOf(movieObject) == -1)
+									if(wish.indexOf(movie) == -1)
 									{
-										wish.push(movieObject);
+
+										console.log('1');
+										wish.push(movie);
+
+										console.log('2');
 										item['wishlist']= wish;
 			    			        	
 			    			        	item.save(function(err, item2) {
