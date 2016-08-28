@@ -565,13 +565,13 @@ app.get('/:action', function (req, res) {
 
 									list.push(obj);
 
-			        				console.log(list);
 						        }
 						        else
 						        	console.log('errrrrrrrr');
 					    	});
 
 			        	}
+			        				console.log(list);
 			        	res.end(JSON.stringify(list));
 			        	
 			         }
