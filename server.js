@@ -552,7 +552,7 @@ app.get('/:action', function (req, res) {
 			        	var list=[];
 			        	for(i=0; i<item.wishlist.length ;i++)
 			        	{
-			        		
+			        		console.log(i);
 			        		Movie.findOne({'uid' : item.wishlist[i]}, function (err, movie) 
 			        		{		          
 			          
