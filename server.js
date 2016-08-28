@@ -566,6 +566,8 @@ app.get('/:action', function (req, res) {
 
 									list.push(obj);
 						        }
+						        else
+						        	console.log('errrrrrrrr');
 					    	});
 
 			        	}
