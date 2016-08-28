@@ -33,13 +33,13 @@ var mongodbUri = 'mongodb://skverma:skverma@ds139425.mlab.com:39425/wishlist';
 mongoose.connect(mongodbUri);
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
-var ObjectId= Schema.ObjectId;
+var ObjectId= mongoose.mongo.ObjectId;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
 db.once('open', function callback () {});
 
-  var movieSchema = new mongoose.Schema({
+  var movieSchema = new Schema({
     uid: String,
     title: String,
     release:{ type : Date, default: Date.now },
