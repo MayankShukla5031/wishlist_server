@@ -7,7 +7,6 @@ var cookieParser = require('cookie-parser');
 var session = require('client-sessions');
 
 app.use(cookieParser('secret'));
-//app.use(expressSession());
 app.use(session({
   cookieName: 'session',
   secret: 'onshivay',
@@ -33,7 +32,7 @@ var mongodbUri = 'mongodb://skverma:skverma@ds139425.mlab.com:39425/wishlist';
 mongoose.connect(mongodbUri);
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
-var ObjectId= mongoose.mongo.ObjectId;
+var ObjectId= mongoose.Types.ObjectId;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
