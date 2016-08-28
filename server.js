@@ -552,42 +552,18 @@ app.get('/:action', function (req, res) {
     	if( req.session.userid != undefined)
         {
 
-			   User.findOne({'username' : req.session.userid}).populate('wishlist').exec(function (err, item) 
+			   User.findOne({'username' : req.session.userid}).populate('wishlist').exec(function (err, list) 
 			   {		          			          
 					if(err) res.end("{}");
 			        else 
 			        { 
-			        	/*
-			        	var list=[];
-			        	for(i=0; i<item.wishlist.length ;i++)
-			        	{
-			        		var promise = Movie.findOne({'uid' : item.wishlist[i]}).exec();
-
-			        		promise.then(function ( movie) 
-			        		{		          			          
-								if(movie) 
-								{
-									var obj= {};
-									obj.uid= movie.uid;
-									obj.title= movie.title;
-									obj.poster_url= movie.poster_url;
-									obj.wishcount=10;
-
-									list.push(obj);
-
-									if(i==(item.wishlist.length-1 )) 
-						        	 res.end(JSON.stringify(list));
-						        }
-						        else
-						        	console.log('errrrrrrrr');
-
-					    	});
-
-			        	}
-			        	*/
+			        	
+			        	res.end(JSON.stringify(list));
+			        }
+			        	
 			        	console.log(item);
 			        	
-			         }
+			         
 			         });
   	    }
 	      else 
