@@ -32,6 +32,8 @@ var mongoose = require('mongoose');
 var mongodbUri = 'mongodb://skverma:skverma@ds139425.mlab.com:39425/wishlist';
 mongoose.connect(mongodbUri);
 var db = mongoose.connection;
+var Schema = mongoose.Schema;
+var ObjectId= Schema.ObjectId;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -50,15 +52,19 @@ db.once('open', function callback () {});
     inmywishlist:Boolean
   } , {collection : 'moviecollection'});
 
-  var actorSchema = new mongoose.Schema({
+  var Movie = mongoose.model('moviecollection', movieSchema);
+
+  var actorSchema = new Schema({
     uid: String,
     title: String,
     dob: { type : Date, default: Date.now },
     tags: String,
     poster_url: String
   } , {collection : 'actorcollection'});
+
+  var Actor = mongoose.model('actorcollection', actorSchema);
   
-  var directorSchema = new mongoose.Schema({
+  var directorSchema = new Schema({
     uid: String,
     title: String,
     dob: { type : Date, default: Date.now },
@@ -66,7 +72,9 @@ db.once('open', function callback () {});
     poster_url: String
   } , {collection : 'directorcollection'});
 
-  var producerSchema = new mongoose.Schema({
+  var Director = mongoose.model('directorcollection', directorSchema);
+
+  var producerSchema = new Schema({
     uid: String,
     title: String,
     dob: { type : Date, default: Date.now },
@@ -74,7 +82,9 @@ db.once('open', function callback () {});
     poster_url: String
   } , {collection : 'producercollection'});
 
-  var musicDirectorSchema = new mongoose.Schema({
+  var Producer = mongoose.model('producercollection', producerSchema);
+
+  var musicDirectorSchema = new Schema({
     uid: String,
     title: String,
     dob: { type : Date, default: Date.now },
@@ -82,7 +92,9 @@ db.once('open', function callback () {});
     poster_url: String
   } , {collection : 'musicdirectorcollection'});
 
-  var productionHouseSchema = new mongoose.Schema({
+  var MusicDirector = mongoose.model('musicdirectorcollection', musicDirectorSchema);
+
+  var productionHouseSchema = new Schema({
     uid: String,
     title: String,
     dob: { type : Date, default: Date.now },
@@ -90,7 +102,9 @@ db.once('open', function callback () {});
     poster_url: String
   } , {collection : 'productionhousecollection'});
 
-  var countSchema = new mongoose.Schema({
+  var ProductionHouse = mongoose.model('productionhousecollection', productionHouseSchema);
+
+  var countSchema = new Schema({
     movie: Number,
     actor: Number,
     director: Number,
@@ -100,20 +114,16 @@ db.once('open', function callback () {});
     poster_url: String
   } , {collection : 'countcollection'});
 
-  var userSchema = new mongoose.Schema({
+  var Count = mongoose.model('countcollection', countSchema);
+
+  var userSchema = new Schema({
     uid: String,
     username: String,
-    wishlist: { type : Array , default : [] }
+    wishlist: [{ type : ObjectId, ref: 'Movie' }]
   } , {collection : 'usercollection'});
 
-  var Movie = mongoose.model('moviecollection', movieSchema);
-  var Actor = mongoose.model('actorcollection', actorSchema);
-  var Director = mongoose.model('directorcollection', directorSchema);
-  var Producer = mongoose.model('producercollection', producerSchema);
-  var MusicDirector = mongoose.model('musicdirectorcollection', musicDirectorSchema);
-  var ProductionHouse = mongoose.model('productionhousecollection', productionHouseSchema);
-  var Count = mongoose.model('countcollection', countSchema);
   var User = mongoose.model('usercollection', userSchema);
+
 
 app.get('/', function (req, res) {
 
@@ -543,19 +553,20 @@ app.get('/:action', function (req, res) {
     	if( req.session.userid != undefined)
         {
 
-			   User.findOne({'username' : req.session.userid}, function (err, item) {		          
-			          
+			   User.findOne({'username' : req.session.userid}).populate('wishlist').exec(function (err, item) 
+			   {		          			          
 					if(err) res.end("{}");
 			        else 
 			        { 
-
+			        	/*
 			        	var list=[];
 			        	for(i=0; i<item.wishlist.length ;i++)
 			        	{
-			        		Movie.findOne({'uid' : item.wishlist[i]}, function (err, movie, list) 
-			        		{		          
-			          
-								if(!err) 
+			        		var promise = Movie.findOne({'uid' : item.wishlist[i]}).exec();
+
+			        		promise.then(function ( movie) 
+			        		{		          			          
+								if(movie) 
 								{
 									var obj= {};
 									obj.uid= movie.uid;
@@ -565,14 +576,17 @@ app.get('/:action', function (req, res) {
 
 									list.push(obj);
 
+									if(i==(item.wishlist.length-1 )) 
+						        	 res.end(JSON.stringify(list));
 						        }
 						        else
 						        	console.log('errrrrrrrr');
+
 					    	});
 
-			        				console.log(list);
 			        	}
-			        	res.end(JSON.stringify(list));
+			        	*/
+			        	console.log(item);
 			        	
 			         }
 			         });
@@ -814,9 +828,9 @@ app.post("/:action", function (req, res)
 
 								try
 								{
-									if(wish.indexOf(movie) == -1)
+									if(wish.indexOf(ObjectId(movie)) == -1)
 									{
-										wish.push(movie);
+										wish.push(ObjectId(movie));
 										item['wishlist']= wish;
 			    			        	
 			    			        	item.save(function(err, item2) {
