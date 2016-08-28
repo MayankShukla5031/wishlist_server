@@ -540,26 +540,46 @@ app.get('/:action', function (req, res) {
     }
     else if(action== "getmywishlist")
     {
-      console.log('Entered getmywishlist:');
-
     	if( req.session.userid != undefined)
         {
-
-        	   console.log('User present:'+req.session.userid);
 
 			   User.findOne({'username' : req.session.userid}, function (err, item) {		          
 			          
 					if(err) res.end("{}");
-			        else  res.end(JSON.stringify(item.wishlist));
-			            
+			        else 
+			        { 
+
+			        	var list=[];
+			        	for(i=0; i<item.wishlist.length ;i++)
+			        	{
+			        		
+			        		Movie.findOne({'uid' : item.wishlist[i]}, function (err, movie) 
+			        		{		          
+			          
+								if(!err) 
+								{
+									var obj= {};
+									obj.uid= movie.uid;
+									obj.title= movie.title;
+									obj.poster_url= movie.poster_url;
+									obj.wishcount=10;
+
+									list.push(obj);
+						        }
+					    	});
+
+			        	}
+			        	res.end(JSON.stringify(list));
+			        	
+			         }
 			         });
   	    }
-      else 
-      {
-        console.log('User not present, redirecting to login');
-        res.writeHead(301, {'Location': '/login'});
-        res.end(); 
-      }			       
+	      else 
+	      {
+	        console.log('User not present, redirecting to login');
+	        res.writeHead(301, {'Location': '/login'});
+	        res.end(); 
+	      }			       
     }
     else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".ico") )
     {
