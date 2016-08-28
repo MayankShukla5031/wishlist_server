@@ -551,17 +551,17 @@ app.get('/:action', function (req, res) {
     {
     	if( req.session.userid != undefined)
         {
-
-			   User.findOne({'username' : req.session.userid}).populate('wishlist').exec(function (err, list) 
+//).populate('wishlist').exec(
+			   User.findOne({'username' : req.session.userid}, function (err, list) 
 			   {		          			          
 					if(err) res.end("{}");
 			        else 
 			        { 
 			        	
-			        	res.end(JSON.stringify(list));
+			        	res.end(JSON.stringify(list.wishlist));
 			        }
 			        	
-			        	console.log(list);
+			        	console.log(list.wishlist);
 			        	
 			         
 			         });
