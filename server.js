@@ -828,9 +828,12 @@ app.post("/:action", function (req, res)
 
 								try
 								{
-									if(wish.indexOf(ObjectId(movie)) == -1)
+									var movieObject= ObjectId(movie);
+									console.log('movieObject:'+ movieObject);
+
+									if(wish.indexOf(movieObject) == -1)
 									{
-										wish.push(ObjectId(movie));
+										wish.push(movieObject);
 										item['wishlist']= wish;
 			    			        	
 			    			        	item.save(function(err, item2) {
