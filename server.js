@@ -818,7 +818,9 @@ app.post("/:action", function (req, res)
 			    			        	  else 
 			    			        	  {
 			    			        	  	console.log('Movie added to wishlist');
-			    			        	  	res.end(JSON.stringify({"success"}));
+			    			        	  	var result= {};
+			    			        	  	result.push("success");
+			    			        	  	res.end(JSON.stringify(result));
 			    			        	  }
 						                    });   
 		    			        	}
@@ -872,7 +874,9 @@ app.post("/:action", function (req, res)
 			    			        	  else 
 			    			        	  {
 			    			        	  	console.log('Movie removed from wishlist');
-			    			        	  	res.end(JSON.stringify({"success"}));
+			    			        	  	var result= {};
+			    			        	  	result.push("success");
+			    			        	  	res.end(JSON.stringify(result));
 			    			        	  }
 						                    });   
 		    			        	}
