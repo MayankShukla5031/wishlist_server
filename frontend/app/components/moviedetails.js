@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import * as MovieDetailsAction from '../actions/moviedetailsaction';
 import * as MyWishListAction from '../actions/mywishlistaction';
 import MovieDetailsStore from '../stores/moviedetailsstore';
+import MyWishListStore from '../stores/mywishliststore';
 
 const styles = {
 	saveButtonStyle:{
@@ -30,16 +31,19 @@ export default class TrendingMovies extends React.Component{
 			buttonText: 'Add to WishList',
 		};
 		this._getMovieDetailsfromStore = this._getMovieDetailsfromStore.bind(this);
+		this._getWishListStoreData = this._getWishListStoreData.bind(this);
 	}
 
 	componentWillMount(){
 		let id = this.props.params.movieId;
 		MovieDetailsAction._getMovieDetails({movieid: id});
 		MovieDetailsStore.on('change',this._getMovieDetailsfromStore); 
+		MyWishListStore.on('change', this._getWishListStoreData);
 	}
 
 	componentWillUnmount(){
 		MovieDetailsStore.removeListener('change', this._getMovieDetailsfromStore);
+		MyWishListStore.removeListener('change', this._getWishListStoreData);
 	}
 
 	componentWillReceiveProps(newKey){
@@ -56,18 +60,22 @@ export default class TrendingMovies extends React.Component{
 				inMyWishList: details.inmywishlist,
 				buttonText: text
 			});
-		}else if(type == 'AddToWishListSuccess'){
-			let text = "Add to WishList"; 
-			this.setState({buttonText: text});
-		}else if(type == 'RemoveFromWishListSuccess'){
-			let data = 'Remove from WishList';
-			this.setState({buttonText: text});
 		}
+	}
+
+	_getWishListStoreData(type){
+		let text;
+		if(type == 'AddToWishListSuccess'){
+			text = 'Remove from WishList';
+		}else if(type == 'RemoveFromWishListSuccess'){
+			text = "Add to WishList"; 
+		}
+		this.setState({buttonText: text});
 	}
 
 	_addToWishList(){
 		let query = {movieid: this.state.movieId}
-		if(!this.state.inMyWishList){
+		if(this.state.buttonText == 'Add to WishList'){
 			MyWishListAction._addToWishList(query);
 		}else{
 			MyWishListAction._removeFromWishList(query);

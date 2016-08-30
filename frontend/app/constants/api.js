@@ -18,12 +18,12 @@ module.exports ={
 	        contentType: "application/x-www-form-urlencoded",
 
 	        success: (data,textStatus, jqXHR) => {
-	        	console.log('success plz', data,textStatus, jqXHR);
+	        	console.log('success plz api.js', data,textStatus, jqXHR);
 	        	target('success',data);        	
 	        },
 	        
 	        error: (jqXhr,textStatus,error) => {
-	        	console.log('error plz', jqXhr,textStatus,error);
+	        	console.log('error plz api js', jqXhr,textStatus,error);
                 if(jqXhr.status == 401){
                 }else{
 	        		target('error',jqXhr,textStatus,error);

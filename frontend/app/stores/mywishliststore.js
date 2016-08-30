@@ -23,6 +23,16 @@ class MyWishListStore extends EventEmitter{
 				this._setMovieList(action.data);
 				break;
 			}
+			case 'ADD_TO_WISHLIST_SUCCESS' : {
+				console.log('add done');
+				this.emit('change', 'AddToWishListSuccess');
+				break;
+			}
+			case 'REMOVE_FROM_WISHLIST_SUCCESS' : {
+				console.log('remove done');
+				this.emit('change', 'RemoveFromWishListSuccess');
+				break;
+			}
 		}
 	}
 }
