@@ -29,21 +29,31 @@ export default class MyWishList extends React.Component{
 		if(type == 'MyWishList'){
 			let myWishList = MyWishListStore._getMyWishList();
 			console.log('myWishList', myWishList);
+			// let data = [{title: 'A', id: 1, count: 1}, {title: 'B', id: 2, count: 2}, {title: 'C', id: 3, count: 3}];
 			this.setState({myWishList: myWishList});
+			// this.setState({myWishList: data});
 		}
 	}
 
 	setWishListUi(){		
 		let uiItem = [];
+		let movieName = '';
+		let wishCount = 0;
+		let imageUrl;
+		let id;
 		uiItem = this.state.myWishList.map((item, index)=> {
+			movieName = item.title || "Movie Name";
+			wishCount = item.count || 0;
+			imageUrl = "";
+			id = item.id || item;
 			return(
 				<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
-				    <CardTitle expand style={{color: '#fff', background: 'url(http://www.getmdl.io/assets/demos/dog.png) bottom right 15% no-repeat #46B6AC'}}>Movie Name</CardTitle>
+				    <CardTitle expand style={{color: '#fff', background: 'url(http://www.getmdl.io/assets/demos/dog.png) bottom right 15% no-repeat #46B6AC'}}>{movieName}</CardTitle>
 				    <CardText>
-				        Wish Count: {item}
+				        Wish Count: {wishCount}
 				    </CardText>
 				    <CardActions border>
-				        <Button colored><Link to={`moviedetails/${item}`}>View Details</Link></Button>
+				        <Button colored><Link to={`moviedetails/${id}`}>View Details</Link></Button>
 		     		</CardActions>
 				</Card>);
 		});

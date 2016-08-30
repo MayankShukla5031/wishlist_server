@@ -24,14 +24,6 @@ class MovieDetailsStore extends EventEmitter{
 				this._setMovieDetails(action.data);
 				break;
 			}
-			case 'ADD_TO_WISHLIST_SUCCESS' : {
-				this.emit('change', 'AddToWishListSuccess');
-				break;
-			}
-			case 'REMOVE_FROM_WISHLIST_SUCCESS' : {
-				this.emit('change', 'RemoveFromWishListSuccess');
-				break;
-			}
 		}
 	}
 }

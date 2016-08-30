@@ -570,7 +570,7 @@ app.get('/:action', function (req, res) {
 	        res.end(); 
 	      }			       
     }
-    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".ico") )
+    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") )
     {
     	fs.readFile('frontend/public/'+ action, function(err, contents) {
 
@@ -580,7 +580,7 @@ app.get('/:action', function (req, res) {
 			        if(action.endsWith(".css") || action.endsWith("css.map"))
 			        	res.writeHead(200, {'Content-Type': 'text/css'});
 
-			        else if(action.endsWith(".js"))
+			        else if(action.endsWith(".js")|| action.endsWith("js.map"))
 			        	res.writeHead(200, {'Content-Type': 'text/javascript'});
 
 			        res.write(contents);
