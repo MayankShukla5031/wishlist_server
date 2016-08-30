@@ -162,7 +162,7 @@ app.get('/:action', function (req, res) {
     else if(action=="index")
     {
     	console.log(req.session.userid);
-        fs.readFile('public/index.html' , function(err, contents) {
+        fs.readFile('frontend/public/index.html' , function(err, contents) {
 
 		res.writeHead(200, {'Content-Type': 'text/html'});
         res.end(contents);
@@ -572,7 +572,7 @@ app.get('/:action', function (req, res) {
     }
     else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".ico") )
     {
-    	fs.readFile('public/'+ action, function(err, contents) {
+    	fs.readFile('frontend/public/'+ action, function(err, contents) {
 
 	        if (err) console.log(err);
 	        else 
@@ -818,9 +818,9 @@ app.post("/:action", function (req, res)
 			    			        	  else 
 			    			        	  {
 			    			        	  	console.log('Movie added to wishlist');
-			    			        	  	var result= {};
-			    			        	  	result.push("success");
-			    			        	  	res.end(JSON.stringify(result));
+			    			        	  	var ret= {};
+			    			        	  	ret.result="success";
+			    			        	  	res.end(JSON.stringify(ret));
 			    			        	  }
 						                    });   
 		    			        	}
@@ -874,9 +874,9 @@ app.post("/:action", function (req, res)
 			    			        	  else 
 			    			        	  {
 			    			        	  	console.log('Movie removed from wishlist');
-			    			        	  	var result= {};
-			    			        	  	result.push("success");
-			    			        	  	res.end(JSON.stringify(result));
+			    			        	  	var ret= {};
+			    			        	  	ret.result="success";
+			    			        	  	res.end(JSON.stringify(ret));
 			    			        	  }
 						                    });   
 		    			        	}
