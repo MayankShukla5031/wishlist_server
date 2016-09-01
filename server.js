@@ -549,26 +549,42 @@ app.get('/:action', function (req, res) {
     }
     else if(action== "getmywishlist")
     {
-    	if( req.session.userid != undefined)
-        {
-//).populate('wishlist').exec(
-			   User.findOne({'username' : req.session.userid}, function (err, list) 
-			   {		          			          
-					if(err) res.end("{}");
-			        else 
-			        { 			        	
-			        	res.end(JSON.stringify(list.wishlist));
-			        }			        	
-			        	console.log(list.wishlist);
-			        				         
-			         });
-  	    }
-	      else 
-	      {
-	        console.log('User not present, redirecting to login');
-	        res.writeHead(301, {'Location': '/login'});
-	        res.end(); 
-	      }			       
+      	if( req.session.userid != undefined)
+          {
+    			   User.findOne({'username' : req.session.userid}, function (err, user){		          			          
+    					if(err) res.end("{}");
+    			        else 
+    			        {
+                    var array=[];
+                    var count=0;
+                      for(i=0;i<user.wishlist.length;i++)
+                      {
+                        var obj = {};
+                        obj.title='Movie-'+(i+1);
+
+                        Movie.findOne({'uid' : user.wishlist[i]}, function (err, movie) {
+                                       
+                                  obj.title= movie.title;
+                                  obj.id= user.wishlist[i];
+                                  obj.count= i*10 +100;
+                                  obj.poster_url=movie.poster_url;
+                                  array.push(obj);
+                                  
+                                  res.end(JSON.stringify(array));
+
+                                  console.log(array);
+                                });                      
+                      }
+    			        } 	
+    			        				         
+    			         });
+      	  }
+  	      else 
+  	      {
+  	        console.log('User not present, redirecting to login');
+  	        res.writeHead(301, {'Location': '/login'});
+  	        res.end(); 
+  	      }			       
     }
     else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") )
     {
