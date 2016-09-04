@@ -118,7 +118,7 @@ db.once('open', function callback () {});
   var userSchema = new Schema({
     uid: String,
     username: String,
-    wishlist: { type : Array , default : [] }//[{ type : ObjectId, ref: 'Movie' }]
+    wishlist:[movieSchema]//[{ type : ObjectId, ref: 'moviecollection' }]
   } , {collection : 'usercollection'});
 
   var User = mongoose.model('usercollection', userSchema);
@@ -164,9 +164,9 @@ app.get('/:action', function (req, res) {
     	console.log(req.session.userid);
         fs.readFile('frontend/public/index.html' , function(err, contents) {
 
-		res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(contents);
-      });
+  		res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end(contents);
+        });
     }
     else if(action== "home")
     {
@@ -200,10 +200,9 @@ app.get('/:action', function (req, res) {
     {
     	if( req.query.title != undefined)
         {
-
           Movie.find({'title' : new RegExp(req.query.title, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};}); 
           res.end(JSON.stringify(list));
             });
 
@@ -239,14 +238,12 @@ app.get('/:action', function (req, res) {
 
         }
         if( req.query.music_director != undefined)
-        {
-           
+        {           
           Movie.find({'music_director' : new RegExp(req.query.music_director, 'i')}, function (err, str) {
           var list=[];
           list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
           res.end(JSON.stringify(list));
             });
-
         }
         if( req.query.production_house != undefined)
         {
@@ -255,8 +252,7 @@ app.get('/:action', function (req, res) {
           var list=[];
           list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
           res.end(JSON.stringify(list));
-            });
-           
+            });           
         }
     }
     else if(action== "add")
@@ -504,40 +500,45 @@ app.get('/:action', function (req, res) {
     {
     	if( req.query.movieid != undefined)
         {
-			Movie.findOne({'uid' : req.query.movieid}, function (err, item) {		          
+          console.log(req.query.movieid);
+
+          if(movie=null)
+            console.log('NULL');
+
+			   Movie.findOne({'uid' : req.query.movieid}, function (err, movie) {		          
 			          
 					if(err) res.end("{}");
 			        else  
 			        	{
 			        		var moviePresent = false;
-			        		User.findOne({'username' : req.session.userid}, function (err, item2) {		          
+			        		User.findOne({'username' : req.session.userid}, function (err, user) {		          
 		    			          
-	    					if(err) 
-	    						{
-	    							console.log("Error getting wishlist");
-	    							res.end("Error");
-	    						}
-	    			        else  
-	    			        {	    			        	
-		    			        	var wish= item2['wishlist'];
+  	    					if(err) 
+  	    						{
+  	    							console.log("Error getting wishlist");
+  	    							res.end("Error");
+  	    						}
+  	    			        else  
+  	    			        {	    			        	
+  		    			        	var wish= user['wishlist'];
 
-								try
-								{
-									if(wish.indexOf(req.query.movieid) != -1)
-									{
-										item.inmywishlist= true;
-			        					res.end(JSON.stringify(item));
-		    			        	}
-		    			        	else
-		    			        	{
-		    			        		item.inmywishlist= false;
-			        					res.end(JSON.stringify(item));
-		    			        	}
-								}
-								catch(e)
-								{
-									console.log(e);
-								}
+          								try
+          								{
+          									if(wish.indexOf(movie) != -1)
+          									{
+          										    movie.inmywishlist= true;
+          			        					res.end(JSON.stringify(movie));
+          		    			    }
+          		    			     else
+          		    			     {
+          		    			        	movie.inmywishlist= false;
+          			        					res.end(JSON.stringify(movie));
+          		    			     }
+          								}
+          								catch(e)
+          								{
+          									console.log(e);
+          								}
 			    			        	
 					        }	
 					    	});
@@ -549,26 +550,24 @@ app.get('/:action', function (req, res) {
     }
     else if(action== "getmywishlist")
     {
-    	if( req.session.userid != undefined)
-        {
-//).populate('wishlist').exec(
-			   User.findOne({'username' : req.session.userid}, function (err, list) 
-			   {		          			          
-					if(err) res.end("{}");
-			        else 
-			        { 			        	
-			        	res.end(JSON.stringify(list.wishlist));
-			        }			        	
-			        	console.log(list.wishlist);
-			        				         
-			         });
-  	    }
-	      else 
-	      {
-	        console.log('User not present, redirecting to login');
-	        res.writeHead(301, {'Location': '/login'});
-	        res.end(); 
-	      }			       
+      	if( req.session.userid != undefined)
+          {
+    			   User.findOne({'username' : req.session.userid}, function (err, user){		          			          
+    					if(err) res.end("{}");
+    			        else 
+    			        {
+                    res.end(JSON.stringify(user.wishlist));             
+                      
+    			        } 	
+    			        				         
+    			         });
+      	  }
+  	      else 
+  	      {
+  	        console.log('User not present, redirecting to login');
+  	        res.writeHead(301, {'Location': '/login'});
+  	        res.end(); 
+  	      }			       
     }
     else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") )
     {
@@ -587,6 +586,16 @@ app.get('/:action', function (req, res) {
 			        res.end();
 	    		}
         });	
+    }
+    else if(action== "getuser")
+    {
+      if( req.session.userid != undefined)
+        {
+          User.findOne({'username' : req.session.userid }, function (err, user) {          
+        
+          console.log(user.id(user.wishlist[0]));
+          });
+        }
     }
     else
     {
@@ -766,6 +775,19 @@ app.post("/:action", function (req, res)
 		    }
 	  	});
   }
+  if(action=="adduser")
+  {
+    var user = new User({
+                    uid: "USR1000000",
+                    username: 'SK'
+                    });
+                user.save(function(err, user) {
+                      if (err)
+                          console.log(err);
+                        else console.log('user added');
+                        });
+ 
+  }
   else if (action=="login")
   {
 	    var post = req.body;
@@ -786,7 +808,7 @@ app.post("/:action", function (req, res)
 	    	
 		  		console.log('Adding to wishlist of user:' + req.session.userid);
 
-		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
+		        User.findOne({'username' : req.session.userid}, function (err, user) {		          
 		    			          
 	    					if(err) 
 	    						{
@@ -795,42 +817,54 @@ app.post("/:action", function (req, res)
 	    						}
 	    			        else  
 	    			        {	    			        	
-		    			        	var movie = req.body["movieid"];									
-									var wish= item['wishlist'];
+                      if(user==null)
+                      {
+                        console.log('Null user');
+                        res.end("Null user");
+                        return;
+                      }
 
-								try
-								{
-									//var movieObject= ObjectId(movie);
-									console.log('movieObject:'+ movie);
+		    			        	var movieid = req.body["movieid"];	
+                        console.log(movieid);					
 
-									if(wish.indexOf(movie) == -1)
-									{
+        								try
+        								{
+        									
+                           Movie.findOne({'uid' : movieid}, function (err, movie) {    
 
-										console.log('1');
-										wish.push(movie);
+                                        console.log(movie);  
 
-										console.log('2');
-										item['wishlist']= wish;
-			    			        	
-			    			        	item.save(function(err, item2) {
-						                  if (err)
-						                      console.log('save error:'+err);
-			    			        	  else 
-			    			        	  {
-			    			        	  	console.log('Movie added to wishlist');
-			    			        	  	var ret= {};
-			    			        	  	ret.result="success";
-			    			        	  	res.end(JSON.stringify(ret));
-			    			        	  }
-						                    });   
-		    			        	}
-		    			        	else
-										console.log('Movie is already present in wishlist');
-								}
-								catch(e)
-								{
-									console.log(e);
-								}
+                                        if(movie!=null)
+                                        { 
+                                          if(user['wishlist'].indexOf(movie) == -1)
+                                          {                                       
+                                                            										
+                          										user['wishlist'].push(movie);
+                          			    			        	
+                          			    			        	user.save(function(err, item2) {
+                          						                  if (err)
+                          						                      console.log('save error:'+err);
+                          			    			        	  else 
+                          			    			        	  {
+                          			    			        	  	console.log('Movie added to wishlist');
+                          			    			        	  	var ret= {};
+                          			    			        	  	ret.result="success";
+                          			    			        	  	res.end(JSON.stringify(ret));
+                          			    			        	  }
+                          						                    });  
+                                            }
+                                            else
+                                            console.log('Movie is already present in wishlist');
+
+                                        }
+                                    }); 
+        		    			        	
+        		    			        	
+        								}
+        								catch(e)
+        								{
+        									console.log(e);
+        								}
 			    			        	
 					        }	
 					    });
