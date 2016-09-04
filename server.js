@@ -820,17 +820,14 @@ app.post("/:action", function (req, res)
                         return;
                       }
 		    			        	var movieid = req.body["movieid"];	
-                        console.log(movieid);					
 
         								try
         								{        									
                            Movie.findOne({'uid' : movieid}, function (err, movie) {    
 
-                                        console.log(movie);  
-
                                         if(movie!=null)
                                         { 
-                                          if(containsMovie(movie, user['wishlist']))
+                                          if(!containsMovie(movie, user['wishlist']))
                                           {                 										
                           										user['wishlist'].push(movie);
                           			    			        	
@@ -847,7 +844,7 @@ app.post("/:action", function (req, res)
                           						                    });  
                                             }
                                             else
-                                            console.log('Movie is already present in wishlist');
+                                              console.log('Movie is already present in wishlist');
 
                                         }
                                     }); 
@@ -866,15 +863,14 @@ app.post("/:action", function (req, res)
 	      res.writeHead(301, {'Location': '/login'});
 	      res.end(); 
 	    }
- }
-else if (action=="removefromwishlist")
-{
+  }
+  else if (action=="removefromwishlist")
+  {
 	    if (req.session!=undefined && req.session.userid!=undefined)
-	    {
-	    	
+	    {	    	
 		  		console.log('Removing from wishlist of user:' + req.session.userid);
 
-		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
+		        User.findOne({'username' : req.session.userid}, function (err, user) {		          
 		    			          
 	    					if(err) 
 	    						{
@@ -882,16 +878,12 @@ else if (action=="removefromwishlist")
 	    							res.end("Error");
 	    						}
 	    			        else  
-	    			        {	    			        	
-		    			        	var movie = req.body["movieid"];
-
+	    			        {
         								try
         								{
-        									if(containsMovie(movie, user['wishlist']))
-        									{
-        										    item['wishlist'].pop(movie);
-        			    			        	
-        			    			        	item.save(function(err, item2) {
+        									user['wishlist']= removeMovie(req.body["movieid"], user['wishlist']);
+        									        			    			        	
+        			    			        	user.save(function(err, item2) {
 
         						                if (err)
         						                  console.log('save error:'+err);
@@ -902,10 +894,8 @@ else if (action=="removefromwishlist")
         			    			        	  	ret.result="success";
         			    			        	  	res.end(JSON.stringify(ret));
         			    			        	  }
-        						                    });   
-        		    			        	}
-        		    			        	else
-        										console.log('Movie is not present in wishlist');
+        						                    });
+        		    			        	
         								}
         								catch(e)
         								{
@@ -921,7 +911,7 @@ else if (action=="removefromwishlist")
 	      res.writeHead(301, {'Location': '/login'});
 	      res.end(); 
 	    }
-}
+  }
 });
 
 function containsMovie(movie, list) {
@@ -932,4 +922,15 @@ function containsMovie(movie, list) {
         }
     }
     return false;
+}
+
+function removeMovie(movieid, list) {
+    var i;
+    var newList=[];
+    for (i = 0; i < list.length; i++) {
+        if (list[i].uid != movieid) {
+            newList.push(list[i]);
+        }
+    }
+    return newList;
 }
