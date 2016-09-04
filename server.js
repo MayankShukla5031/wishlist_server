@@ -141,7 +141,7 @@ app.get('/:action', function (req, res) {
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
-	if(action== "login")
+	  if(action== "login")
     {
       res.end( "<html>\
 			<body><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>\
@@ -519,12 +519,10 @@ app.get('/:action', function (req, res) {
   	    							res.end("Error");
   	    						}
   	    			        else  
-  	    			        {	    			        	
-  		    			        	var wish= user['wishlist'];
-
+  	    			        {	    	
           								try
           								{
-          									if(wish.indexOf(movie) != -1)
+          									if(containsMovie(movie, user['wishlist']))
           									{
           										    movie.inmywishlist= true;
           			        					res.end(JSON.stringify(movie));
@@ -785,8 +783,7 @@ app.post("/:action", function (req, res)
                       if (err)
                           console.log(err);
                         else console.log('user added');
-                        });
- 
+                        }); 
   }
   else if (action=="login")
   {
@@ -804,8 +801,7 @@ app.post("/:action", function (req, res)
   else if (action=="addtowishlist")
   {
 	    if (req.session!=undefined && req.session.userid !=undefined)
-	    {
-	    	
+	    {	    	
 		  		console.log('Adding to wishlist of user:' + req.session.userid);
 
 		        User.findOne({'username' : req.session.userid}, function (err, user) {		          
@@ -815,30 +811,27 @@ app.post("/:action", function (req, res)
 	    							console.log("Error getting wishlist");
 	    							res.end("Error");
 	    						}
-	    			        else  
-	    			        {	    			        	
+	    			      else  
+	    			      {
                       if(user==null)
                       {
                         console.log('Null user');
                         res.end("Null user");
                         return;
                       }
-
 		    			        	var movieid = req.body["movieid"];	
                         console.log(movieid);					
 
         								try
-        								{
-        									
+        								{        									
                            Movie.findOne({'uid' : movieid}, function (err, movie) {    
 
                                         console.log(movie);  
 
                                         if(movie!=null)
                                         { 
-                                          if(user['wishlist'].indexOf(movie) == -1)
-                                          {                                       
-                                                            										
+                                          if(containsMovie(movie, user['wishlist']))
+                                          {                 										
                           										user['wishlist'].push(movie);
                           			    			        	
                           			    			        	user.save(function(err, item2) {
@@ -858,8 +851,61 @@ app.post("/:action", function (req, res)
 
                                         }
                                     }); 
-        		    			        	
-        		    			        	
+        		    			        	        		    			        	
+        								}
+        								catch(e)
+        								{
+        									console.log(e);
+        								}			    			        	
+					        }	
+					    });
+	    }
+	    else
+	    {
+	  	  console.log('User not available');
+	      res.writeHead(301, {'Location': '/login'});
+	      res.end(); 
+	    }
+ }
+else if (action=="removefromwishlist")
+{
+	    if (req.session!=undefined && req.session.userid!=undefined)
+	    {
+	    	
+		  		console.log('Removing from wishlist of user:' + req.session.userid);
+
+		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
+		    			          
+	    					if(err) 
+	    						{
+	    							console.log("Error getting wishlist");
+	    							res.end("Error");
+	    						}
+	    			        else  
+	    			        {	    			        	
+		    			        	var movie = req.body["movieid"];
+
+        								try
+        								{
+        									if(containsMovie(movie, user['wishlist']))
+        									{
+        										    item['wishlist'].pop(movie);
+        			    			        	
+        			    			        	item.save(function(err, item2) {
+
+        						                if (err)
+        						                  console.log('save error:'+err);
+        			    			        	  else 
+        			    			        	  {
+        			    			        	  	console.log('Movie removed from wishlist');
+        			    			        	  	var ret= {};
+        			    			        	  	ret.result="success";
+        			    			        	  	res.end(JSON.stringify(ret));
+        			    			        	  }
+        						                    });   
+        		    			        	}
+        		    			        	else
+        										console.log('Movie is not present in wishlist');
         								}
         								catch(e)
         								{
@@ -875,61 +921,15 @@ app.post("/:action", function (req, res)
 	      res.writeHead(301, {'Location': '/login'});
 	      res.end(); 
 	    }
- }
-  else if (action=="removefromwishlist")
-  {
-	    if (req.session!=undefined && req.session.userid!=undefined)
-	    {
-	    	
-		  		console.log('Removing from wishlist of user:' + req.session.userid);
-
-		        User.findOne({'username' : req.session.userid}, function (err, item) {		          
-		    			          
-	    					if(err) 
-	    						{
-	    							console.log("Error getting wishlist");
-	    							res.end("Error");
-	    						}
-	    			        else  
-	    			        {	    			        	
-		    			        	var movie = req.body["movieid"];									
-									var wish= item['wishlist'];
-
-								try
-								{
-									if(wish.indexOf(movie) != -1)
-									{
-										wish.pop(movie);
-										item['wishlist']= wish;
-			    			        	
-			    			        	item.save(function(err, item2) {
-						                  if (err)
-						                      console.log('save error:'+err);
-			    			        	  else 
-			    			        	  {
-			    			        	  	console.log('Movie removed from wishlist');
-			    			        	  	var ret= {};
-			    			        	  	ret.result="success";
-			    			        	  	res.end(JSON.stringify(ret));
-			    			        	  }
-						                    });   
-		    			        	}
-		    			        	else
-										console.log('Movie is not present in wishlist');
-								}
-								catch(e)
-								{
-									console.log(e);
-								}
-			    			        	
-					        }	
-					    });
-	    }
-	    else
-	    {
-	  	  console.log('User not available');
-	      res.writeHead(301, {'Location': '/login'});
-	      res.end(); 
-	    }
- }
+}
 });
+
+function containsMovie(movie, list) {
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i].uid == movie.uid) {
+            return true;
+        }
+    }
+    return false;
+}
