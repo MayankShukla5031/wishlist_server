@@ -13,10 +13,11 @@ const styles = {
 		backgroundColor: '#77ADFC',
 		color: 'white',
 		marginLeft: '20px',
-		cursor: 'pointer'
+		cursor: 'pointer',
+		marginLeft: '10%',
 	},
 	leftMargin: {
-		marginLeft: '20px',
+		marginLeft: '10%',
 	}
 }
 
@@ -85,7 +86,7 @@ export default class TrendingMovies extends React.Component{
 	render(){
 		return(<Paper><Grid>
 			<Cell col={6}>
-				<img style={{height: '100%', width: '100%'}} src={this.state.movieDetails.poster_url}/>
+				<img style={{ width: '60%', marginLeft: '10%'}} src={this.state.movieDetails.poster_url}/>
 			</Cell>
 			<Cell col={6} style={{marginTop: '10px'}}>	
 				<p style={styles.leftMargin}>Movie: {this.state.movieDetails.title}</p>									      
