@@ -110,7 +110,7 @@ db.once('open', function callback () {});
     producer: Number,
     musicdirector: Number,
     productionhouse: Number,
-    poster_url: String
+    user: Number
   } , {collection : 'countcollection'});
 
   var Count = mongoose.model('countcollection', countSchema);
@@ -118,7 +118,10 @@ db.once('open', function callback () {});
   var userSchema = new Schema({
     uid: String,
     username: String,
-    wishlist:[movieSchema]//[{ type : ObjectId, ref: 'moviecollection' }]
+    password: String,
+    email_id: String,
+    phone_number: String,
+    wishlist:[{ type : ObjectId, ref: 'moviecollection' }]
   } , {collection : 'usercollection'});
 
   var User = mongoose.model('usercollection', userSchema);
@@ -516,7 +519,9 @@ app.get('/:action', function (req, res) {
   	    					if(err) 
   	    						{
   	    							console.log("Error getting wishlist");
-  	    							res.end("Error");
+                      var ret= {};
+                      ret.result="error";
+                      res.end(JSON.stringify(ret));
   	    						}
   	    			        else  
   	    			        {	    	
@@ -773,30 +778,138 @@ app.post("/:action", function (req, res)
 		    }
 	  	});
   }
-  if(action=="adduser")
+  if(action=="register")
   {
-    var user = new User({
-                    uid: "USR1000000",
-                    username: 'SK'
-                    });
-                user.save(function(err, user) {
-                      if (err)
-                          console.log(err);
-                        else console.log('user added');
-                        }); 
+
+    if(req.body["username"]== undefined || req.body["username"]=="")
+    {
+      var ret= {};
+      ret.result="error: username can not be blank";
+      res.end(JSON.stringify(ret))
+    }
+    else if(req.body["password"]== undefined || req.body["password"]=="")
+    {
+      var ret= {};
+      ret.result="error: password can not be blank";
+      res.end(JSON.stringify(ret))
+    }
+    else if(req.body["email_id"]== undefined || req.body["email_id"]=="")
+    {
+      var ret= {};
+      ret.result="error: emailid can not be blank";
+      res.end(JSON.stringify(ret))
+    }
+    else if(req.body["phone_number"]== undefined || req.body["phone_number"]=="")
+    {
+      var ret= {};
+      ret.result="error: phone number can not be blank";
+      res.end(JSON.stringify(ret))
+    }
+    else{
+
+          User.findOne({username:req.body["username"]}, function (err, user1) 
+                {
+                    if(user1)
+                    {
+                        var ret= {};
+                        ret.result="error: username already taken";
+                        res.end(JSON.stringify(ret))
+                    }
+                    else
+                    {
+                      User.findOne({email_id:req.body["email_id"]}, function (err, user2) 
+                      {
+                          if(user2)
+                          {
+                              var ret= {};
+                              ret.result="error: emailid already taken";
+                              res.end(JSON.stringify(ret))
+                          }
+                          else
+                          {
+                            User.findOne({phone_number:req.body["phone_number"]}, function (err, user3) 
+                            {
+                                if(user3)
+                                {
+                                    var ret= {};
+                                    ret.result="error: phone number already taken";
+                                    res.end(JSON.stringify(ret))
+                                }
+                                else
+                                {
+                                  Count.findOne({}, function (err, count)
+                                  {
+                                      var user = new User({
+                                                uid: "USR100000"+ count.user,
+                                                username: req.body["username"],
+                                                password: req.body["password"],
+                                                email_id: req.body["email_id"],
+                                                phone_number: req.body["phone_number"]
+                                                });
+
+                                            user.save(function(err, user) {
+                                                  if (err)
+                                                      console.log(err);
+                                                    else console.log('user added');
+                                                    });
+
+                                            count.user= count.user+1;
+                                            count.save(function(err, user) {
+                                                  if (err)
+                                                      console.log(err);
+                                                    });
+
+                                          var ret= {};
+                                          ret.result="success";
+                                          res.end(JSON.stringify(ret));            
+                                  });
+                                }
+
+                            });
+
+                          }
+                      });
+
+                    }
+                });
+        }     
   }
   else if (action=="login")
   {
-	    var post = req.body;
-	    if (post.user === 'SK' && post.password === 'onshivay') {
-	      req.session.userid = 'SK';
-	      //res.writeHead(301, {'Location': '/home'});
-	      res.end('/index');
-	    } 
-	    else {
-	      res.writeHead(301, {'Location': '/login'});
-	      res.end(); 
-	    }
+    var usr = req.body["user"];
+    var pwd= req.body["password"];
+
+    if(usr== undefined || usr=="")
+    {
+      var ret= {};
+      ret.result="error: username/emailid/phonenumber can not be blank";
+      res.end(JSON.stringify(ret))
+    }
+    else if(pwd== undefined || pwd=="")
+    {
+      var ret= {};
+      ret.result="error: password can not be blank";
+      res.end(JSON.stringify(ret))
+    }
+    else
+    {
+      User.find( {$and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} , 
+        function(err,user){
+          if(user) 
+            {
+              var ret= {};
+              ret.result="success";
+              res.end(JSON.stringify(ret));
+            }
+            else
+            {
+              var ret= {};
+              ret.result="error: username or password is invalid";
+              res.end(JSON.stringify(ret));
+            }
+      });
+    }
+	    
   }
   else if (action=="addtowishlist")
   {
@@ -809,7 +922,9 @@ app.post("/:action", function (req, res)
 	    					if(err) 
 	    						{
 	    							console.log("Error getting wishlist");
-	    							res.end("Error");
+	    							var ret= {};
+                    ret.result="error";
+                    res.end(JSON.stringify(ret));
 	    						}
 	    			      else  
 	    			      {
@@ -875,7 +990,9 @@ app.post("/:action", function (req, res)
 	    					if(err) 
 	    						{
 	    							console.log("Error getting wishlist");
-	    							res.end("Error");
+                    var ret= {};
+                    ret.result="error";
+                    res.end(JSON.stringify(ret));
 	    						}
 	    			        else  
 	    			        {
