@@ -124,10 +124,12 @@ db.once('open', function callback () {});
     wishlist:[{ type : ObjectId, ref: 'moviecollection' }]
   } , {collection : 'usercollection'});
 
-  var User = mongoose.model('usercollection', userSchema);
+var User = mongoose.model('usercollection', userSchema);
 
 
-app.get('/', function (req, res) {
+app.get('/', function (req, res) 
+{
+
 
 	req.session.userid = 'SK';
 	if (req.session!=undefined && req.session.userid!=undefined)	    
@@ -138,9 +140,11 @@ app.get('/', function (req, res) {
 	res.end();
 });
 
-app.get('/:action', function (req, res) {
+app.get('/:action', function (req, res) 
+{
 
-	req.session.userid = 'SK';
+	 req.session.userid = 'SK';
+
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
@@ -541,13 +545,10 @@ app.get('/:action', function (req, res) {
           								catch(e)
           								{
           									console.log(e);
-          								}
-			    			        	
+          								}			    			        	
 					        }	
-					    	});
-			        		
-			        	}
-			            
+					    	});			        		
+			        	}			            
 			         });
 	    }
     }
@@ -602,9 +603,8 @@ app.get('/:action', function (req, res) {
     }
     else
     {
-    	res.end("unknown request" );
+    	 res.end("unknown request" );
     }
-
 })
 
 app.use(bodyParser.json() );
@@ -909,8 +909,7 @@ app.post("/:action", function (req, res)
               res.end(JSON.stringify(ret));
             }
       });
-    }
-	    
+    }	    
   }
   else if (action=="addtowishlist")
   {
@@ -1032,7 +1031,8 @@ app.post("/:action", function (req, res)
   }
 });
 
-function containsMovie(movie, list) {
+function containsMovie(movie, list) 
+{
     var i;
     for (i = 0; i < list.length; i++) {
         if (list[i].uid == movie.uid) {
@@ -1042,7 +1042,8 @@ function containsMovie(movie, list) {
     return false;
 }
 
-function removeMovie(movieid, list) {
+function removeMovie(movieid, list) 
+{
     var i;
     var newList=[];
     for (i = 0; i < list.length; i++) {
