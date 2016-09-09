@@ -893,12 +893,13 @@ app.post("/:action", function (req, res)
     }
     else
     {
-      User.find( {$and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} , 
+      User.findOne( { $and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} , 
         function(err,user){
-          if(user) 
+
+          if(user!=undefined && user!={}) 
             {
               var ret= {};
-              ret.result="success";
+              ret.result=user;
               res.end(JSON.stringify(ret));
             }
             else
