@@ -1,5 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
+
+import Avatar from 'material-ui/Avatar';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
@@ -134,6 +136,7 @@ export default class HomePage extends React.Component {
                                     <MenuItem key={5} value="music house" primaryText="Music House" />  
                                     <MenuItem key={6} value="production house" primaryText="Production House" />                                  
                                 </SelectField>
+                                <Avatar>A</Avatar>
                             </HeaderRow>
                             <HeaderRow>
                                 <Navigation>
