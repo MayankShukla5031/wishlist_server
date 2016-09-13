@@ -193,6 +193,7 @@ export default class HomePage extends React.Component {
                         <TextField
                             hintText="e.g- abc"
                             floatingLabelText="User Name"
+                            floatingLabelStyle={styles.floatingLabelStyle}
                             fullWidth={true}
                             value={this.state.loginData.username || ''}
                             onChange={this._handleCommonLoginChange.bind(this, 'username')}                                  
@@ -202,6 +203,7 @@ export default class HomePage extends React.Component {
                         <TextField
                             hintText="e.g- 1234567890"
                             floatingLabelText="Mobile Number"
+                            floatingLabelStyle={styles.floatingLabelStyle}
                             fullWidth={true}
                             value={this.state.loginData.mobile_number || ''}
                             onChange={this._handleCommonLoginChange.bind(this, 'mobile_number')}                                  
@@ -211,6 +213,7 @@ export default class HomePage extends React.Component {
                          <TextField
                             hintText="e.g- abc@xyz.com"
                             floatingLabelText="Mail Id"
+                            floatingLabelStyle={styles.floatingLabelStyle}
                             fullWidth={true}
                             value={this.state.loginData.email_id || ''}
                             onChange={this._handleCommonLoginChange.bind(this, 'email_id')}                                  
@@ -222,6 +225,7 @@ export default class HomePage extends React.Component {
                             hintText="*****"
                             fullWidth={true}
                             floatingLabelText="Password"
+                            floatingLabelStyle={styles.floatingLabelStyle}
                             value={this.state.loginData.password || ''}
                             onChange={this._handleCommonLoginChange.bind(this, 'password')}                                  
                         />
@@ -239,6 +243,7 @@ export default class HomePage extends React.Component {
                            fullWidth={true}
                             hintText="e.g- abc"
                             floatingLabelText="User Name or Mobile Number or Mail Id"
+                            floatingLabelStyle={styles.floatingLabelStyle}
                             value={this.state.loginData.user || ''}
                             onChange={this._handleCommonLoginChange.bind(this, 'user')}                                  
                         />
@@ -249,6 +254,7 @@ export default class HomePage extends React.Component {
                             hintText="*****"
                             fullWidth={true}
                             floatingLabelText="Password"
+                            floatingLabelStyle={styles.floatingLabelStyle}
                             value={this.state.loginData.password || ''}
                             onChange={this._handleCommonLoginChange.bind(this, 'password')}                                  
                         />
