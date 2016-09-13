@@ -31,4 +31,13 @@ module.exports ={
 	        }
 		});
 	},
+
+	_setKey: function(key,value){
+		localStorage.setItem('wishlist.'+ key, value);
+	},
+
+	_getKey: function(key){
+		let value = localStorage.getItem('wishlist.' + key);
+		return value;
+	},
 }
