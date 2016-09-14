@@ -33024,7 +33024,8 @@
 	                });
 	            } else if (type == 'User_Reg_Success') {
 	                this.setState({
-	                    isRegister: true
+	                    isRegister: true,
+	                    loginData: {}
 	                });
 	            }
 	        }
@@ -33083,7 +33084,8 @@
 	        value: function _openLoginDialogue() {
 	            this.setState({
 	                openLoginDialogue: true,
-	                openUserOption: false
+	                openUserOption: false,
+	                loginData: {}
 	            });
 	        }
 	    }, {
@@ -33144,8 +33146,8 @@
 	                            floatingLabelText: 'Mobile Number',
 	                            floatingLabelStyle: styles.floatingLabelStyle,
 	                            fullWidth: true,
-	                            value: this.state.loginData.mobile_number || '',
-	                            onChange: this._handleCommonLoginChange.bind(this, 'mobile_number')
+	                            value: this.state.loginData.phone_number || '',
+	                            onChange: this._handleCommonLoginChange.bind(this, 'phone_number')
 	                        })
 	                    ),
 	                    _react2.default.createElement(

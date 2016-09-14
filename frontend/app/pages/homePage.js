@@ -98,9 +98,9 @@ export default class HomePage extends React.Component {
         }else if(type == 'User_Reg_Success'){
             this.setState({
                 isRegister: true,
+                loginData: {}
             });
         }
-
     }
 
     _handleFilterChange(event, index, value){
@@ -154,6 +154,7 @@ export default class HomePage extends React.Component {
         this.setState({
             openLoginDialogue : true,
             openUserOption: false,
+            loginData: {}
         });
     }
 
@@ -205,8 +206,8 @@ export default class HomePage extends React.Component {
                             floatingLabelText="Mobile Number"
                             floatingLabelStyle={styles.floatingLabelStyle}
                             fullWidth={true}
-                            value={this.state.loginData.mobile_number || ''}
-                            onChange={this._handleCommonLoginChange.bind(this, 'mobile_number')}                                  
+                            value={this.state.loginData.phone_number || ''}
+                            onChange={this._handleCommonLoginChange.bind(this, 'phone_number')}                                  
                         />
                     </Cell>
                      <Cell col={12}>
