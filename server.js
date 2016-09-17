@@ -515,9 +515,7 @@ app.get('/:action', function (req, res)
 		    			          
   	    					if(err)
   	    						{
-  	    							console.log("Error getting wishlist");
-                      
-                      sendResponse(res, 500, "error");  
+  	    							sendResponse(res, 500, "Error getting user");  
   	    						}
   	    			        else
   	    			        {
@@ -560,7 +558,7 @@ app.get('/:action', function (req, res)
       	  }
   	      else 
   	      {
-  	       sendResponse(res, 500, "error: user not logged in"); 
+  	       sendResponse(res, 401, "Unauthorized"); 
   	      }			             
     }
     else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") || action.endsWith(".min.css"))
@@ -900,9 +898,7 @@ app.post("/:action", function (req, res)
 		    			          
 	    					  if(err) 
 	    						{
-	    							console.log("Error getting wishlist");
-	    							sendResponse(res, 500, "error");  
-
+                    sendResponse(res, 500, "Error getting user");
 	    						}
 	    			      else
 	    			      {
@@ -941,9 +937,8 @@ app.post("/:action", function (req, res)
                                                                       console.log('save error:'+err);
                                                                   else 
                                                                   {
-                                                                    console.log('Movie added to wishlist');
-                                                                    
-                                                                   sendResponse(res, 200, "success");  
+                                                                    console.log('Movie added to wishlist');                                                                    
+                                                                    sendResponse(res, 200, "success");  
                                                                   }
                                                               }); 
 
@@ -967,7 +962,7 @@ app.post("/:action", function (req, res)
 	    }
 	    else
 	    {
-	  	  sendResponse(res, 500, "error: user not logged in"); 
+	  	  sendResponse(res, 401, "Unauthorized"); 
 	    }
   }
   else if (action=="removefromwishlist")
@@ -982,9 +977,7 @@ app.post("/:action", function (req, res)
 		    			          
 	    					if(err) 
 	    						{
-	    							console.log("Error getting wishlist");
-                    sendResponse(res, 500, "error");  
-
+                    sendResponse(res, 500, "Error getting user");
 	    						}
 	    			        else  
 	    			        {
@@ -1030,7 +1023,7 @@ app.post("/:action", function (req, res)
 	    }
 	    else
 	    {
-	  	  sendResponse(res, 500, "error: user not logged in"); 
+	  	  sendResponse(res, 401, "Unauthorized"); 
 	    }
   }
 });
