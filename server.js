@@ -248,9 +248,10 @@ app.get('/:action', function (req, res)
         {
             
           Movie.find({'production_house' : new RegExp(req.query.production_house, 'i')}, function (err, str) {
+          
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
-          res.end(JSON.stringify(list));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': a.poster_url};}); 
+          res.end(JSON.stringify(list));                     
             });           
         }
     }
@@ -510,7 +511,7 @@ app.get('/:action', function (req, res)
 			        else  
 			        	{
 			        		var moviePresent = false;
-			        		User.findOne({'username' : req.session.user}, function (err, user) {		          
+			        		User.findOne({'uid' : req.session.user}, function (err, user) {		          
 		    			          
   	    					if(err)
   	    						{
@@ -593,7 +594,13 @@ app.get('/:action', function (req, res)
     }
     else if(action== "trendingmovies")
     {
-
+      Movie.find().sort({wishcount: -1}).limit(10).exec( 
+          function(err, movies) {
+             
+          var list=[];
+          list= movies.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': a.poster_url};}); 
+          res.end(JSON.stringify(list));
+                     });      
     }
     else
     {
@@ -889,7 +896,7 @@ app.post("/:action", function (req, res)
 	    {
 		  		console.log('Adding to wishlist of user:' + req.session.user);
 
-		        User.findOne({'username' : req.session.user}, function (err, user) {		          
+		        User.findOne({'uid' : req.session.user}, function (err, user) {		          
 		    			          
 	    					  if(err) 
 	    						{
@@ -971,7 +978,7 @@ app.post("/:action", function (req, res)
 	    {
 		  		console.log('Removing from wishlist of user:' + req.session.user);
 
-		        User.findOne({'username' : req.session.user}, function (err, user) {		          
+		        User.findOne({'uid' : req.session.user}, function (err, user) {		          
 		    			          
 	    					if(err) 
 	    						{
@@ -1068,7 +1075,18 @@ function validateToken(req)
 {
   try 
   {
-      var decoded = jwt.verify(req.query.token, secret);
+    var token="";
+
+    if(req.query != undefined && req.query.token != undefined)
+    {
+      token= req.query.token;
+    }
+    else if(req.body != undefined && req.body.token != undefined)
+    {
+      token= req.body.token;
+    }
+
+      var decoded = jwt.verify(token, secret);
 
       if(decoded.auth!=undefined)
       {
