@@ -543,13 +543,8 @@ app.get('/:action', function (req, res)
     }
     else if(action== "getmywishlist")
     {
-
-      if(!validateToken(req, res))
-      {
-
-
-      }
-
+      validateToken(req, res);
+      
       	if( req.session.user != undefined)
           {
     			   User.findOne({'username' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
@@ -883,9 +878,7 @@ app.post("/:action", function (req, res)
             }
             else
             {
-              var ret= {};
-              ret.result="error: username or password is invalid";
-              res.end(JSON.stringify(ret));
+              sendResponse(res, 500, "error: username or password is invalid");  
             }
       });
     }	    
