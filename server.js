@@ -501,45 +501,46 @@ app.get('/:action', function (req, res)
         {
           console.log(req.query.movieid);
 
-          if(movie=null)
-            console.log('NULL');
-
 			    Movie.findOne({'uid' : req.query.movieid}, function (err, movie) {		          
 			          
-					if(err) res.end("{}");
-			        else  
-			        	{
+					if(err) 
+            {
+              res.end("{}");
+            }
+			     else  
+			      {
 			        		var moviePresent = false;
-			        		User.findOne({'uid' : req.session.user}, function (err, user) {		          
-		    			          
-  	    					if(err)
-  	    						{
-  	    							sendResponse(res, 500, "Error getting user");  
-  	    						}
-  	    			        else
-  	    			        {
-          								try
-          								{
-          									if(containsMovie(movie, user['wishlist']))
-          									{
-          										    movie.inmywishlist= true;
-          			        					res.end(JSON.stringify(movie));
-          		    			    }
-          		    			     else
-          		    			     {
-          		    			        	movie.inmywishlist= false;
-          			        					res.end(JSON.stringify(movie));
-          		    			     }
-          								}
-          								catch(e)
-          								{
-          									console.log(e);
-          								}			    			        	
-					        }	
-					    	});			        		
-			        	}			            
+
+                  if(req.session.user != undefined)
+                  {
+  			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
+  		    			          
+    	    					if(err)
+    	    						{
+    	    							sendResponse(res, 500, "Error getting user");  
+    	    						}
+    	    			      else
+    	    			      {
+            									if(containsMovie(movie, user['wishlist']))
+            									{
+            										    movie.inmywishlist= true;                                    
+                                    res.end(JSON.stringify(movie));
+            		    			    }
+            		    			     else
+            		    			    {
+            		    			        	movie.inmywishlist= false;
+            			        					res.end(JSON.stringify(movie));
+            		    			    }            										    			        	
+  					          }	
+  					    	  });		
+                  }
+                  else
+                  {
+                   res.end(JSON.stringify(movie));  
+                  }
+			      }			            
 			         });
-	    }
+	       }
     }
     else if(action== "getmywishlist")
     {
