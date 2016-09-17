@@ -1,12 +1,8 @@
 var express = require("express");
 var app = express();
-var bodyParser = require('body-parser')
-var fs = require('fs');
-var expressSession = require('express-session');
-var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var session = require('client-sessions');
 
-app.use(cookieParser('secret'));
 app.use(session({
   cookieName: 'session',
   secret: 'onshivay',
@@ -33,6 +29,12 @@ mongoose.connect(mongodbUri);
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
 var ObjectId= Schema.Types.ObjectId;
+
+app.use(bodyParser.json() );
+app.use(bodyParser.urlencoded({extended: true}));
+
+var jwt= require('jsonwebtoken');
+var secret= process.env.JWT_SECRET || "tokengeneratorsecret";
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -126,7 +128,6 @@ db.once('open', function callback () {});
   } , {collection : 'usercollection'});
 
 var User = mongoose.model('usercollection', userSchema);
-
 
 app.get('/', function (req, res) 
 {
@@ -558,17 +559,16 @@ app.get('/:action', function (req, res)
   	      else 
   	      {
   	       sendResponse(res, 500, "error: user not logged in"); 
-  	      }			       
-      
+  	      }			             
     }
-    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") )
+    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") || action.endsWith(".min.css"))
     {
     	fs.readFile('frontend/public/'+ action, function(err, contents) {
 
 	        if (err) console.log(err);
 	        else 
 	        	{
-			        if(action.endsWith(".css") || action.endsWith("css.map"))
+			        if(action.endsWith(".css") || action.endsWith("css.map") || action.endsWith(".min.css"))
 			        	res.writeHead(200, {'Content-Type': 'text/css'});
 
 			        else if(action.endsWith(".js")|| action.endsWith("js.map"))
@@ -590,19 +590,19 @@ app.get('/:action', function (req, res)
           res.end(JSON.stringify(user));          });
         }
     }
+    else if(action== "trendingmovies")
+    {
+
+    }
     else
     {
     	 res.end("unknown request" );
     }
 })
 
-app.use(bodyParser.json() );
-app.use(bodyParser.urlencoded({extended: true}));
-
 app.post("/:action", function (req, res)
 {
   var action= req.params.action;
-
   console.log('Received POST Req:' + action);
 
   if(action=="add")
@@ -963,7 +963,7 @@ app.post("/:action", function (req, res)
 	    }
   }
   else if (action=="removefromwishlist")
-  {      
+  {
       validateToken(req);
 
 	    if (req.session.user!=undefined)
@@ -1050,9 +1050,6 @@ function removeMovie(movie, list)
     }
     return newList;
 }
-
-var jwt= require('jsonwebtoken');
-var secret= process.env.JWT_SECRET || "tokengeneratorsecret";
 
 // generate the JWT 
 function generateToken(req, tokenUser)
