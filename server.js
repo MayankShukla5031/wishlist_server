@@ -544,7 +544,11 @@ app.get('/:action', function (req, res)
     else if(action== "getmywishlist")
     {
 
-      console.log(validateToken(req, res));
+      if(!validateToken(req, res))
+      {
+
+        
+      }
 
       	if( req.session.user != undefined)
           {
@@ -562,6 +566,7 @@ app.get('/:action', function (req, res)
   	        res.writeHead(301, {'Location': '/login'});
   	        res.end(); 
   	      }			       
+      }
     }
     else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") )
     {
