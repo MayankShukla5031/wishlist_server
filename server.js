@@ -2,6 +2,7 @@ var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var session = require('client-sessions');
+var fs = require('fs');
 
 app.use(session({
   cookieName: 'session',
