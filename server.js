@@ -156,8 +156,7 @@ app.get('/:action', function (req, res)
     else if(action== "logout")
     {
       delete req.session.user;
-      res.writeHead(301, {'Location': '/login'});
-      res.end();
+      sendResponse(res, 200, "success");
     }
     else if(action=="index")
     {
@@ -1079,6 +1078,8 @@ function validateToken(req)
       token= req.body.token;
     }
 
+    if(token!= "")
+    {
       var decoded = jwt.verify(token, secret);
 
       if(decoded.auth!=undefined)
@@ -1086,6 +1087,7 @@ function validateToken(req)
         req.session.user = decoded.auth;
         console.log('User:'+decoded.auth);
       }
+    }
 
     } 
     catch (e) {
