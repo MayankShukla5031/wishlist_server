@@ -543,11 +543,11 @@ app.get('/:action', function (req, res)
     }
     else if(action== "getmywishlist")
     {
-      validateToken(req, res);
+        validateToken(req);
       
       	if( req.session.user != undefined)
           {
-    			   User.findOne({'username' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
+    			   User.findOne({'uid' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
                    {
                     var list=[];
                     list= user.wishlist.map(function(a) {return { uid:a.movieid.uid, title:a.movieid.title, poster_url:a.movieid.poster_url, count:a.movieid.wishcount};});
@@ -557,9 +557,7 @@ app.get('/:action', function (req, res)
       	  }
   	      else 
   	      {
-  	        console.log('User not present, redirecting to login');
-  	        res.writeHead(301, {'Location': '/login'});
-  	        res.end(); 
+  	       sendResponse(res, 500, "error: user not logged in"); 
   	      }			       
       
     }
@@ -581,14 +579,15 @@ app.get('/:action', function (req, res)
 	    		}
         });	
     }
-    else if(action== "getuser")
+    else if(action== "getuserprofile")
     {
+      validateToken(req);
+      
       if( req.session.user != undefined)
         {
-          User.findOne({'username' : req.session.user }, function (err, user) {          
+          User.findOne({'uid' : req.session.user }, function (err, user) {          
         
-          console.log(user.id(user.wishlist[0]));
-          });
+          res.end(JSON.stringify(user));          });
         }
     }
     else
@@ -872,8 +871,6 @@ app.post("/:action", function (req, res)
               ret.result.username= user.username;
               var token= generateToken(req, user.uid);
               res.set('authorization', token);
-              //userTokens[user.uid]= token;        
-              //console.log(userTokens);
               res.end(JSON.stringify(ret));
             }
             else
@@ -885,8 +882,10 @@ app.post("/:action", function (req, res)
   }
   else if (action=="addtowishlist")
   {
-	    if (req.session!=undefined && req.session.user !=undefined)
-	    {	    	
+      validateToken(req);
+      
+	    if (req.session.user !=undefined)
+	    {
 		  		console.log('Adding to wishlist of user:' + req.session.user);
 
 		        User.findOne({'username' : req.session.user}, function (err, user) {		          
@@ -960,15 +959,15 @@ app.post("/:action", function (req, res)
 	    }
 	    else
 	    {
-	  	  console.log('User not available');
-	      res.writeHead(301, {'Location': '/login'});
-	      res.end(); 
+	  	  sendResponse(res, 500, "error: user not logged in"); 
 	    }
   }
   else if (action=="removefromwishlist")
-  {
-	    if (req.session!=undefined && req.session.user!=undefined)
-	    {	    	
+  {      
+      validateToken(req);
+
+	    if (req.session.user!=undefined)
+	    {
 		  		console.log('Removing from wishlist of user:' + req.session.user);
 
 		        User.findOne({'username' : req.session.user}, function (err, user) {		          
@@ -1023,9 +1022,7 @@ app.post("/:action", function (req, res)
 	    }
 	    else
 	    {
-	  	  console.log('User not available');
-	      res.writeHead(301, {'Location': '/login'});
-	      res.end(); 
+	  	  sendResponse(res, 500, "error: user not logged in"); 
 	    }
   }
 });
@@ -1056,41 +1053,41 @@ function removeMovie(movie, list)
 
 var jwt= require('jsonwebtoken');
 var secret= process.env.JWT_SECRET || "tokengeneratorsecret";
-var userTokens={};
 
 // generate the JWT 
-function generateToken(req, tokenUser){
+function generateToken(req, tokenUser)
+{
   var token = jwt.sign({
     auth: tokenUser,
     agent: req.get['user-agent'],
-    exp:   Math.floor(new Date().getTime()/1000) + 60*60 // Note: in seconds! 
-  }, secret);  // secret is defined in the environment variable JWT_SECRET 
+    exp:   Math.floor(new Date().getTime()/1000) + 24*60*60 // Note: in seconds! 
+  }, secret); 
   return token;
 }
 
 // validate the token supplied in request header 
-function validateToken(req) {
-  var token = req.get('authorization');
+function validateToken(req) 
+{
+  try 
+  {
+      var decoded = jwt.verify(req.query.token, secret);
 
-  try {
-    var decoded = jwt.verify(token, secret);
+      if(decoded.auth!=undefined)
+      {
+        req.session.user = decoded.auth;
+        console.log('User:'+decoded.auth);
+      }
 
-  console.log('decoded:'+decoded);
-  } catch (e) {
-  console.log('error'+e);
-    return false;
-  }
-  if(!decoded || decoded.auth !== tokenUser) {
-    return false;
-  } else {
-    return true;
-  }
+    } 
+    catch (e) {
+    console.log('error'+e);
+    }  
 }
 
-function sendResponse(res, type, message)
+function sendResponse(res, status, message)
 {
   var ret= {};
   ret.result= message;
-  res.status(type);
+  res.status(status);
   res.end(JSON.stringify(ret)); 
 }
