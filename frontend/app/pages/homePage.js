@@ -341,7 +341,7 @@ export default class HomePage extends React.Component {
                                     <MenuItem key={2} value="actor" primaryText="Actor" />
                                     <MenuItem key={3} value="director" primaryText="Director" />
                                     <MenuItem key={4} value="producer" primaryText="Producer" />
-                                    <MenuItem key={5} value="music house" primaryText="Music House" />  
+                                    <MenuItem key={5} value="music director" primaryText="Music Director" />  
                                     <MenuItem key={6} value="production house" primaryText="Production House" />                                  
                                 </SelectField>
 
