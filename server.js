@@ -1071,9 +1071,9 @@ function validateToken(req)
   {
     var token="";
 
-    if(req.query != undefined && req.query.token != undefined)
+    if(req.get('token') != undefined )
     {
-      token= req.query.token;
+      token= req.get('token');
     }
     else if(req.body != undefined && req.body.token != undefined)
     {
