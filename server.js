@@ -15,8 +15,8 @@ app.use(session({
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  res.header("Access-Control-Expose-Headers", "authorization");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Expose-Headers", "Authorization");
   next();
 });
 
@@ -877,7 +877,7 @@ app.post("/:action", function (req, res)
               ret.result={};
               ret.result.username= user.username;
               var token= generateToken(req, user.uid);
-              res.set('authorization', token);
+              res.set('Authorization', token);
               res.end(JSON.stringify(ret));
             }
             else
