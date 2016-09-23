@@ -1,12 +1,9 @@
 var express = require("express");
 var app = express();
-var bodyParser = require('body-parser')
-var fs = require('fs');
-var expressSession = require('express-session');
-var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var session = require('client-sessions');
+var fs = require('fs');
 
-app.use(cookieParser('secret'));
 app.use(session({
   cookieName: 'session',
   secret: 'onshivay',
@@ -18,7 +15,8 @@ app.use(session({
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+  res.header("Access-Control-Expose-Headers", "Authorization");
   next();
 });
 
@@ -33,6 +31,12 @@ mongoose.connect(mongodbUri);
 var db = mongoose.connection;
 var Schema = mongoose.Schema;
 var ObjectId= Schema.Types.ObjectId;
+
+app.use(bodyParser.json() );
+app.use(bodyParser.urlencoded({extended: true}));
+
+var jwt= require('jsonwebtoken');
+var secret= process.env.JWT_SECRET || "tokengeneratorsecret";
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -127,24 +131,14 @@ db.once('open', function callback () {});
 
 var User = mongoose.model('usercollection', userSchema);
 
-
 app.get('/', function (req, res) 
 {
-
-
-	req.session.userid = 'SK';
-	if (req.session!=undefined && req.session.userid!=undefined)	    
-		res.writeHead(301, {'Location': '/index'});
-	else
-		res.writeHead(301, {'Location': '/login'});
-
-	res.end();
+		res.writeHead(301, {'Location': '/index'});	
+	 res.end();
 });
 
 app.get('/:action', function (req, res) 
 {
-	 req.session.userid = 'SK';
-
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
@@ -162,14 +156,12 @@ app.get('/:action', function (req, res)
     }
     else if(action== "logout")
     {
-      delete req.session.userid;
-      res.writeHead(301, {'Location': '/login'});
-      res.end();
+      delete req.session.user;
+      sendResponse(res, 200, "success");
     }
     else if(action=="index")
     {
-    	console.log(req.session.userid);
-        fs.readFile('frontend/public/index.html' , function(err, contents) {
+      fs.readFile('frontend/public/index.html' , function(err, contents) {
 
   		res.writeHead(200, {'Content-Type': 'text/html'});
           res.end(contents);
@@ -256,9 +248,10 @@ app.get('/:action', function (req, res)
         {
             
           Movie.find({'production_house' : new RegExp(req.query.production_house, 'i')}, function (err, str) {
+          
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
-          res.end(JSON.stringify(list));
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': a.poster_url};}); 
+          res.end(JSON.stringify(list));                     
             });           
         }
     }
@@ -507,56 +500,56 @@ app.get('/:action', function (req, res)
     {
     	if( req.query.movieid != undefined)
         {
-          console.log(req.query.movieid);
-
-          if(movie=null)
-            console.log('NULL');
-
+          validateToken(req);
+      
 			    Movie.findOne({'uid' : req.query.movieid}, function (err, movie) {		          
 			          
-					if(err) res.end("{}");
-			        else  
-			        	{
+					if(err) 
+            {
+              res.end("{}");
+            }
+			     else  
+			      {
 			        		var moviePresent = false;
-			        		User.findOne({'username' : req.session.userid}, function (err, user) {		          
-		    			          
-  	    					if(err)
-  	    						{
-  	    							console.log("Error getting wishlist");
-                      var ret= {};
-                      ret.result="error";
-                      res.end(JSON.stringify(ret));
-  	    						}
-  	    			        else
-  	    			        {
-          								try
-          								{
-          									if(containsMovie(movie, user['wishlist']))
-          									{
-          										    movie.inmywishlist= true;
-          			        					res.end(JSON.stringify(movie));
-          		    			    }
-          		    			     else
-          		    			     {
-          		    			        	movie.inmywishlist= false;
-          			        					res.end(JSON.stringify(movie));
-          		    			     }
-          								}
-          								catch(e)
-          								{
-          									console.log(e);
-          								}			    			        	
-					        }	
-					    	});			        		
-			        	}			            
+
+                  if(req.session.user != undefined)
+                  {
+  			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
+  		    			          
+    	    					if(err)
+    	    						{
+    	    							sendResponse(res, 500, "Error getting user");  
+    	    						}
+    	    			      else
+    	    			      {
+            									if(containsMovie(movie, user['wishlist']))
+            									{
+            										    movie.inmywishlist= true;                                    
+                                    res.end(JSON.stringify(movie));
+            		    			    }
+            		    			     else
+            		    			    {
+            		    			        	movie.inmywishlist= false;
+            			        					res.end(JSON.stringify(movie));
+            		    			    }            										    			        	
+  					          }	
+  					    	  });		
+                  }
+                  else
+                  {
+                   res.end(JSON.stringify(movie));  
+                  }
+			      }			            
 			         });
-	    }
+	       }
     }
     else if(action== "getmywishlist")
     {
-      	if( req.session.userid != undefined)
+        validateToken(req);
+      
+      	if( req.session.user != undefined)
           {
-    			   User.findOne({'username' : req.session.userid}).populate({path:'wishlist.movieid'}).exec(function(err, user)
+    			   User.findOne({'uid' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
                    {
                     var list=[];
                     list= user.wishlist.map(function(a) {return { uid:a.movieid.uid, title:a.movieid.title, poster_url:a.movieid.poster_url, count:a.movieid.wishcount};});
@@ -566,19 +559,17 @@ app.get('/:action', function (req, res)
       	  }
   	      else 
   	      {
-  	        console.log('User not present, redirecting to login');
-  	        res.writeHead(301, {'Location': '/login'});
-  	        res.end(); 
-  	      }			       
+  	       sendResponse(res, 401, "Unauthorized"); 
+  	      }			             
     }
-    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") )
+    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") || action.endsWith(".min.css"))
     {
     	fs.readFile('frontend/public/'+ action, function(err, contents) {
 
 	        if (err) console.log(err);
 	        else 
 	        	{
-			        if(action.endsWith(".css") || action.endsWith("css.map"))
+			        if(action.endsWith(".css") || action.endsWith("css.map") || action.endsWith(".min.css"))
 			        	res.writeHead(200, {'Content-Type': 'text/css'});
 
 			        else if(action.endsWith(".js")|| action.endsWith("js.map"))
@@ -589,15 +580,26 @@ app.get('/:action', function (req, res)
 	    		}
         });	
     }
-    else if(action== "getuser")
+    else if(action== "getuserprofile")
     {
-      if( req.session.userid != undefined)
+      validateToken(req);
+      
+      if( req.session.user != undefined)
         {
-          User.findOne({'username' : req.session.userid }, function (err, user) {          
+          User.findOne({'uid' : req.session.user }, function (err, user) {          
         
-          console.log(user.id(user.wishlist[0]));
-          });
+          res.end(JSON.stringify(user));          });
         }
+    }
+    else if(action== "trendingmovies")
+    {
+      Movie.find().sort({wishcount: -1}).limit(10).exec( 
+          function(err, movies) {
+             
+          var list=[];
+          list= movies.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': a.poster_url};}); 
+          res.end(JSON.stringify(list));
+                     });      
     }
     else
     {
@@ -605,14 +607,9 @@ app.get('/:action', function (req, res)
     }
 })
 
-app.use(bodyParser.json() );
-app.use(bodyParser.urlencoded({extended: true}));
-
 app.post("/:action", function (req, res)
 {
-  req.session.userid = 'SK';
   var action= req.params.action;
-
   console.log('Received POST Req:' + action);
 
   if(action=="add")
@@ -781,57 +778,43 @@ app.post("/:action", function (req, res)
 
     if(req.body["username"]== undefined || req.body["username"]=="")
     {
-      var ret= {};
-      ret.result="error: username can not be blank";
-      res.end(JSON.stringify(ret))
+      sendResponse(res, 500, "error: username can not be blank");  
     }
     else if(req.body["password"]== undefined || req.body["password"]=="")
     {
-      var ret= {};
-      ret.result="error: password can not be blank";
-      res.end(JSON.stringify(ret))
+      sendResponse(res, 500, "error: password can not be blank");  
     }
     else if(req.body["email_id"]== undefined || req.body["email_id"]=="")
     {
-      var ret= {};
-      ret.result="error: emailid can not be blank";
-      res.end(JSON.stringify(ret))
+       sendResponse(res, 500, "error: emailid can not be blank");  
     }
     else if(req.body["phone_number"]== undefined || req.body["phone_number"]=="")
     {
-      var ret= {};
-      ret.result="error: phone number can not be blank";
-      res.end(JSON.stringify(ret))
+      sendResponse(res, 500, "error: phone number can not be blank");  
     }
     else{
 
           User.findOne({username:req.body["username"]}, function (err, user1) 
                 {
                     if(user1)
-                    {
-                        var ret= {};
-                        ret.result="error: username already taken";
-                        res.end(JSON.stringify(ret))
+                    {                       
+                      sendResponse(res, 500, "error: username already taken");  
                     }
                     else
                     {
                       User.findOne({email_id:req.body["email_id"]}, function (err, user2) 
                       {
                           if(user2)
-                          {
-                              var ret= {};
-                              ret.result="error: emailid already taken";
-                              res.end(JSON.stringify(ret))
+                          {                            
+                           sendResponse(res, 500, "error: emailid already taken");   
                           }
                           else
                           {
                             User.findOne({phone_number:req.body["phone_number"]}, function (err, user3) 
                             {
                                 if(user3)
-                                {
-                                    var ret= {};
-                                    ret.result="error: phone number already taken";
-                                    res.end(JSON.stringify(ret))
+                                {                                    
+                                  sendResponse(res, 500, "error: phone number already taken");                   
                                 }
                                 else
                                 {
@@ -857,9 +840,7 @@ app.post("/:action", function (req, res)
                                                       console.log(err);
                                                     });
 
-                                          var ret= {};
-                                          ret.result="success";
-                                          res.end(JSON.stringify(ret));            
+                                          sendResponse(res, 200, "success");        
                                   });
                                 }
 
@@ -879,15 +860,11 @@ app.post("/:action", function (req, res)
 
     if(usr== undefined || usr=="")
     {
-      var ret= {};
-      ret.result="error: username/emailid/phonenumber can not be blank";
-      res.end(JSON.stringify(ret))
+       sendResponse(res, 500, "error: username/emailid/phonenumber can not be blank");  
     }
     else if(pwd== undefined || pwd=="")
     {
-      var ret= {};
-      ret.result="error: password can not be blank";
-      res.end(JSON.stringify(ret))
+       sendResponse(res, 500, "error: password can not be blank");  
     }
     else
     {
@@ -897,32 +874,32 @@ app.post("/:action", function (req, res)
           if(user!=undefined && user!={}) 
             {
               var ret= {};
-              ret.result=user;
+              ret.result={};
+              ret.result.username= user.username;
+              var token= generateToken(req, user.uid);
+              res.set('Authorization', token);
               res.end(JSON.stringify(ret));
             }
             else
             {
-              var ret= {};
-              ret.result="error: username or password is invalid";
-              res.end(JSON.stringify(ret));
+              sendResponse(res, 500, "error: username or password is invalid");  
             }
       });
     }	    
   }
   else if (action=="addtowishlist")
   {
-	    if (req.session!=undefined && req.session.userid !=undefined)
-	    {	    	
-		  		console.log('Adding to wishlist of user:' + req.session.userid);
+      validateToken(req);
+      
+	    if (req.session.user !=undefined)
+	    {
+		  		console.log('Adding to wishlist of user:' + req.session.user);
 
-		        User.findOne({'username' : req.session.userid}, function (err, user) {		          
+		        User.findOne({'uid' : req.session.user}, function (err, user) {		          
 		    			          
 	    					  if(err) 
 	    						{
-	    							console.log("Error getting wishlist");
-	    							var ret= {};
-                    ret.result="error";
-                    res.end(JSON.stringify(ret));
+                    sendResponse(res, 500, "Error getting user");
 	    						}
 	    			      else
 	    			      {
@@ -961,10 +938,8 @@ app.post("/:action", function (req, res)
                                                                       console.log('save error:'+err);
                                                                   else 
                                                                   {
-                                                                    console.log('Movie added to wishlist');
-                                                                    var ret= {};
-                                                                    ret.result="success";
-                                                                    res.end(JSON.stringify(ret));
+                                                                    console.log('Movie added to wishlist');                                                                    
+                                                                    sendResponse(res, 200, "success");  
                                                                   }
                                                               }); 
 
@@ -988,25 +963,22 @@ app.post("/:action", function (req, res)
 	    }
 	    else
 	    {
-	  	  console.log('User not available');
-	      res.writeHead(301, {'Location': '/login'});
-	      res.end(); 
+	  	  sendResponse(res, 401, "Unauthorized"); 
 	    }
   }
   else if (action=="removefromwishlist")
   {
-	    if (req.session!=undefined && req.session.userid!=undefined)
-	    {	    	
-		  		console.log('Removing from wishlist of user:' + req.session.userid);
+      validateToken(req);
 
-		        User.findOne({'username' : req.session.userid}, function (err, user) {		          
+	    if (req.session.user!=undefined)
+	    {
+		  		console.log('Removing from wishlist of user:' + req.session.user);
+
+		        User.findOne({'uid' : req.session.user}, function (err, user) {		          
 		    			          
 	    					if(err) 
 	    						{
-	    							console.log("Error getting wishlist");
-                    var ret= {};
-                    ret.result="error";
-                    res.end(JSON.stringify(ret));
+                    sendResponse(res, 500, "Error getting user");
 	    						}
 	    			        else  
 	    			        {
@@ -1031,9 +1003,8 @@ app.post("/:action", function (req, res)
                                                           else 
                                                             {
                                                                console.log('Movie removed from wishlist');
-                                                               var ret= {};
-                                                               ret.result="success";
-                                                               res.end(JSON.stringify(ret));
+                                                               
+                                                               sendResponse(res, 200, "success");  
                                                              }
                                                       }); 
                                                     
@@ -1053,9 +1024,7 @@ app.post("/:action", function (req, res)
 	    }
 	    else
 	    {
-	  	  console.log('User not available');
-	      res.writeHead(301, {'Location': '/login'});
-	      res.end(); 
+	  	  sendResponse(res, 401, "Unauthorized"); 
 	    }
   }
 });
@@ -1082,4 +1051,52 @@ function removeMovie(movie, list)
         }
     }
     return newList;
+}
+
+// generate the JWT 
+function generateToken(req, tokenUser)
+{
+  var token = jwt.sign({
+    auth: tokenUser,
+    agent: req.get['user-agent'],
+    exp:   Math.floor(new Date().getTime()/1000) + 24*60*60 // Note: in seconds! 
+  }, secret); 
+  return token;
+}
+
+// validate the token supplied in request header 
+function validateToken(req) 
+{
+  try 
+  {
+    var token="";
+
+    if(req.get('token') != undefined )
+    {
+      token= req.get('token');
+    }
+
+    if(token!= "")
+    {
+      var decoded = jwt.verify(token, secret);
+
+      if(decoded.auth!=undefined)
+      {
+        req.session.user = decoded.auth;
+        console.log('User:'+decoded.auth);
+      }
+    }
+
+    } 
+    catch (e) {
+    console.log('error'+e);
+    }  
+}
+
+function sendResponse(res, status, message)
+{
+  var ret= {};
+  ret.result= message;
+  res.status(status);
+  res.end(JSON.stringify(ret)); 
 }
