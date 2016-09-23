@@ -500,8 +500,8 @@ app.get('/:action', function (req, res)
     {
     	if( req.query.movieid != undefined)
         {
-          console.log(req.query.movieid);
-
+          validateToken(req);
+      
 			    Movie.findOne({'uid' : req.query.movieid}, function (err, movie) {		          
 			          
 					if(err) 
@@ -1074,10 +1074,6 @@ function validateToken(req)
     if(req.get('token') != undefined )
     {
       token= req.get('token');
-    }
-    else if(req.body != undefined && req.body.token != undefined)
-    {
-      token= req.body.token;
     }
 
     if(token!= "")
