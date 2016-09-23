@@ -133,7 +133,7 @@ export default class HomePage extends React.Component {
     }
 
     _openUserOption(event){
-        console.log(event.target);
+        // console.log(event.target);
         this.setState({
             anchorUserOption: event.target, 
             openUserOption: true,

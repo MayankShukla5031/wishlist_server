@@ -3,8 +3,8 @@ import MyWishListWebApiUtils from "../utils/mywishlistwebapiutils";
 
 module.exports = {
 
-	_getMyWishList : function(){
-		MyWishListWebApiUtils._getMyWishList("");
+	_getMyWishList : function(inpulvalues){
+		MyWishListWebApiUtils._getMyWishList(inpulvalues);
 	},
 
 	_addToWishList : function(inpulvalues){

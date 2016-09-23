@@ -17,7 +17,8 @@ export default class MyWishList extends React.Component{
 	}
 
 	componentWillMount(){
-		MyWishListAction._getMyWishList();
+		let data = {};
+		MyWishListAction._getMyWishList(data);
 		MyWishListStore.on('change',this._getMovieList); 
 	}
 
