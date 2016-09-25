@@ -37,4 +37,9 @@ module.exports = {
         });
     },
 
+    _userLogOut: function(){
+        Api._removeKey('token');
+        hashHistory.push('/');
+    }
+
 }

@@ -39,8 +39,13 @@ module.exports ={
 	        error: (jqXhr,textStatus,error) => {
 	        	// console.log('error plz api js', jqXhr,textStatus,error);
                 if(jqXhr.status == 401){
-                }else{
                 	this._removeKey('token');
+                	dispatcher.dispatch({
+                		type: 'SNACKBAR',
+                		msg: 'Kindly Login First'
+                	});
+                }else{
+                	// this._removeKey('token');
 	        		target('error',jqXhr,textStatus,error);
 	        	}
 	        }
@@ -67,7 +72,7 @@ module.exports ={
 		return value;
 	},
 
-	_removeKey: function(key,value){
+	_removeKey: function(key){
 		localStorage.removeItem('wishlist.' + key);
 	},
 

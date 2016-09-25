@@ -9,7 +9,7 @@ class MovieListStore extends EventEmitter{
 
 	_setMovieList(data){
 		this.moviesList = data;
-		this.emit('change','MOVIES');
+		this.emit('change','Trending_Movies');
 	}
 
 	_getMovieList(){
@@ -19,7 +19,7 @@ class MovieListStore extends EventEmitter{
 
 	_handleActions(action){
 		switch(action.type){
-			case 'MOVIES' : {
+			case 'TRENDING_MOVIES' : {
 				this._setMovieList(action.data);
 				break;
 			}

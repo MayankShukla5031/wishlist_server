@@ -1,11 +1,74 @@
 import React from 'react';
-//import * as TreandingMoviesAction from '../actions/treandingmoviesaction';
-//import TrendingMoviesStore from '../stores/treandingmoviesstore';
+import {Link, hashhistory} from 'react-router';
+
+import {Grid, Cell, Card, CardTitle, CardText, CardActions, Button} from 'react-mdl';
+import Paper from 'material-ui/Paper';
+import FlatButton from 'material-ui/FlatButton';
+
+import * as TreandingMoviesAction from '../actions/treandingmoviesaction';
+import TrendingMoviesStore from '../stores/treandingmoviesstore';
 
 export default class TrendingMovies extends React.Component{
+
+	constructor(){
+		super();
+		this.state = {
+			trendingMovies : [],
+		};
+		this._trendingMovieStoreChange = this._trendingMovieStoreChange.bind(this);
+	}
+
+
+	componentWillMount(){
+		TreandingMoviesAction._getTreandingMoviesList();
+		TrendingMoviesStore.on('change', this._trendingMovieStoreChange);
+	}
+
+	componentWillUnmount(){
+		TrendingMoviesStore.removeListener('change', this._trendingMovieStoreChange);	
+	}
+
+	_trendingMovieStoreChange(type){
+		if(type == 'Trending_Movies'){
+			let movies = TrendingMoviesStore._getTrendingMovies();
+			this.setState({
+				trendingMovies: movies,
+			});
+		}
+	}
+
+
+	_setTrendingMoviesUI(){		
+		let uiItem = [];
+		let movieName = '';
+		let wishCount = 0;
+		let imageUrl;
+		let uid;
+		uiItem = this.state.trendingMovies.map((item, index)=> {
+			movieName = item.title || "Movie Name";
+			wishCount = item.count || 0;
+			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
+			uid = item.uid || item;
+			return(
+				<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
+				    <CardTitle expand style={{color: '#fff', height: 'inherit', width: 'inherit', fontSize: '8px' , color: 'black' , background: `url(${imageUrl}) bottom right 15% no-repeat #46B6AC `}}>{movieName}</CardTitle>
+				    <CardText>
+				        Wish Count: {wishCount}
+				    </CardText>
+				    <CardActions border>
+				        <Button colored><Link to={`moviedetails/${uid}`}>View Details</Link></Button>
+		     		</CardActions>
+				</Card>);
+		});
+		return uiItem;
+	}
+
+
 	render(){
 		return(
-				<h3>hello</h3>
+			<div>
+				{this._setTrendingMoviesUI()}
+			</div>
 		);
 	}
 }

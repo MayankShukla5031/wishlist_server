@@ -36,7 +36,7 @@ export default class MyWishList extends React.Component{
 		}
 	}
 
-	setWishListUi(){		
+	_setWishListUI(){		
 		let uiItem = [];
 		let movieName = '';
 		let wishCount = 0;
@@ -75,7 +75,7 @@ export default class MyWishList extends React.Component{
 
 	render(){
 		return(<div>
-				{this.setWishListUi()}
+				{this._setWishListUI()}
 			</div>
 		);
 	}

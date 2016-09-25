@@ -5,5 +5,6 @@ module.exports = {
 	GET_WISHLIST: 'getmywishlist/',
 	REMOVE_FROM_WISHLIST: 'removefromwishlist/',
 	LOGIN: 'login/',
-	USER_REGISTRATION: 'register/'
+	USER_REGISTRATION: 'register/',
+	TRENDING_MOVIE: 'trendingmovies',
 }

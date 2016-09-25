@@ -2,7 +2,6 @@ import React from 'react';
 import {Link} from 'react-router';
 
 import Avatar from 'material-ui/Avatar';
-import Snackbar from 'material-ui/Snackbar';
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -12,6 +11,7 @@ import Menu from 'material-ui/Menu';
 import Paper from 'material-ui/Paper';
 import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
+import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
 
 import Api from '../constants/api';
@@ -21,7 +21,7 @@ import * as MovieSearchAction from '../actions/moviesearchaction';
 
 import LoginStore from '../stores/loginstore';
 import MoviesListStore from '../stores/moviesliststore';
-
+import SnackBarStore from '../stores/snackbarstore';
 
 const styles = {
 
@@ -63,22 +63,28 @@ export default class HomePage extends React.Component {
             isRegister: true,
             openLoginDialogue: false,
             isLoggedin: false,
-            loginData: {}
+            loginData: {},
+            openSnackBar: false,
+            snackbarMsg: '',
         };
         this._getMovieList = this._getMovieList.bind(this);
         this._loginStoreChange = this._loginStoreChange.bind(this);
+        this._snackbarStoreChange = this._snackbarStoreChange.bind(this);
         this._handleLoginDialogCancel = this._handleLoginDialogCancel.bind(this);
         this._handleLoginDialogSubmit = this._handleLoginDialogSubmit.bind(this);
+        this._handleRequestClose = this._handleRequestClose.bind(this);
     }
 
     componentWillMount(){
         MoviesListStore.on('change',this._getMovieList); 
         LoginStore.on('change',this._loginStoreChange); 
+        SnackBarStore.on('change', this._snackbarStoreChange);
     }
 
     componentWillUnmount(){
         MoviesListStore.removeListener('change', this._getMovieList);
         LoginStore.removeListener('change', this._loginStoreChange);
+        SnackBarStore.removeListener('change', this._snackbarStoreChange);
     }
     
     _getMovieList(type){
@@ -99,6 +105,15 @@ export default class HomePage extends React.Component {
             this.setState({
                 isRegister: true,
                 loginData: {}
+            });
+        }
+    }
+
+    _snackbarStoreChange(type, str){
+        if(type == 'SNACKBAR'){
+            this.setState({
+                openSnackBar: true,
+                snackbarMsg: str,
             });
         }
     }
@@ -289,8 +304,15 @@ export default class HomePage extends React.Component {
     }
 
     _setLogOut(){
+        LoginAction._userLogOut();
         this.setState({
             isLoggedin: false,
+        });
+    }
+
+    _handleRequestClose(){
+        this.setState({
+            openSnackBar: false,
         });
     }
 
@@ -299,7 +321,7 @@ export default class HomePage extends React.Component {
         const LoginOptionAction = [
             <FlatButton style={styles.cancelButtonStyle} hoverColor="#237BFB" label="Cancel" primary={true} onTouchTap={this._handleLoginDialogCancel}/>,
             <FlatButton style={styles.saveButtonStyle}  label={this.state.isRegister? 'Log In' : 'Register'} primary={true} onTouchTap={this._handleLoginDialogSubmit} />,
-            // {this.state.isRegister?  <p style={{float: 'left', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'oldUser')}>Already have a Account</p> : ''}
+            // {this.state.isRegister? <p style={{float: 'left', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'oldUser')}>Already have a Account</p> : ''}
         ];
 
         return (
@@ -329,7 +351,7 @@ export default class HomePage extends React.Component {
                                 </Popover>
                                 
                                 
-                                 <SelectField
+                                <SelectField
                                     style={styles.SearchFieldFontStyling}
                                     labelStyle={{padding: '0px'}} 
                                     floatingLabelStyle={styles.floatingLabelStyle}
@@ -404,6 +426,12 @@ export default class HomePage extends React.Component {
                                 {/*<Divider/>*/}
                                     {this._setLoginDialogueUi()}
                             </Dialog>
+                            <Snackbar
+                                open={this.state.openSnackBar}
+                                message={this.state.snackbarMsg}
+                                autoHideDuration={4000}
+                                onRequestClose={this._handleRequestClose}
+                            />
                             {this.props.children}
                         </Content>
                     </Layout>                
