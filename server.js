@@ -1059,7 +1059,7 @@ function generateToken(req, tokenUser)
   var token = jwt.sign({
     auth: tokenUser,
     agent: req.get['user-agent'],
-    exp:   Math.floor(new Date().getTime()/1000) + 24*60*60 // Note: in seconds! 
+    exp:   Math.floor(new Date().getTime()/1000) + 5*60 // Note: in seconds! 
   }, secret); 
   return token;
 }
