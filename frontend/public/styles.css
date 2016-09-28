@@ -75,3 +75,41 @@
 .react-bs-table-container tbody td{
   vertical-align: middle !important;
 }
+
+.mdl-card{
+  margin: auto;
+}
+
+.mdl-card__title {
+  background-size: 150px 150px !important;
+  background-position: center !important;
+}
+
+.mdl-card{
+  transition: all .2s ease-in-out !important;
+  transform: scale(0.95) !important; 
+}
+
+.mdl-card:hover{
+  transform: scale(1.0) !important;
+}
+
+.mdl-card__title h2{
+  font-size: 18px !important;
+}
+
+a{
+  text-decoration: none !important;
+}
+/*
+.activeTab {
+  color:#ffffff;
+  line-height: 40px !important;
+  /*font-family: Roboto-Medium;
+  font-size: 14px;
+  background: #237BFB;
+  width: 130px;
+  padding: 0px !important;
+  text-align: center;
+  text-decoration: none !important;
+}*/

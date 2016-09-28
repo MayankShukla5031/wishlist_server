@@ -7,8 +7,6 @@ import FlatButton from 'material-ui/FlatButton';
 import * as MyWishListAction from '../actions/mywishlistaction';
 import MyWishListStore from '../stores/mywishliststore';
 
-var intervalID;
-
 export default class MyWishList extends React.Component{
 	constructor(){
 		super();
@@ -19,17 +17,11 @@ export default class MyWishList extends React.Component{
 	}
 
 	componentWillMount(){
-		// setTimeout(()=>{
-		// 	console.log('yes');
-		// 	MyWishListAction._getMyWishList("");
-		// }, 5000);
-	    intervalID = setInterval(function(){MyWishListAction._getMyWishList("");}, 10000);
 		MyWishListAction._getMyWishList("");
 		MyWishListStore.on('change',this._getMovieList); 
 	}
 
 	componentWillUnmount(){
-		clearInterval(intervalID);
 		MyWishListStore.removeListener('change', this._getMovieList);
 	}
 
@@ -53,10 +45,10 @@ export default class MyWishList extends React.Component{
 			movieName = item.title || "Movie Name";
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
-			uid = item.uid || item;
+			uid = item.uid || item;			
 			return(
 				<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
-				    <CardTitle expand style={{color: '#fff',  background: `url(${imageUrl}) no-repeat #46B6AC `}}/>
+				    <CardTitle expand style={{color: '#fff',  background: `url(${imageUrl})  no-repeat #46B6AC `}}/>
 				    <CardText>
 				    	{movieName}<br/>
 				        Wish Count: {wishCount}

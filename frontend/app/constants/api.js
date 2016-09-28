@@ -41,6 +41,9 @@ module.exports ={
                 		type: 'SNACKBAR',
                 		msg: 'Kindly Login First'
                 	});
+                	dispatcher.dispatch({
+                		type:'LOGOUT_SUCCESS'
+                	});
                 }else{
                 	// this._removeKey('token');
 	        		target('error',jqXhr,textStatus,error);
@@ -71,9 +74,10 @@ module.exports ={
 
 	_removeKey: function(key){
 		localStorage.removeItem('wishlist.' + key);
+		console.log('token removed');
 	},
 
-	_clearStorage: function(){
+	/*_clearStorage: function(){
 		let len = localStorage.length;
 		for (let i = len - 1; i >= 0; i--) {
             let key = localStorage.key(i);
@@ -81,5 +85,5 @@ module.exports ={
                 localStorage.removeItem(key);
             }
         }
-	},
+	},*/
 }

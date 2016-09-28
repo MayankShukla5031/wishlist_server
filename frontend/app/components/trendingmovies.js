@@ -8,6 +8,8 @@ import FlatButton from 'material-ui/FlatButton';
 import * as TreandingMoviesAction from '../actions/treandingmoviesaction';
 import TrendingMoviesStore from '../stores/treandingmoviesstore';
 
+var intervalID;
+
 export default class TrendingMovies extends React.Component{
 
 	constructor(){
@@ -22,9 +24,11 @@ export default class TrendingMovies extends React.Component{
 	componentWillMount(){
 		TreandingMoviesAction._getTreandingMoviesList();
 		TrendingMoviesStore.on('change', this._trendingMovieStoreChange);
+		intervalID = setInterval(function(){TreandingMoviesAction._getTreandingMoviesList();}, 10000);
 	}
 
 	componentWillUnmount(){
+		clearInterval(intervalID);
 		TrendingMoviesStore.removeListener('change', this._trendingMovieStoreChange);	
 	}
 
@@ -49,6 +53,7 @@ export default class TrendingMovies extends React.Component{
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
 			uid = item.uid || item;
+			// console.log('imageUrl', imageUrl);
 			return(
 				<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
 				    <CardTitle expand style={{color: '#fff',  background: `url(${imageUrl})  no-repeat #46B6AC `}}/>

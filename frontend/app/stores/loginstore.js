@@ -19,10 +19,11 @@ class LoginStore extends EventEmitter{
 			}
 			case 'LOGOUT_SUCCESS': {
 				this.emit('change', 'Logout');
+				break;
 			}
 			case 'Logged_In_Last_Time': {
-				console.log('recieved');
 				this.emit('change', 'Logged_In_Last_Time');
+				break;
 			}
 		}
 	}

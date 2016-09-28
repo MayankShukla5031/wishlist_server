@@ -40,12 +40,13 @@ module.exports = {
     _userLogOut: function(query){
         Api._callAPI(Url.LOG_OUT, 'post',query,(type,data)=> {
             if(type == 'success'){
-                console.log('success');
-                Api._removeKey('token');
                 hashHistory.push('/');
+                Api._removeKey('token');
+                dispatcher.dispatch({
+                    type: 'LOGOUT_SUCCESS',                   
+                });
             }else{
-                console.log('success');
-                dispatcher.Dispatch({
+                dispatcher.dispatch({
                     type: 'SNACKBAR',
                     msg: 'Something went wrong, Kindly try after some time'
                 });
@@ -55,10 +56,8 @@ module.exports = {
 
     _checkLogin: function(){
         let type;
-        console.log('yes');
         let token = Api._getKey('token');
         if(token){
-            console.log('token');
             dispatcher.dispatch({
                 type: "Logged_In_Last_Time",
             });
