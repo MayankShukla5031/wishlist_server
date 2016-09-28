@@ -154,11 +154,6 @@ app.get('/:action', function (req, res)
 				  				}\
 				  </script></body></html>");
     }
-    else if(action== "logout")
-    {
-      delete req.session.user;
-      sendResponse(res, 200, "success");
-    }
     else if(action=="index")
     {
       fs.readFile('frontend/public/index.html' , function(err, contents) {
@@ -773,7 +768,7 @@ app.post("/:action", function (req, res)
 		    }
 	  	});
   }
-  if(action=="register")
+  else if(action=="register")
   {
 
     if(req.body["username"]== undefined || req.body["username"]=="")
@@ -886,6 +881,13 @@ app.post("/:action", function (req, res)
             }
       });
     }	    
+  }
+  else if(action== "logout")
+  {
+      validateToken(req);
+      
+      delete req.session.user;
+      sendResponse(res, 200, "success");
   }
   else if (action=="addtowishlist")
   {

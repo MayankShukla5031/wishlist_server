@@ -14,7 +14,11 @@ module.exports = {
 	},
 
 	_userLogOut: function(){
-		LoginWebApiUtils._userLogOut();
+		LoginWebApiUtils._userLogOut("");
+	},
+
+	_checkLogin: function(){
+		LoginWebApiUtils._checkLogin();
 	}
 
 

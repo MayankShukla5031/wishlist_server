@@ -22,14 +22,11 @@ module.exports ={
 
 	        beforeSend: (xhr) => {
 				if(this._getKey('token')){
-					console.log('yes', xhr);
 					xhr.setRequestHeader('token' ,this._getKey('token'));
-					console.log('yes', xhr);
 				}
 			},
 
 	        success: (data,textStatus, jqXHR) => {
-	        	console.log('on succes', jqXHR, jqXHR.getResponseHeader('Authorization'));
 	        	if(jqXHR.getResponseHeader('Authorization')){
 	        		this._setKey('token',jqXHR.getResponseHeader('Authorization'));
 	        	}

@@ -76,14 +76,15 @@ export default class HomePage extends React.Component {
     }
 
     componentWillMount(){
-        MoviesListStore.on('change',this._getMovieList); 
         LoginStore.on('change',this._loginStoreChange); 
+        MoviesListStore.on('change',this._getMovieList); 
         SnackBarStore.on('change', this._snackbarStoreChange);
+        LoginAction._checkLogin();
     }
 
     componentWillUnmount(){
-        MoviesListStore.removeListener('change', this._getMovieList);
         LoginStore.removeListener('change', this._loginStoreChange);
+        MoviesListStore.removeListener('change', this._getMovieList);
         SnackBarStore.removeListener('change', this._snackbarStoreChange);
     }
     
@@ -96,16 +97,27 @@ export default class HomePage extends React.Component {
     }
 
     _loginStoreChange(type){
+        console.log('type', type, type == 'Logged_in_Last_Time' );
         if(type == 'Login_Success'){
+            console.log('1');
             this.setState({
                 isLoggedin: true,
                 openLoginDialogue: false,
             });
         }else if(type == 'User_Reg_Success'){
+            console.log('2');
             this.setState({
                 isRegister: true,
                 loginData: {}
             });
+        }else if(type == 'Logout'){
+            console.log('3');
+            this.setState({
+                isLoggedin: false,
+            });
+        }else if(type == 'Logged_In_Last_Time'){
+            console.log('yes done');
+            this.setState({isLoggedin: true});
         }
     }
 
@@ -305,9 +317,9 @@ export default class HomePage extends React.Component {
 
     _setLogOut(){
         LoginAction._userLogOut();
-        this.setState({
+        /*this.setState({
             isLoggedin: false,
-        });
+        });*/
     }
 
     _handleRequestClose(){
