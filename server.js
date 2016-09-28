@@ -855,11 +855,11 @@ app.post("/:action", function (req, res)
 
     if(usr== undefined || usr=="")
     {
-       sendResponse(res, 500, "error: username/emailid/phonenumber can not be blank");  
+       sendResponse(res, 400, "error: username/emailid/phonenumber can not be blank");  
     }
     else if(pwd== undefined || pwd=="")
     {
-       sendResponse(res, 500, "error: password can not be blank");  
+       sendResponse(res, 400, "error: password can not be blank");  
     }
     else
     {
@@ -877,7 +877,7 @@ app.post("/:action", function (req, res)
             }
             else
             {
-              sendResponse(res, 500, "error: username or password is invalid");  
+              sendResponse(res, 400, "error: username or password is invalid");  
             }
       });
     }	    
