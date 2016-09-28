@@ -773,19 +773,19 @@ app.post("/:action", function (req, res)
 
     if(req.body["username"]== undefined || req.body["username"]=="")
     {
-      sendResponse(res, 500, "error: username can not be blank");  
+      sendResponse(res, 400, "error: username can not be blank");  
     }
     else if(req.body["password"]== undefined || req.body["password"]=="")
     {
-      sendResponse(res, 500, "error: password can not be blank");  
+      sendResponse(res, 400, "error: password can not be blank");  
     }
     else if(req.body["email_id"]== undefined || req.body["email_id"]=="")
     {
-       sendResponse(res, 500, "error: emailid can not be blank");  
+       sendResponse(res, 400, "error: emailid can not be blank");  
     }
     else if(req.body["phone_number"]== undefined || req.body["phone_number"]=="")
     {
-      sendResponse(res, 500, "error: phone number can not be blank");  
+      sendResponse(res, 400, "error: phone number can not be blank");  
     }
     else{
 
@@ -793,7 +793,7 @@ app.post("/:action", function (req, res)
                 {
                     if(user1)
                     {                       
-                      sendResponse(res, 500, "error: username already taken");  
+                      sendResponse(res, 400, "error: username already taken");  
                     }
                     else
                     {
@@ -801,7 +801,7 @@ app.post("/:action", function (req, res)
                       {
                           if(user2)
                           {                            
-                           sendResponse(res, 500, "error: emailid already taken");   
+                           sendResponse(res, 400, "error: emailid already taken");   
                           }
                           else
                           {
@@ -809,7 +809,7 @@ app.post("/:action", function (req, res)
                             {
                                 if(user3)
                                 {                                    
-                                  sendResponse(res, 500, "error: phone number already taken");                   
+                                  sendResponse(res, 400, "error: phone number already taken");                   
                                 }
                                 else
                                 {
