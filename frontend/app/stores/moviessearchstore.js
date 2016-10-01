@@ -4,22 +4,22 @@ import dispatcher from "../dispatchers/dispatcher";
 class MovieListStore extends EventEmitter{
 	constructor(){
 		super();
-		this.moviesList = [];
+		this.searchResults = [];
 	}
 
 	_setMovieList(data){
-		this.moviesList = data;
-		this.emit('change','Trending_Movies');
+		this.searchResults = data;
+		this.emit('change','MovieSearchResults');
 	}
 
 	_getMovieList(){
-		return this.moviesList;
+		return this.searchResults;
 	}
 	
 
 	_handleActions(action){
 		switch(action.type){
-			case 'TRENDING_MOVIES' : {
+			case 'MOVIE_SEARCH_RESULTS' : {
 				this._setMovieList(action.data);
 				break;
 			}

@@ -8,7 +8,6 @@ class MovieDetailsStore extends EventEmitter{
 	}
 
 	_setMovieDetails(data){
-		//console.log(data);
 		this.moviesDetails = data;
 		this.emit('change','MovieDetails');
 	}

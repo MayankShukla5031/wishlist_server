@@ -20,7 +20,7 @@ import * as LoginAction from '../actions/loginaction';
 import * as MovieSearchAction from '../actions/moviesearchaction';
 
 import LoginStore from '../stores/loginstore';
-import MoviesListStore from '../stores/moviesliststore';
+import MoviesSearchStore from '../stores/moviessearchstore';
 import SnackBarStore from '../stores/snackbarstore';
 
 const styles = {
@@ -77,21 +77,21 @@ export default class HomePage extends React.Component {
 
     componentWillMount(){
         LoginStore.on('change',this._loginStoreChange); 
-        MoviesListStore.on('change',this._getMovieList); 
+        MoviesSearchStore.on('change',this._getMovieList); 
         SnackBarStore.on('change', this._snackbarStoreChange);
-        console.log('constructor');
         LoginAction._checkLogin();
     }
 
     componentWillUnmount(){
         LoginStore.removeListener('change', this._loginStoreChange);
-        MoviesListStore.removeListener('change', this._getMovieList);
+        MoviesSearchStore.removeListener('change', this._getMovieList);
         SnackBarStore.removeListener('change', this._snackbarStoreChange);
     }
     
     _getMovieList(type){
-        if(type == "MOVIES"){
-            let movieList = MoviesListStore._getMovieList();
+        if(type == "MovieSearchResults"){
+            let movieList = MoviesSearchStore._getMovieList();
+            console.log('movie', movieList);
             this.setState({movieList : movieList});
         }
     }
@@ -134,7 +134,6 @@ export default class HomePage extends React.Component {
 
     _handleSearchChange(event, value){
         let query = {};
-        console.log('value', event.target.value, value);
         query[this.state.filterValue] = event.target.value;
         MovieSearchAction._searchMovie(query);
         this.setState({searchString: value, anchorSearchResult: event.target, searchResultOpen: true});
@@ -146,6 +145,7 @@ export default class HomePage extends React.Component {
 
     _showMoviesName(){
         let temp = this.state.movieList;
+        console.log('temp', temp);
             return(
                 temp.map(function(result, index){
                     return(
