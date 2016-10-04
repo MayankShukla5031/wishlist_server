@@ -55,6 +55,7 @@ export default class HomePage extends React.Component {
         super();
         this.state = {
             filterValue : 'title',
+            userTypeValue: 'user',
             searchString: '',
             searchResultOpen: false,
             openUserOption: false,
@@ -145,7 +146,6 @@ export default class HomePage extends React.Component {
 
     _showMoviesName(){
         let temp = this.state.movieList;
-        console.log('temp', temp);
             return(
                 temp.map(function(result, index){
                     return(
@@ -223,7 +223,7 @@ export default class HomePage extends React.Component {
                             onChange={this._handleCommonLoginChange.bind(this, 'username')}                                  
                         />
                     </Cell>
-                     <Cell col={12}>
+                    <Cell col={12}>
                         <TextField
                             hintText="e.g- 1234567890"
                             floatingLabelText="Mobile Number"
@@ -255,8 +255,21 @@ export default class HomePage extends React.Component {
                         />
                     </Cell>
                     <Cell col={12}>
-                        <p style={{float: 'right', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'oldUser')}>Already have a Account</p>
+                        <SelectField
+                            autoWidth={true}
+                            labelStyle={{padding: '0px'}} 
+                            floatingLabelStyle={styles.floatingLabelStyle}
+                            value={this.state.userTypeValue}
+                            onChange={this._handleUserTypeChange.bind(this)}
+                            floatingLabelText="Select Type"
+                        >                                    
+                            <MenuItem key={1} value="user" primaryText="User" />
+                            <MenuItem key={2} value="theatre" primaryText="Theatre" />
+                        </SelectField>
                     </Cell>
+                   {/* <Cell col={12}>
+                        <p style={{float: 'right', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'oldUser')}>Already have a Account</p>
+                    </Cell>*/}
                 </Grid>
             );
         }else{
@@ -283,12 +296,18 @@ export default class HomePage extends React.Component {
                             onChange={this._handleCommonLoginChange.bind(this, 'password')}                                  
                         />
                     </Cell>
-                    <Cell col={12}>
+                    {/*<Cell col={12}>
                         <p style={{float: 'right', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'newUser')}>New User</p>
-                    </Cell>
+                    </Cell>*/}
                 </Grid>
             );
         }
+    }
+
+    _handleUserTypeChange(event, index, value){
+        this.setState({
+            userTypeValue : value
+        });
     }
 
     _checkandSetLoginUi(){
@@ -329,7 +348,7 @@ export default class HomePage extends React.Component {
         const LoginOptionAction = [
             <FlatButton style={styles.cancelButtonStyle} hoverColor="#237BFB" label="Cancel" primary={true} onTouchTap={this._handleLoginDialogCancel}/>,
             <FlatButton style={styles.saveButtonStyle}  label={this.state.isRegister? 'Log In' : 'Register'} primary={true} onTouchTap={this._handleLoginDialogSubmit} />,
-            // {this.state.isRegister? <p style={{float: 'left', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'oldUser')}>Already have a Account</p> : ''}
+            this.state.isRegister ? <p style={{marginTop: '5px', marginLeft: '10px' ,float: 'left', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'newUser')}>New User</p> : <p style={{marginTop: '5px', marginLeft: '10px', float: 'left', cursor: 'pointer'}} onClick={this._changeLoginUi.bind(this, 'oldUser')}>Already have a Account</p>,
         ];
 
         return (
@@ -358,7 +377,6 @@ export default class HomePage extends React.Component {
                                    </Menu>
                                 </Popover>
                                 
-                                
                                 <SelectField
                                     style={styles.SearchFieldFontStyling}
                                     labelStyle={{padding: '0px'}} 
@@ -375,13 +393,15 @@ export default class HomePage extends React.Component {
                                     <MenuItem key={6} value="production house" primaryText="Production House" />                                  
                                 </SelectField>
 
-                                <Avatar
-                                    style={{cursor: 'pointer'}}
-                                    onClick={this._openUserOption.bind(this)}
-                                > 
-                                    A
-                                </Avatar>
-
+                                <ul style={{listStyle: "none", marginTop: 'auto', cursor: 'pointer', height: '48px'}} onClick={this._openUserOption.bind(this)}>
+                                    <li>
+                                        <Avatar
+                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : ""}
+                                        >
+                                        </Avatar>
+                                    </li>
+                                    {Api._getKey("username") ? <li style={{fontSize: '10px'}}>{Api._getKey("username")}</li> : ""}
+                                </ul>
                                 <Popover
                                     open={this.state.openUserOption}
                                     anchorEl={this.state.anchorUserOption}

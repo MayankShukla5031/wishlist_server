@@ -4,7 +4,7 @@ module.exports = {
 	ADD_TO_WISHLIST: 'addtowishlist/',
 	GET_WISHLIST: 'getmywishlist/',
 	REMOVE_FROM_WISHLIST: 'removefromwishlist/',
-	LOGIN: 'login/',
+	LOGIN: 'login',
 	USER_REGISTRATION: 'register/',
 	TRENDING_MOVIE: 'trendingmovies/',
 	LOG_OUT: 'logout',

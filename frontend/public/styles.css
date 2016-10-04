@@ -81,7 +81,8 @@
 }
 
 .mdl-card__title {
-  background-size: 150px 150px !important;
+  /*background-size: 160px 150px !important;*/
+  background-size: auto 100% !important;
   background-position: center !important;
 }
 

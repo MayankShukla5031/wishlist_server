@@ -30,13 +30,18 @@ module.exports ={
 	        	if(jqXHR.getResponseHeader('Authorization')){
 	        		this._setKey('token',jqXHR.getResponseHeader('Authorization'));
 	        	}
+	        	if(url == "login"){
+	        		console.log("login", data.result.username);
+	        		this._setKey('username', data.result.username);
+	        	}
 	        	target('success',data);        	
 	        },
 	        
 	        error: (jqXhr,textStatus,error) => {
 	        	// console.log('error plz api js', jqXhr,textStatus,error);
                 if(jqXhr.status == 401){
-                	this._removeKey('token');
+                	// this._removeKey('token');
+                	this._clearStorage();
                 	dispatcher.dispatch({
                 		type: 'SNACKBAR',
                 		msg: 'Kindly Login First'
@@ -77,13 +82,13 @@ module.exports ={
 		console.log('token removed');
 	},
 
-	/*_clearStorage: function(){
+	_clearStorage: function(){
 		let len = localStorage.length;
 		for (let i = len - 1; i >= 0; i--) {
             let key = localStorage.key(i);
-            if (key != null && key != undefined && key.indexOf('happay.') == 0) {
+            if (key != null && key != undefined && key.indexOf('wishlist.') == 0) {
                 localStorage.removeItem(key);
             }
         }
-	},*/
+	},
 }
