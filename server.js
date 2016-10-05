@@ -557,7 +557,7 @@ app.get('/:action', function (req, res)
   	       sendResponse(res, 401, "Unauthorized"); 
   	      }			             
     }
-    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") || action.endsWith(".ico") || action.endsWith(".min.css"))
+    else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") ||action.endsWith(".png") ||action.endsWith(".jpg") || action.endsWith(".ico") || action.endsWith(".min.css"))
     {
     	fs.readFile('frontend/public/'+ action, function(err, contents) {
 
