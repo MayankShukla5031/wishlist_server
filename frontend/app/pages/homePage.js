@@ -423,8 +423,8 @@ export default class HomePage extends React.Component {
                             <HeaderRow>
                                 <Navigation>
                                     {this.state.isLoggedin? <Link to="/mywishlist">My Wishlist</Link> : null}
-                                    {this.state.isLoggedin?<Link to="#">My Booking</Link>: null}
-                                    <Link to="#">Trending movie</Link>             
+                                    {this.state.isLoggedin?<Link to="#">My Bookings</Link>: null}
+                                    <Link to="#">Trending movies</Link>             
                                     <Link to="#">Upcoming shows</Link>
                                     <Link to="#">Top Watched movies</Link>  
                                 </Navigation>
