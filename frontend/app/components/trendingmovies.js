@@ -57,7 +57,7 @@ export default class TrendingMovies extends React.Component{
 			// console.log('imageUrl', imageUrl);
 			return(
 				<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
-				    <CardTitle expand style={{color: '#fff',  background: `url(${imageUrl})  no-repeat #46B6AC `}}/>
+				    <CardTitle expand style={{color: '#fff', background: `url(${imageUrl}) no-repeat #46B6AC `}}/>
 				    <CardText>
 				    	{movieName}<br/>
 				        Wish Count: {wishCount}
