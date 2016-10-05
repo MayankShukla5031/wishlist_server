@@ -52,7 +52,6 @@ export default class TrendingMovies extends React.Component{
 			movieName = item.title || "Movie Name";
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
-			console.log('imageUrl', imageUrl, `url(${imageUrl})`);
 			uid = item.uid || item;
 			// console.log('imageUrl', imageUrl);
 			return(
