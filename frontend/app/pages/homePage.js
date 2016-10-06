@@ -457,7 +457,8 @@ export default class HomePage extends React.Component {
                                         {this._showMoviesName()}
                                    </Menu>
                                 </Popover>
-                                
+                            </HeaderRow>
+                            <HeaderRow>
                                 <SelectField
                                     style={styles.SearchFieldFontStyling}
                                     labelStyle={{padding: '0px'}} 
@@ -483,6 +484,7 @@ export default class HomePage extends React.Component {
                                     </li>
                                     {Api._getKey("username") ? <li style={{fontSize: '10px'}}>{Api._getKey("username")}</li> : ""}
                                 </ul>
+                                
                                 <Popover
                                     open={this.state.openUserOption}
                                     anchorEl={this.state.anchorUserOption}
