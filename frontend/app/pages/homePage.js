@@ -353,7 +353,9 @@ export default class HomePage extends React.Component {
 
         return (
                 <div className="demo-big-content">
-                    <Layout fixedHeader>
+                    
+                    {window.innerWidth > 700 ?
+                        <Layout fixedHeader>
                         <Header>
                             <HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
                                 <TextField
@@ -419,8 +421,8 @@ export default class HomePage extends React.Component {
                                 </Popover>
 
                             </HeaderRow>
-
-                            <HeaderRow>
+                           
+                            <HeaderRow>                                
                                 <Navigation>
                                     {this.state.isLoggedin? <Link to="/mywishlist">My Wishlist</Link> : null}
                                     {this.state.isLoggedin?<Link to="#">My Booking</Link>: null}
@@ -429,7 +431,74 @@ export default class HomePage extends React.Component {
                                     <Link to="#">Top Watched movies</Link>  
                                 </Navigation>
                             </HeaderRow>
+                        </Header>
+                        </Layout>
+                        : 
+                        <Layout fixedHeader>
+                        <Header>
+                            <HeaderRow>
+                                <TextField
+                                    hintText="e.g-Sultan"
+                                    floatingLabelText="Search"
+                                    autoFocus={true}
+                                    value={this.state.searchString}
+                                    onChange={this._handleSearchChange.bind(this)}                                  
+                                />
+                                <Popover
+                                    open={this.state.searchResultOpen}
+                                    anchorEl={this.state.anchorSearchResult}
+                                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                    onRequestClose={this._handleSearchResultClose.bind(this)}
+                                    style = {{width: window.innerWidth}}
+                                    animation={PopoverAnimationVertical}
+                                >
+                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)}>
+                                        {this._showMoviesName()}
+                                   </Menu>
+                                </Popover>
+                                
+                                <SelectField
+                                    style={styles.SearchFieldFontStyling}
+                                    labelStyle={{padding: '0px'}} 
+                                    floatingLabelStyle={styles.floatingLabelStyle}
+                                    value={this.state.filterValue}
+                                    onChange={this._handleFilterChange.bind(this)}
+                                    floatingLabelText="Select Filter"
+                                >                                    
+                                    <MenuItem key={1} value="title" primaryText="Title" />
+                                    <MenuItem key={2} value="actor" primaryText="Actor" />
+                                    <MenuItem key={3} value="director" primaryText="Director" />
+                                    <MenuItem key={4} value="producer" primaryText="Producer" />
+                                    <MenuItem key={5} value="music director" primaryText="Music Director" />  
+                                    <MenuItem key={6} value="production house" primaryText="Production House" />                                  
+                                </SelectField>
 
+                                <ul style={{listStyle: "none", marginTop: 'auto', cursor: 'pointer', height: '48px'}} onClick={this._openUserOption.bind(this)}>
+                                    <li>
+                                        <Avatar
+                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : ""}
+                                        >
+                                        </Avatar>
+                                    </li>
+                                    {Api._getKey("username") ? <li style={{fontSize: '10px'}}>{Api._getKey("username")}</li> : ""}
+                                </ul>
+                                <Popover
+                                    open={this.state.openUserOption}
+                                    anchorEl={this.state.anchorUserOption}
+                                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                    style = {{width: window.innerWidth - 100}}
+                                    onRequestClose={this._handleUserOptionClose.bind(this)}
+                                    animation={PopoverAnimationVertical}
+                                >
+                                    <Menu desktop={true}>
+                                        <MenuItem primaryText="Profile" />
+                                        <MenuItem primaryText="Settings" />
+                                        {this._checkandSetLoginUi()}
+                                    </Menu>
+                                </Popover>
+                            </HeaderRow>                             
                         </Header>
                         <Drawer title="Panel Items"> 
                             <Navigation>
@@ -439,7 +508,10 @@ export default class HomePage extends React.Component {
                                 <Link to="#">Upcoming shows</Link>
                                 <Link to="#">Top Watched movies</Link>                             
                             </Navigation>
-                        </Drawer>
+                        </Drawer>                        
+                        </Layout>
+                        }
+
                         <Content>
                             <Dialog
                                 title={this.state.isRegister ? "Log In" : "Register"}
@@ -462,7 +534,6 @@ export default class HomePage extends React.Component {
                             />
                             {this.props.children}
                         </Content>
-                    </Layout>                
                 </div>
         );
     }
