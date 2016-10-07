@@ -41,7 +41,8 @@ module.exports = {
         Api._callAPI(Url.LOG_OUT, 'post',query,(type,data)=> {
             if(type == 'success'){
                 hashHistory.push('/');
-                Api._removeKey('token');
+                // Api._removeKey('token');
+                Api._clearStorage();
                 dispatcher.dispatch({
                     type: 'LOGOUT_SUCCESS',                   
                 });

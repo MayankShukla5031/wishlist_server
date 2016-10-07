@@ -7,7 +7,8 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 const darkMuiTheme = getMuiTheme({});
 
 
-import HomePage from './pages/homePage';
+import WebHomePage from './pages/webhomepage';
+import MobileHomePage from './pages/mobilehomepage';
 import TrendingMovies from './components/trendingmovies';
 import MovieDetails from './components/moviedetails';
 import MyWishList from './components/mywishlist';
@@ -22,7 +23,7 @@ injectTapEventPlugin();
 ReactDOM.render((
 	<MuiThemeProvider muiTheme={darkMuiTheme}>
 		<Router history={hashHistory}>
-		    <Route path="/" component={HomePage}>
+		    <Route path="/" component={window.innerWidth > 700 ? WebHomePage : MobileHomePage}>
 		    	<IndexRoute component={TrendingMovies}/>
 		    	<Route path="/moviedetails/:movieId" component={MovieDetails}/>
 		    	<Route path="/mywishlist" component={MyWishList}/>
