@@ -23,40 +23,4 @@ module.exports = {
 	    });
 	},
 
-	// _addToWishList : function(query){
-	// 	Api._callAPI(Url.ADD_TO_WISHLIST,'post',query,(type,data)=> {
- //            if(type == 'success'){   
- //            	console.log('success'); 
- //            	alert('movie added successfully');        
- //                dispatcher.dispatch({
-                    
- //                });
- //            }
- //            else{   
- //            	console.log('error');             
- //                dispatcher.dispatch({
-                    
- //                });
- //            }
-	//     });
-	// },
-
-	// _removeFromWishList : function(query){
-	// 	Api._callAPI(Url.REMOVE_FROM_WISHLIST,'post',query,(type,data)=> {
- //            if(type == 'success'){   
- //            	console.log('success');
- //            	alert('movie removed successfully');         
- //                dispatcher.dispatch({
-                    
- //                });
- //            }
- //            else{   
- //            	console.log('error');             
- //                dispatcher.dispatch({
-                    
- //                });
- //            }
-	//     });
-	// },
-
 }

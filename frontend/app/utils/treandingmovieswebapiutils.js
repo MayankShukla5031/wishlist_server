@@ -6,16 +6,15 @@ import dispatcher from "../dispatchers/dispatcher";
 module.exports = {
 
 	_getTreandingMoviesList : function(query){
-		Api._callAPI(Url.SEARCH,'get',query,(type,data)=> {
+		Api._callAPI(Url.TRENDING_MOVIE,'get',query,(type,data)=> {
 	            if(type == 'success'){  
-	            	//console.log('success');           
+	            	// console.log('success');           
 	                dispatcher.dispatch({
-	                    type:'MOVIES',
+	                    type:'TRENDING_MOVIES',
 	                    data: data,
 	                });
 	            }
-	            else{   
-	            	console.log('error');             
+	            else{            	         
 	                dispatcher.dispatch({
 	                    
 	                });

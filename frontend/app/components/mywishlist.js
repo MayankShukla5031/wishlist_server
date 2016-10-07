@@ -17,7 +17,7 @@ export default class MyWishList extends React.Component{
 	}
 
 	componentWillMount(){
-		MyWishListAction._getMyWishList();
+		MyWishListAction._getMyWishList("");
 		MyWishListStore.on('change',this._getMovieList); 
 	}
 
@@ -35,7 +35,7 @@ export default class MyWishList extends React.Component{
 		}
 	}
 
-	setWishListUi(){		
+	_setWishListUI(){		
 		let uiItem = [];
 		let movieName = '';
 		let wishCount = 0;
@@ -45,11 +45,12 @@ export default class MyWishList extends React.Component{
 			movieName = item.title || "Movie Name";
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
-			uid = item.uid || item;
+			uid = item.uid || item;			
 			return(
 				<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
-				    <CardTitle expand style={{color: '#fff', height: 'inherit', width: 'inherit' , background: `url(${imageUrl}) bottom right 15% no-repeat #46B6AC `}}>{movieName}</CardTitle>
+				    <CardTitle expand style={{color: '#fff',  background: `url(${imageUrl})  no-repeat #46B6AC `}}/>
 				    <CardText>
+				    	{movieName}<br/>
 				        Wish Count: {wishCount}
 				    </CardText>
 				    <CardActions border>
@@ -57,26 +58,25 @@ export default class MyWishList extends React.Component{
 		     		</CardActions>
 				</Card>);
 		});
-
-	return uiItem;
-		// return(
-		// <Card shadow={0} style={{width: '320px', height: '320px'}}>
-		//     <CardTitle expand style={{color: '#fff', background: 'url(http://www.getmdl.io/assets/demos/dog.png) bottom right 15% no-repeat #46B6AC'}}>Update</CardTitle>
-		//     <CardText>
-		//         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-		//         Aenan convallis.
-		//     </CardText>
-		//     <CardActions border>
-		//         <Button colored>View Updates</Button>
-		//     </CardActions>
-		// </Card>);
+		return uiItem;
 	}
 
 	render(){
 		return(<div>
-				{this.setWishListUi()}
+				{this._setWishListUI()}
 			</div>
 		);
 	}
 }
 
+/*
+
+<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
+				    <CardTitle expand style={{color: '#fff', height: 'inherit', width: 'inherit' , background: `url(${imageUrl}) bottom right 15% no-repeat #46B6AC `}}>{movieName}</CardTitle>
+				    <CardText>
+				        Wish Count: {wishCount}
+				    </CardText>
+				    <CardActions border>
+				        <Button colored><Link to={`moviedetails/${uid}`}>View Details</Link></Button>
+		     		</CardActions>
+				</Card>);*/

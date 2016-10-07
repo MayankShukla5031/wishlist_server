@@ -10,7 +10,7 @@ module.exports = {
 	            if(type == 'success'){  
 	            	//console.log('success');           
 	                dispatcher.dispatch({
-	                    type:'MOVIES',
+	                    type:'MOVIE_SEARCH_RESULTS',
 	                    data: data,
 	                });
 	            }

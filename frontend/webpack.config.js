@@ -1,12 +1,13 @@
 var debug = process.env.NODE_ENV !== "production";
-var webpack = require('webpack')
+var webpack = require('webpack');
+console.log('NODE_ENV', process.env.NODE_ENV, debug);
 // var path = require('path');
 
 module.exports = {
   context: __dirname,
-  // devtool: debug ? "inline-sourcemap" : null,
+  devtool: debug ? "inline-sourcemap" : null,
   entry: './app/index.js',
-  devtool:"cheap-module-source-map",
+  // devtool:"cheap-module-source-map",
 
   output: {
     path: __dirname + "/public/",
@@ -31,11 +32,20 @@ module.exports = {
 
   // add this handful of plugins that optimize the build
   // when we're in production
-  plugins: [
-  new webpack.DefinePlugin({
-    'process.env': {
-      'NODE_ENV': JSON.stringify('production')
-    }
-  })
-]
+  // plugins: [
+  //   new webpack.DefinePlugin({
+  //     'process.env': {
+  //       'NODE_ENV': JSON.stringify('production')
+  //     }
+  //   })
+  // ]
+
+  plugins: process.env.NODE_ENV === 'production' ? [
+    // new webpack.optimize.DedupePlugin(),
+    // new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({minify:true,compress:{warnings:false,side_effects:false},output:{comments:false}})
+  ] : [
+  ],
+
+
 }
