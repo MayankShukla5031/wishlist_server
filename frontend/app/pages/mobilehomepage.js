@@ -264,7 +264,7 @@ export default class HomePage extends React.Component {
                             onChange={this._handleUserTypeChange.bind(this)}
                             floatingLabelText="Select Type"
                         >                                    
-                            <MenuItem key={1} value="user" primaryText="User" />
+                            <MenuItem key={1} value="user" primaryText="Viewer" />
                             <MenuItem key={2} value="theatre" primaryText="Theatre" />
                         </SelectField>
                     </Cell>
