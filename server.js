@@ -536,6 +536,7 @@ app.get('/:action', function (req, res)
                   }
                   else
                   {
+                   movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid; 
                    res.end(JSON.stringify(movie));  
                   }
 			      }			            
