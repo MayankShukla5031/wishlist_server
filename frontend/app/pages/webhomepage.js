@@ -138,6 +138,7 @@ export default class HomePage extends React.Component {
         query[this.state.filterValue] = event.target.value;
         MovieSearchAction._searchMovie(query);
         this.setState({searchString: value, anchorSearchResult: event.target, searchResultOpen: true});
+        
     }
 
     _handleSearchResultClose(){
@@ -263,7 +264,7 @@ export default class HomePage extends React.Component {
                             onChange={this._handleUserTypeChange.bind(this)}
                             floatingLabelText="Select Type"
                         >                                    
-                            <MenuItem key={1} value="user" primaryText="User" />
+                            <MenuItem key={1} value="user" primaryText="Viewer" />
                             <MenuItem key={2} value="theatre" primaryText="Theatre" />
                         </SelectField>
                     </Cell>
@@ -359,9 +360,9 @@ export default class HomePage extends React.Component {
                                 <TextField
                                     hintText="e.g-Sultan"
                                     floatingLabelText="Search"
-                                    autoFocus={true}
                                     value={this.state.searchString}
-                                    onChange={this._handleSearchChange.bind(this)}                                  
+                                    onChange={this._handleSearchChange.bind(this)} 
+                                    autoFocus={true}                             
                                 />
                                 <Popover
                                     open={this.state.searchResultOpen}
@@ -372,7 +373,7 @@ export default class HomePage extends React.Component {
                                     style = {{width: '500px'}}
                                     animation={PopoverAnimationVertical}
                                 >
-                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)}>
+                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
                                         {this._showMoviesName()}
                                    </Menu>
                                 </Popover>
@@ -393,14 +394,14 @@ export default class HomePage extends React.Component {
                                     <MenuItem key={6} value="production house" primaryText="Production House" />                                  
                                 </SelectField>
 
-                                <ul style={{listStyle: "none", marginTop: 'auto', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
+                                <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
                                     <li>
                                         <Avatar
-                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : ""}
+                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : "login.png"}
                                         >
                                         </Avatar>
                                     </li>
-                                    {Api._getKey("username") ? <li style={{fontSize: '10px'}}>{Api._getKey("username")}</li> : ""}
+                                    {Api._getKey("username") ? <li style={{fontSize: '10px'}}>{Api._getKey("username")}</li> : "Login"}
                                 </ul>
                                 <Popover
                                     open={this.state.openUserOption}

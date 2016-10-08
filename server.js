@@ -1,8 +1,10 @@
+//This is my server
 var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var session = require('client-sessions');
 var fs = require('fs');
+var baseUrl= "https://wishlist-image-server.herokuapp.com";
 
 app.use(session({
   cookieName: 'session',
@@ -519,12 +521,14 @@ app.get('/:action', function (req, res)
     	    			      {
             									if(containsMovie(movie, user['wishlist']))
             									{
-            										    movie.inmywishlist= true;                                    
+            										    movie.inmywishlist= true;
+                                    movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid;                          
                                     res.end(JSON.stringify(movie));
             		    			    }
             		    			     else
             		    			    {
             		    			        	movie.inmywishlist= false;
+                                    movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid;  
             			        					res.end(JSON.stringify(movie));
             		    			    }            										    			        	
   					          }	
@@ -532,6 +536,7 @@ app.get('/:action', function (req, res)
                   }
                   else
                   {
+                   movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid; 
                    res.end(JSON.stringify(movie));  
                   }
 			      }			            
@@ -547,7 +552,7 @@ app.get('/:action', function (req, res)
     			   User.findOne({'uid' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
                    {
                     var list=[];
-                    list= user.wishlist.map(function(a) {return { uid:a.movieid.uid, title:a.movieid.title, poster_url:a.movieid.poster_url, count:a.movieid.wishcount};});
+                    list= user.wishlist.map(function(a) {return { uid:a.movieid.uid, title:a.movieid.title, poster_url:baseUrl+"/poster_small?movieid="+a.movieid.uid, count:a.movieid.wishcount};});
                     res.end(JSON.stringify(list));             
                     
                   });              
@@ -592,7 +597,7 @@ app.get('/:action', function (req, res)
           function(err, movies) {
              
           var list=[];
-          list= movies.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': a.poster_url};}); 
+          list= movies.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': baseUrl+"/poster_small?movieid="+a.uid};}); 
           res.end(JSON.stringify(list));
                      });      
     }
