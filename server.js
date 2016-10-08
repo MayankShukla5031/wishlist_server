@@ -601,7 +601,7 @@ app.get('/:action', function (req, res)
     }
     else if(action== "poster_small")
     {
-      fs.readFile('poster/small/'+ req.query.movieid + '.jpg', function(err, contents) {
+      fs.readFile('posters/small/'+ req.query.movieid + '.jpg', function(err, contents) {
 
           if (err) console.log(err);
           else 
@@ -613,7 +613,7 @@ app.get('/:action', function (req, res)
     }
     else if(action== "poster_big")
     {
-      fs.readFile('poster/big/'+ req.query.movieid + '.jpg', function(err, contents) {
+      fs.readFile('posters/big/'+ req.query.movieid + '.jpg', function(err, contents) {
 
           if (err) console.log(err);
           else 
