@@ -528,6 +528,7 @@ app.get('/:action', function (req, res)
             		    			     else
             		    			    {
             		    			        	movie.inmywishlist= false;
+                                    movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid;  
             			        					res.end(JSON.stringify(movie));
             		    			    }            										    			        	
   					          }	
