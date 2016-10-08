@@ -402,7 +402,7 @@ export default class HomePage extends React.Component {
                                     style = {{width: window.innerWidth}}
                                     animation={PopoverAnimationVertical}
                                 >
-                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)}>
+                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true}>
                                         {this._showMoviesName()}
                                    </Menu>
                                 </Popover>

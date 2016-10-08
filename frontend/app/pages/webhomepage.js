@@ -138,6 +138,7 @@ export default class HomePage extends React.Component {
         query[this.state.filterValue] = event.target.value;
         MovieSearchAction._searchMovie(query);
         this.setState({searchString: value, anchorSearchResult: event.target, searchResultOpen: true});
+        
     }
 
     _handleSearchResultClose(){
@@ -359,9 +360,9 @@ export default class HomePage extends React.Component {
                                 <TextField
                                     hintText="e.g-Sultan"
                                     floatingLabelText="Search"
-                                    autoFocus={true}
                                     value={this.state.searchString}
-                                    onChange={this._handleSearchChange.bind(this)}                                  
+                                    onChange={this._handleSearchChange.bind(this)} 
+                                    autoFocus={true}                             
                                 />
                                 <Popover
                                     open={this.state.searchResultOpen}
@@ -372,7 +373,7 @@ export default class HomePage extends React.Component {
                                     style = {{width: '500px'}}
                                     animation={PopoverAnimationVertical}
                                 >
-                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)}>
+                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
                                         {this._showMoviesName()}
                                    </Menu>
                                 </Popover>
