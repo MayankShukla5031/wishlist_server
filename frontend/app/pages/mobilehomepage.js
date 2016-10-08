@@ -358,7 +358,7 @@ export default class HomePage extends React.Component {
                         <Header>
                         	<HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
 
-                                <ul style={{listStyle: "none", marginTop: 'auto', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
+                                <ul style={{listStyle: "none", marginTop: '10px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
                                     <li>
                                         <Avatar
                                             src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : ""}
