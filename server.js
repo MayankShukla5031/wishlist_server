@@ -4,7 +4,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('client-sessions');
 var fs = require('fs');
-var baseUrl= "https://wishlist-image-server.herokuapp.com/";
+var baseUrl= "https://wishlist-image-server.herokuapp.com";
 
 app.use(session({
   cookieName: 'session',
