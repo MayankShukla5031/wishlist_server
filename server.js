@@ -128,6 +128,7 @@ db.once('open', function callback () {});
     password: String,
     email_id: String,
     phone_number: String,
+    user_type: String,
     wishlist:[{movieid:{ type : ObjectId, ref: 'moviecollection' }}]
   } , {collection : 'usercollection'});
 
@@ -831,6 +832,10 @@ app.post("/:action", function (req, res)
     else if(req.body["phone_number"]== undefined || req.body["phone_number"]=="")
     {
       sendResponse(res, 400, "error: phone number can not be blank");  
+    }
+    else if(req.body["user_type"]== undefined || req.body["user_type"]=="")
+    {
+      sendResponse(res, 400, "error: user type can not be blank");  
     }
     else{
 
