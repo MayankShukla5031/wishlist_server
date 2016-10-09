@@ -150,7 +150,7 @@ export default class HomePage extends React.Component {
             return(
                 temp.map(function(result, index){
                     return(
-                       <MenuItem key={index} value={result.uid} primaryText={result.title} style = {{'fontSize': '11px'}} containerElement={<Link to={`/moviedetails/${result.uid}`}/>}></MenuItem>
+                       <MenuItem key={index} value={result.uid} primaryText='' style = {{'fontSize': '15px'}} containerElement={<Link to={`/moviedetails/${result.uid}`}/>}><img src={result.poster_url} alt="" style={{width: '35px', height: 'auto', margin:'5px'}}/>{result.title}</MenuItem>
                 )
             })
         );
