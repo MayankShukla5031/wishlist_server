@@ -194,7 +194,7 @@ app.get('/:action', function (req, res)
     }
     else if(action== "search")
     {
-    	if( req.query.title != undefined)
+    	if( req.query.title != undefined && req.query.title !='')
         {
           Movie.find({'title' : new RegExp(req.query.title, 'i')}, function (err, str) {
           var list=[];
@@ -203,7 +203,7 @@ app.get('/:action', function (req, res)
             });
 
         }
-        if( req.query.actor != undefined)
+        if( req.query.actor != undefined && req.query.actor !='')
         {
            
           Movie.find({'cast' : new RegExp(req.query.actor, 'i')}, function (err, str) {
@@ -213,7 +213,7 @@ app.get('/:action', function (req, res)
             });
            
         }
-        if( req.query.director != undefined)
+        if( req.query.director != undefined && req.query.director != '')
         {
            
           Movie.find({'director' : new RegExp(req.query.director, 'i')}, function (err, str) {
@@ -223,7 +223,7 @@ app.get('/:action', function (req, res)
             });
 
         }
-        if( req.query.producer != undefined)
+        if( req.query.producer != undefined &&  req.query.producer != '')
         {
            
           Movie.find({'producer' : new RegExp(req.query.producer, 'i')}, function (err, str) {
@@ -233,7 +233,7 @@ app.get('/:action', function (req, res)
             });
 
         }
-        if( req.query.music_director != undefined)
+        if( req.query.music_director != undefined && req.query.music_director != '')
         {           
           Movie.find({'music_director' : new RegExp(req.query.music_director, 'i')}, function (err, str) {
           var list=[];
