@@ -42,6 +42,7 @@ module.exports ={
                 if(jqXhr.status == 401){
                 	// this._removeKey('token');
                 	this._clearStorage();
+                	hashHistory.push('/');
                 	dispatcher.dispatch({
                 		type: 'SNACKBAR',
                 		msg: 'Kindly Login First'
@@ -68,7 +69,6 @@ module.exports ={
 	// },
 
 	_setKey: function(key,value){
-		// console.log('set key', key, value);
 		localStorage.setItem('wishlist.'+ key, value);
 	},
 
@@ -79,7 +79,6 @@ module.exports ={
 
 	_removeKey: function(key){
 		localStorage.removeItem('wishlist.' + key);
-		console.log('token removed');
 	},
 
 	_clearStorage: function(){

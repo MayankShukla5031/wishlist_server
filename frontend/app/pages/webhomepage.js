@@ -188,7 +188,11 @@ export default class HomePage extends React.Component {
         });
     }
 
-    _handleCommonLoginChange(type, event, value){
+    _handleCommonLoginChange(type, event, value, index){
+        if(type == "usertype"){
+            value = index;
+            console.log('va', value);
+        }
         let loginData = this.state.loginData;
         loginData[type] = value;
         this.setState({
@@ -260,8 +264,8 @@ export default class HomePage extends React.Component {
                             autoWidth={true}
                             labelStyle={{padding: '0px'}} 
                             floatingLabelStyle={styles.floatingLabelStyle}
-                            value={this.state.userTypeValue}
-                            onChange={this._handleUserTypeChange.bind(this)}
+                            value={this.state.loginData.usertype || ""}
+                            onChange={this._handleCommonLoginChange.bind(this, 'usertype')}
                             floatingLabelText="Select Type"
                         >                                    
                             <MenuItem key={1} value="user" primaryText="Viewer" />
@@ -305,11 +309,11 @@ export default class HomePage extends React.Component {
         }
     }
 
-    _handleUserTypeChange(event, index, value){
-        this.setState({
-            userTypeValue : value
-        });
-    }
+    // _handleUserTypeChange(event, index, value){
+    //     this.setState({
+    //         userTypeValue : value
+    //     });
+    // }
 
     _checkandSetLoginUi(){
         if(this.state.isLoggedin){
