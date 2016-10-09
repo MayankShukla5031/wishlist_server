@@ -54,7 +54,7 @@ export default class TrendingMovies extends React.Component{
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
 			uid = item.uid || item;
-			inmywishlist= item.inmywishlist== true? <img src="heart.png" alt="" style={{width: '15px', height: '15px'}}/>: '' ;
+			inmywishlist= item.inmywishlist== true? <img src="heart.png" alt="Yes" style={{width: '15px', height: '15px'}}/>: '' ;
 
 			 //console.log('item', item.inmywishlist);
 			return(
