@@ -4,7 +4,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('client-sessions');
 var fs = require('fs');
-var baseUrl= "https://wishlist-image-server.herokuapp.com";
+var imageServerUrl= "https://wishlist-image-server.herokuapp.com";
 
 app.use(session({
   cookieName: 'session',
@@ -522,13 +522,13 @@ app.get('/:action', function (req, res)
             									if(containsMovie(movie, user['wishlist']))
             									{
             										    movie.inmywishlist= true;
-                                    movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid;                          
+                                    movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
                                     res.end(JSON.stringify(movie));
             		    			    }
             		    			     else
             		    			    {
             		    			        	movie.inmywishlist= false;
-                                    movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid;  
+                                    movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
             			        					res.end(JSON.stringify(movie));
             		    			    }            										    			        	
   					          }	
@@ -536,7 +536,7 @@ app.get('/:action', function (req, res)
                   }
                   else
                   {
-                   movie.poster_url= baseUrl+"/poster_big?movieid="+movie.uid; 
+                   movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid; 
                    res.end(JSON.stringify(movie));  
                   }
 			      }			            
@@ -552,7 +552,7 @@ app.get('/:action', function (req, res)
     			   User.findOne({'uid' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
                    {
                     var list=[];
-                    list= user.wishlist.map(function(a) {return { uid:a.movieid.uid, title:a.movieid.title, poster_url:baseUrl+"/poster_small?movieid="+a.movieid.uid, count:a.movieid.wishcount};});
+                    list= user.wishlist.map(function(a) {return { uid:a.movieid.uid, title:a.movieid.title, poster_url:imageServerUrl+"/poster_small?movieid="+a.movieid.uid, count:a.movieid.wishcount};});
                     res.end(JSON.stringify(list));             
                     
                   });              
@@ -593,13 +593,53 @@ app.get('/:action', function (req, res)
     }
     else if(action== "trendingmovies")
     {
-      Movie.find().sort({wishcount: -1}).limit(10).exec( 
-          function(err, movies) {
-             
-          var list=[];
-          list= movies.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': baseUrl+"/poster_small?movieid="+a.uid};}); 
-          res.end(JSON.stringify(list));
-                     });      
+
+        validateToken(req);
+      
+        if( req.session.user != undefined)
+          {
+             User.findOne({'uid' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
+                   {
+                    var wishlist=[];
+
+                      for (i=0; i< user.wishlist.length; i++)
+                      {
+                        wishlist.push(user.wishlist[i].movieid.uid);
+                      }
+                                        
+                    Movie.find().sort({wishcount: -1}).limit(10).exec( 
+                              function(err, movies) {
+                                 
+                              var list=[];
+                              list= movies.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': imageServerUrl+"/poster_small?movieid="+a.uid };}); 
+                              
+                              for (i=0; i< list.length; i++)
+                              {                        
+                                list[i].inmywishlist= ContainsItem(wishlist, list[i].uid);                        
+                              }
+
+                              res.end(JSON.stringify(list));
+                                         });
+                  });              
+          }
+          else 
+          {
+            Movie.find().sort({wishcount: -1}).limit(10).exec( 
+            function(err, movies) {
+               
+            var list=[];
+            list= movies.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': imageServerUrl+"/poster_small?movieid="+a.uid};}); 
+            
+              for (i=0; i< list.length; i++)
+                  {                        
+                    list[i].inmywishlist= false;                        
+                  }
+                  
+            res.end(JSON.stringify(list));
+                       });  
+          }
+
+          
     }
     else
     {
@@ -1048,6 +1088,17 @@ function containsMovie(movie, list)
     return false;
 }
 
+function ContainsItem(list, item) 
+{
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i]===item) {
+            return true;
+        }
+    }         
+    return false;
+}
+
 function removeMovie(movie, list) 
 {
     var i;
@@ -1066,7 +1117,7 @@ function generateToken(req, tokenUser)
   var token = jwt.sign({
     auth: tokenUser,
     agent: req.get['user-agent'],
-    exp:   Math.floor(new Date().getTime()/1000) + 5*60 // Note: in seconds! 
+    exp:   Math.floor(new Date().getTime()/1000) + 24*60*60 // Note: in seconds! 
   }, secret); 
   return token;
 }
