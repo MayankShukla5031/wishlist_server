@@ -146,7 +146,7 @@ db.once('open', function callback () {});
 
 app.get('/', function (req, res) 
 {
-		res.writeHead(301, {'Location': '/index'});	
+	 res.writeHead(301, {'Location': '/index'});	
 	 res.end();
 });
 
@@ -604,7 +604,6 @@ app.get('/:action', function (req, res)
     }
     else if(action== "trendingmovies")
     {
-
         validateToken(req);
       
         if( req.session.user != undefined)
