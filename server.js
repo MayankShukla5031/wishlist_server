@@ -833,7 +833,7 @@ app.post("/:action", function (req, res)
     {
       sendResponse(res, 400, "error: phone number can not be blank");  
     }
-    else if(req.body["user_type"]== undefined || req.body["user_type"]=="")
+    else if(req.body["usertype"]== undefined || req.body["usertype"]=="")
     {
       sendResponse(res, 400, "error: user type can not be blank");  
     }
@@ -870,7 +870,8 @@ app.post("/:action", function (req, res)
                                                 username: req.body["username"],
                                                 password: req.body["password"],
                                                 email_id: req.body["email_id"],
-                                                phone_number: req.body["phone_number"]
+                                                phone_number: req.body["phone_number"],
+                                                user_type: req.body["usertype"]
                                                 });
 
                                             user.save(function(err, user) {
