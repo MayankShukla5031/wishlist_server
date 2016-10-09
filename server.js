@@ -132,7 +132,17 @@ db.once('open', function callback () {});
     wishlist:[{movieid:{ type : ObjectId, ref: 'moviecollection' }}]
   } , {collection : 'usercollection'});
 
-var User = mongoose.model('usercollection', userSchema);
+  var User = mongoose.model('usercollection', userSchema);
+
+  var showsSchema = new Schema({ 
+    theatre:{userid:{ type : ObjectId, ref: 'usercollection' }},
+    show_time:{ type : Date, default: Date.now },
+    ticket_price: { type : Number , default : 0 },
+    no_of_seats: { type : Number , default : 0 },
+    movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }}
+  } , {collection : 'showcollection'});
+
+  var Show = mongoose.model('showcollection', showsSchema);
 
 app.get('/', function (req, res) 
 {
@@ -638,9 +648,7 @@ app.get('/:action', function (req, res)
                   
             res.end(JSON.stringify(list));
                        });  
-          }
-
-          
+          }          
     }
     else
     {
@@ -1038,8 +1046,8 @@ app.post("/:action", function (req, res)
 	    			        {
         								try
         								{
-                                  Movie.findOne({'uid' : req.body["movieid"]}, function (err, movie) 
-                                  {                                    
+                          Movie.findOne({'uid' : req.body["movieid"]}, function (err, movie) 
+                          {
                                             
                                                 user['wishlist']= removeMovie(movie, user['wishlist']);
                                                             
@@ -1063,9 +1071,8 @@ app.post("/:action", function (req, res)
                                                       }); 
                                                     
                                                   }
-                                                      });
-                                                       
-                                  });       									
+                                                      });                                                       
+                          });							
         		    			        	
         								}
         								catch(e)
@@ -1081,6 +1088,79 @@ app.post("/:action", function (req, res)
 	  	  sendResponse(res, 401, "Unauthorized"); 
 	    }
   }
+  else if (action=="addshow")
+  {
+      validateToken(req);
+      
+      if (req.session.user !=undefined)
+      {
+          console.log('Adding show for user:' + req.session.user);
+
+            User.findOne({'uid' : req.session.user}, function (err, user) {             
+                        
+                  if(err) 
+                  {
+                    sendResponse(res, 500, "Error getting user");
+                  }
+                  else
+                  {
+                      if(user==null)
+                      {
+                        console.log('Null user');
+                        res.end("Null user");
+                        return;
+                      }
+                        var movieid = req.body["movie_id"];
+                        console.log(movieid);
+
+                        try
+                        {                         
+                           Movie.findOne({'uid' : movieid}, function (err, movie) 
+                              {
+                                if(movie!=null)
+                                  {
+                                            var movieObject={};
+                                            movieObject.movieid = movie._id ; 
+
+                                            var userObject={};
+                                            userObject.userid = user._id   ; 
+
+                                            var show = new Show({
+                                            theatre:userObject,
+                                            show_time: new Date(req.body["show_time"]),
+                                            ticket_price: req.body["ticket_price"],
+                                            no_of_seats: req.body["no_of_seats"],
+                                            movie: movieObject
+                                            });
+
+                                            show.save(function(err, user) {
+                                                  if (err)
+                                                      console.log(err);
+                                                    else {
+                                                      console.log('Added Show');
+                                                      sendResponse(res, 200, "success"); 
+                                                      }                                                    
+                                                    });
+                                  }
+                              });                                                    
+                                                                
+                        }
+                        catch(e)
+                        {
+                          console.log(e);
+                        }                         
+                  } 
+              });
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
+  }
+  else
+  {
+    res.end("unknown request" );
+  }
 });
 
 function containsMovie(movie, list) 
@@ -1089,17 +1169,6 @@ function containsMovie(movie, list)
     for (i = 0; i < list.length; i++) {
         if (list[i].movieid.equals(movie._id)) {
 
-            return true;
-        }
-    }         
-    return false;
-}
-
-function ContainsItem(list, item) 
-{
-    var i;
-    for (i = 0; i < list.length; i++) {
-        if (list[i]===item) {
             return true;
         }
     }         
@@ -1116,6 +1185,17 @@ function removeMovie(movie, list)
         }
     }
     return newList;
+}
+
+function ContainsItem(list, item) 
+{
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i]===item) {
+            return true;
+        }
+    }         
+    return false;
 }
 
 // generate the JWT 
