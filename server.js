@@ -922,6 +922,7 @@ app.post("/:action", function (req, res)
               var ret= {};
               ret.result={};
               ret.result.username= user.username;
+              ret.result.user_type= user.user_type;
               var token= generateToken(req, user.uid);
               res.set('Authorization', token);
               res.end(JSON.stringify(ret));
