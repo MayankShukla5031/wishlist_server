@@ -198,7 +198,7 @@ app.get('/:action', function (req, res)
         {
           Movie.find({'title' : new RegExp(req.query.title, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};}); 
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.uid };}); 
           res.end(JSON.stringify(list));
             });
 
@@ -208,7 +208,7 @@ app.get('/:action', function (req, res)
            
           Movie.find({'cast' : new RegExp(req.query.actor, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.uid };});          
           res.end(JSON.stringify(list));
             });
            
@@ -218,7 +218,7 @@ app.get('/:action', function (req, res)
            
           Movie.find({'director' : new RegExp(req.query.director, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.uid };});          
           res.end(JSON.stringify(list));
             });
 
@@ -228,7 +228,7 @@ app.get('/:action', function (req, res)
            
           Movie.find({'producer' : new RegExp(req.query.producer, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.uid };});          
           res.end(JSON.stringify(list));
             });
 
@@ -237,7 +237,7 @@ app.get('/:action', function (req, res)
         {           
           Movie.find({'music_director' : new RegExp(req.query.music_director, 'i')}, function (err, str) {
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title};});          
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.uid };});          
           res.end(JSON.stringify(list));
             });
         }
@@ -247,7 +247,7 @@ app.get('/:action', function (req, res)
           Movie.find({'production_house' : new RegExp(req.query.production_house, 'i')}, function (err, str) {
           
           var list=[];
-          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'count':a.wishcount, 'poster_url': a.poster_url};}); 
+          list= str.map(function(a) {return { 'uid':a.uid, 'title':a.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.uid };}); 
           res.end(JSON.stringify(list));                     
             });           
         }
