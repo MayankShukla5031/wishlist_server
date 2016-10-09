@@ -649,6 +649,31 @@ app.get('/:action', function (req, res)
                        });  
           }          
     }
+    else if(action== "getmyshows")
+    {
+        validateToken(req);
+      
+        if( req.session.user != undefined)
+          {
+             User.findOne({'uid' : req.session.user}).exec(function(err, user)
+                   {
+                                                        
+                    console.log('getting shows for theatre:'+ user.uid);    
+                    Show.find({'theatre.userid' : user._id}).populate({path:'movie.movieid'}).exec( 
+                              function(err, shows) {                                                              
+                              res.end(JSON.stringify(shows));
+                                         });
+                  });              
+          }                
+    }
+    else if(action== "getupcomingshows")
+    {
+         
+       Show.find().populate({path:'movie.movieid'}).exec( 
+           function(err, shows) {                                                              
+           res.end(JSON.stringify(shows));
+           });       
+    }
     else
     {
     	 res.end("unknown request" );
