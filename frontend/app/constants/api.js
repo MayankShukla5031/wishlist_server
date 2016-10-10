@@ -5,8 +5,6 @@ import dispatcher from "../dispatchers/dispatcher";
 import $ from 'jquery';
 import BASEURL from '../../config';
 
-
-
 module.exports ={
 
 	_callAPI : function(url,method,data,target){
@@ -69,7 +67,7 @@ module.exports ={
 	// 	return data;
 	// },
 
-/*
+
 	_setKey: function(key,value){
 		localStorage.setItem('wishlist.'+ key, value);
 	},
@@ -92,5 +90,5 @@ module.exports ={
             }
         }
 	},
-	*/
+	
 }
