@@ -69,6 +69,7 @@ module.exports ={
 	// 	return data;
 	// },
 
+/*
 	_setKey: function(key,value){
 		localStorage.setItem('wishlist.'+ key, value);
 	},
@@ -91,4 +92,5 @@ module.exports ={
             }
         }
 	},
+	*/
 }
