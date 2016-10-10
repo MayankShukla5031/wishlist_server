@@ -48,21 +48,25 @@ export default class TrendingMovies extends React.Component{
 		let wishCount = 0;
 		let imageUrl;
 		let uid;
+		let inmywishlist;
 		uiItem = this.state.trendingMovies.map((item, index)=> {
 			movieName = item.title || "Movie Name";
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
 			uid = item.uid || item;
-			// console.log('imageUrl', imageUrl);
+			inmywishlist= item.inmywishlist== true? <img src="heart.png" alt="Yes" style={{width: '15px', height: '15px', float: 'right', marginTop: '10px'}}/>: '' ;
+
+			 //console.log('item', item.inmywishlist);
 			return(
 				<Card key={index} shadow={0} style={{width: '220px', height: '300px', display:'inline-flex', marginLeft: '10px', marginTop: '10px'}}>
 				    <CardTitle expand style={{color: '#fff', background: `url(${imageUrl}) no-repeat #46B6AC `}}/>
-				    <CardText>
+				    <CardText  style = {{'fontSize': '12px'}}>
 				    	{movieName}<br/>
 				        Wish Count: {wishCount}
 				    </CardText>
 				    <CardActions border>
 				        <Button colored><Link to={`moviedetails/${uid}`}>View Details</Link></Button>
+				        {inmywishlist}
 		     		</CardActions>
 				</Card>);
 		});

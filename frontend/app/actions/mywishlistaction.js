@@ -13,5 +13,9 @@ module.exports = {
 
 	_removeFromWishList: function(inpulvalues){
 		MyWishListWebApiUtils._removeFromWishList(inpulvalues);
+	},
+
+	_addToMyShows : function(inpulvalues){
+		MyWishListWebApiUtils._addToMyShows(inpulvalues);
 	}
 }

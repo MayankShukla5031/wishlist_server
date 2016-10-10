@@ -67,6 +67,7 @@ export default class HomePage extends React.Component {
             loginData: {},
             openSnackBar: false,
             snackbarMsg: '',
+            userType : null,
         };
         this._getMovieList = this._getMovieList.bind(this);
         this._loginStoreChange = this._loginStoreChange.bind(this);
@@ -99,9 +100,12 @@ export default class HomePage extends React.Component {
 
     _loginStoreChange(type){
         if(type == 'Login_Success'){
+            let userType = Api._getKey('user_type');
+            console.log('user_type', userType);
             this.setState({
                 isLoggedin: true,
                 openLoginDialogue: false,
+                userType: userType ? userType : null,
             });
         }else if(type == 'User_Reg_Success'){
             this.setState({
@@ -150,7 +154,7 @@ export default class HomePage extends React.Component {
             return(
                 temp.map(function(result, index){
                     return(
-                       <MenuItem key={index} value={result.uid} primaryText={result.title} style = {{'fontSize': '11px'}} containerElement={<Link to={`/moviedetails/${result.uid}`}/>}></MenuItem>
+                       <MenuItem key={index} value={result.uid} primaryText='' style = {{'fontSize': '15px'}} containerElement={<Link to={`/moviedetails/${result.uid}`}/>}><img src={result.poster_url} alt="" style={{width: '35px', height: 'auto', margin:'5px'}}/>{result.title}</MenuItem>
                 )
             })
         );
@@ -189,7 +193,7 @@ export default class HomePage extends React.Component {
     }
 
     _handleCommonLoginChange(type, event, value, index){
-        if(type == "usertype"){
+        if(type == "user_type"){
             value = index;
             console.log('va', value);
         }
@@ -264,11 +268,11 @@ export default class HomePage extends React.Component {
                             autoWidth={true}
                             labelStyle={{padding: '0px'}} 
                             floatingLabelStyle={styles.floatingLabelStyle}
-                            value={this.state.loginData.usertype || ""}
-                            onChange={this._handleCommonLoginChange.bind(this, 'usertype')}
+                            value={this.state.loginData.user_type || ""}
+                            onChange={this._handleCommonLoginChange.bind(this, 'user_type')}
                             floatingLabelText="Select Type"
                         >                                    
-                            <MenuItem key={1} value="user" primaryText="Viewer" />
+                            <MenuItem key={1} value="viewer" primaryText="Viewer" />
                             <MenuItem key={2} value="theatre" primaryText="Theatre" />
                         </SelectField>
                     </Cell>
@@ -427,8 +431,8 @@ export default class HomePage extends React.Component {
                            
                             <HeaderRow>                                
                                 <Navigation>
-                                    {this.state.isLoggedin? <Link to="/mywishlist">My Wishlist</Link> : null}
-                                    {this.state.isLoggedin?<Link to="#">My Bookings</Link>: null}
+                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
+                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}
                                     <Link to="#">Trending movies</Link>             
                                     <Link to="#">Upcoming shows</Link>
                                     <Link to="#">Top Watched movies</Link>  

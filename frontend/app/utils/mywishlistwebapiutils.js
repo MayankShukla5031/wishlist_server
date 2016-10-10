@@ -57,4 +57,21 @@ module.exports = {
 	    });
 	},
 
+	_addToMyShows : function(query){
+		Api._callAPI(Url.ADD_SHOW,'post',query,(type,data)=> {
+            if(type == 'success'){   
+                dispatcher.dispatch({
+                    type: 'MOVIE_ADDED_IN_MYSHOWS',
+                });
+            }
+            else{   
+            	//console.log('error');             
+                dispatcher.dispatch({
+                    type: 'snackbar',
+                    str: "something went wrong"
+                });
+            }
+	    });
+	}
+
 }

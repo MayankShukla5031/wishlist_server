@@ -12,6 +12,7 @@ import MobileHomePage from './pages/mobilehomepage';
 import TrendingMovies from './components/trendingmovies';
 import MovieDetails from './components/moviedetails';
 import MyWishList from './components/mywishlist';
+import MyShows from './components/myshows';
 
 //import injectTapEventPlugin from 'react-tap-event-plugin';
 //injectTapEventPlugin();
@@ -27,6 +28,7 @@ ReactDOM.render((
 		    	<IndexRoute component={TrendingMovies}/>
 		    	<Route path="/moviedetails/:movieId" component={MovieDetails}/>
 		    	<Route path="/mywishlist" component={MyWishList}/>
+		    	<Route path="/myshows" component={MyShows}/>
 		    </Route>
 		</Router>
 	</MuiThemeProvider>

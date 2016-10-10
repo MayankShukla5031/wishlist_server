@@ -31,8 +31,9 @@ module.exports ={
 	        		this._setKey('token',jqXHR.getResponseHeader('Authorization'));
 	        	}
 	        	if(url == "login"){
-	        		console.log("login", data.result.username);
+	        		console.log("login", data.result.user_type);
 	        		this._setKey('username', data.result.username);
+	        		this._setKey('user_type', data.result.user_type);
 	        	}
 	        	target('success',data);        	
 	        },
