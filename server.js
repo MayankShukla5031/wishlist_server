@@ -511,7 +511,6 @@ app.get('/:action', function (req, res)
     {
     	if( req.query.id != undefined)
         {
-
           if(req.query.id.includes("MVI"))
             {
               validateToken(req);
@@ -554,7 +553,7 @@ app.get('/:action', function (req, res)
                                           movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
                   			        					res.end(JSON.stringify(movie));
                   		    			    }            										    			        	
-        					         }	
+        					        }	
         					    	  });		
                         }
                         else
@@ -586,12 +585,12 @@ app.get('/:action', function (req, res)
                         res.end(JSON.stringify(show));                         
                   }                 
                });
-
             }
-	       }else 
-          {
+    	   }
+         else 
+         {
            sendResponse(res, 400, "Bad Request"); 
-          } 
+         } 
     }
     else if(action== "getmywishlist")
     {
