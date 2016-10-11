@@ -670,7 +670,7 @@ app.get('/:action', function (req, res)
                               function(err, shows) {    
 
                               var list=[];
-                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats};}); 
+                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats};}); 
                                                                    
                               res.end(JSON.stringify(list));
                                          });
@@ -687,7 +687,7 @@ app.get('/:action', function (req, res)
            function(err, shows) {       
 
                               var list=[];
-                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username};}); 
+                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username};}); 
                                                                    
                               res.end(JSON.stringify(list));
            });       
