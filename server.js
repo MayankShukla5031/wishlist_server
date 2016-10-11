@@ -512,7 +512,7 @@ app.get('/:action', function (req, res)
     	if( req.query.id != undefined)
         {
 
-          if(req.query.movieid.includes("MVI"))
+          if(req.query.id.includes("MVI"))
             {
               validateToken(req);
           
@@ -525,11 +525,11 @@ app.get('/:action', function (req, res)
                   }
       			     else  
       			      {
-                    if(movie== null)
-                    {
-                      sendResponse(res, 500, "Error getting movie");
-                      return;
-                    }
+                      if(movie== null)
+                      {
+                        sendResponse(res, 500, "Error getting movie");
+                        return;
+                      }
       			        		var moviePresent = false;
 
                         if(req.session.user != undefined)
@@ -537,11 +537,11 @@ app.get('/:action', function (req, res)
         			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
         		    			          
           	    					if(err)
-          	    						{
+          	    					{
           	    							sendResponse(res, 500, "Error getting user");  
-          	    						}
-          	    			      else
-          	    			      {
+          	    					}
+          	    			    else
+          	    			    {
                   									if(containsMovie(movie, user['wishlist']))
                   									{
                   										    movie.inmywishlist= true;
@@ -554,7 +554,7 @@ app.get('/:action', function (req, res)
                                           movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
                   			        					res.end(JSON.stringify(movie));
                   		    			    }            										    			        	
-        					          }	
+        					         }	
         					    	  });		
                         }
                         else
@@ -568,14 +568,15 @@ app.get('/:action', function (req, res)
             else if(req.query.movieid.includes("SHO"))
             {
               Show.findOne({'uid' : req.query.id}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
-             function (err, show) {              
+              function (err, show) {              
                 
                 if(err) 
                   {
                     res.end("{}");
                   }
                  else  
-                  {     if(show== null)
+                  {     
+                    if(show== null)
                         {
                           sendResponse(res, 500, "Error getting show");
                           return;
