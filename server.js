@@ -565,7 +565,7 @@ app.get('/:action', function (req, res)
       			      }			            
     			     });
             }
-            else if(req.query.movieid.includes("SHO"))
+            else if(req.query.id.includes("SHO"))
             {
               Show.findOne({'uid' : req.query.id}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
               function (err, show) {              
