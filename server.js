@@ -511,56 +511,85 @@ app.get('/:action', function (req, res)
     {
     	if( req.query.movieid != undefined)
         {
-          validateToken(req);
-      
-			    Movie.findOne({'uid' : req.query.movieid}, function (err, movie) {		          
-			          
-					if(err) 
-            {
-              res.end("{}");
-            }
-			     else  
-			      {
-              if(movie== null)
-              {
-                sendResponse(res, 500, "Error getting movie");
-                return;
-              }
-			        		var moviePresent = false;
 
-                  if(req.session.user != undefined)
+          if(req.query.movieid.includes("MVI"))
+            {
+              validateToken(req);
+          
+    			    Movie.findOne({'uid' : req.query.movieid}, function (err, movie) { 
+    			          
+      					if(err) 
                   {
-  			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
-  		    			          
-    	    					if(err)
-    	    						{
-    	    							sendResponse(res, 500, "Error getting user");  
-    	    						}
-    	    			      else
-    	    			      {
-            									if(containsMovie(movie, user['wishlist']))
-            									{
-            										    movie.inmywishlist= true;
-                                    movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
-                                    res.end(JSON.stringify(movie));
-            		    			    }
-            		    			     else
-            		    			    {
-            		    			        	movie.inmywishlist= false;
-                                    movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
-            			        					res.end(JSON.stringify(movie));
-            		    			    }            										    			        	
-  					          }	
-  					    	  });		
+                    res.end("{}");
                   }
-                  else
+      			     else  
+      			      {
+                    if(movie== null)
+                    {
+                      sendResponse(res, 500, "Error getting movie");
+                      return;
+                    }
+      			        		var moviePresent = false;
+
+                        if(req.session.user != undefined)
+                        {
+        			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
+        		    			          
+          	    					if(err)
+          	    						{
+          	    							sendResponse(res, 500, "Error getting user");  
+          	    						}
+          	    			      else
+          	    			      {
+                  									if(containsMovie(movie, user['wishlist']))
+                  									{
+                  										    movie.inmywishlist= true;
+                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
+                                          res.end(JSON.stringify(movie));
+                  		    			    }
+                  		    			     else
+                  		    			    {
+                  		    			        	movie.inmywishlist= false;
+                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
+                  			        					res.end(JSON.stringify(movie));
+                  		    			    }            										    			        	
+        					          }	
+        					    	  });		
+                        }
+                        else
+                        {
+                         movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid; 
+                         res.end(JSON.stringify(movie));  
+                        }
+      			      }			            
+    			         });
+            }
+            else if(req.query.movieid.includes("SHO"))
+            {
+              Show.findOne({'uid' : req.query.showid}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
+             function (err, show) {              
+                
+                if(err) 
                   {
-                   movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid; 
-                   res.end(JSON.stringify(movie));  
+                    res.end("{}");
                   }
-			      }			            
-			         });
-	       }
+                 else  
+                  {     if(show== null)
+                        {
+                          sendResponse(res, 500, "Error getting show");
+                          return;
+                        }                  
+
+                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid; 
+                        res.end(JSON.stringify(show));                         
+                  }                 
+               });
+
+            }
+	       }else 
+          {
+           sendResponse(res, 400, "Bad Request"); 
+          } 
     }
     else if(action== "getmywishlist")
     {
@@ -696,35 +725,7 @@ app.get('/:action', function (req, res)
                                                                    
                               res.end(JSON.stringify(list));
            });       
-    }
-    else if(action== "getshowdetails")
-    {
-      if( req.query.showid != undefined)
-        {      
-          Show.findOne({'uid' : req.query.showid}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
-             function (err, show) {              
-                
-                if(err) 
-                  {
-                    res.end("{}");
-                  }
-                 else  
-                  {     if(show== null)
-                        {
-                          sendResponse(res, 500, "Error getting show");
-                          return;
-                        }                  
-                        
-                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid; 
-                        res.end(JSON.stringify(show));                         
-                  }                 
-               });
-         }
-          else 
-          {
-           sendResponse(res, 400, "Bad Request"); 
-          } 
-    }
+    }    
     else
     {
     	 res.end("unknown request" );
