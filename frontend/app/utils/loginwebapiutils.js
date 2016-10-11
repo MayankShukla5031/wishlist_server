@@ -14,7 +14,8 @@ module.exports = {
             }
             else{   
                 dispatcher.dispatch({
-                    
+                    type: 'SNACKBAR',
+                    msg:  data.responseJSON.result || 'Something went wrong, Kindly try after some time'
                 });
             }
 	    });
@@ -28,10 +29,11 @@ module.exports = {
                     type:'USER_REG_SUCCESS',
                 });
             }
-            else{   
-                //console.log('error');             
+            else{  
+                // console.log('data', data.responseJSON.result); 
                 dispatcher.dispatch({
-                    
+                    type: 'SNACKBAR',
+                    msg: data.responseJSON.result || "Something went wrong, kindly try after sometime"
                 });
             }
         });
@@ -53,7 +55,7 @@ module.exports = {
                 });
             }
         });       
-    },
+    },  
 
     _checkLogin: function(){
         let type;

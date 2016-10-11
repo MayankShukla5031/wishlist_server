@@ -5,51 +5,48 @@ import {Grid, Cell, Card, CardTitle, CardText, CardActions, Button} from 'react-
 import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
 
-import * as TreandingMoviesAction from '../actions/treandingmoviesaction';
-import TrendingMoviesStore from '../stores/treandingmoviesstore';
+import * as MyShowsAction from '../actions/myshowsAction';
+import MyShowsStore from '../stores/myshowsStore';
 
-var intervalID;
 
-export default class TrendingMovies extends React.Component{
+export default class MyShows extends React.Component{
 
 	constructor(){
 		super();
 		this.state = {
-			trendingMovies : [],
+			MyShowsList : [],
 		};
-		this._trendingMovieStoreChange = this._trendingMovieStoreChange.bind(this);
+		this._myShowsStoreChange = this._myShowsStoreChange.bind(this);
 	}
 
 
 	componentWillMount(){
-		TreandingMoviesAction._getTreandingMoviesList();
-		TrendingMoviesStore.on('change', this._trendingMovieStoreChange);
-		intervalID = setInterval(function(){TreandingMoviesAction._getTreandingMoviesList();}, 10000);
+		MyShowsAction._getMyShowsList("");
+		MyShowsStore.on('change', this._myShowsStoreChange);
 	}
 
 	componentWillUnmount(){
-		clearInterval(intervalID);
-		TrendingMoviesStore.removeListener('change', this._trendingMovieStoreChange);	
+		MyShowsStore.removeListener('change', this._myShowsStoreChange);	
 	}
 
-	_trendingMovieStoreChange(type){
-		if(type == 'Trending_Movies'){
-			let movies = TrendingMoviesStore._getTrendingMovies();
+	_myShowsStoreChange(type){
+		if(type=="MyShowsList"){
+			let myShows = MyShowsStore._getMyShowsList();
 			this.setState({
-				trendingMovies: movies,
+				MyShowsList : myShows || [],
 			});
 		}
 	}
 
 
-	_setTrendingMoviesUI(){		
+	_setMyShowsUI(){		
 		let uiItem = [];
 		let movieName = '';
 		let wishCount = 0;
 		let imageUrl;
 		let uid;
 		let inmywishlist;
-		uiItem = this.state.trendingMovies.map((item, index)=> {
+		uiItem = this.state.MyShowsList.map((item, index)=> {
 			movieName = item.title || "Movie Name";
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
@@ -62,10 +59,10 @@ export default class TrendingMovies extends React.Component{
 				    <CardTitle expand style={{color: '#fff', background: `url(${imageUrl}) no-repeat #46B6AC `}}/>
 				    <CardText  style = {{'fontSize': '12px'}}>
 				    	{movieName}<br/>
-				        Wish Count: {wishCount}
+				        Show Time: {new Date(item.show_time).toDateString() || ""}
 				    </CardText>
 				    <CardActions border>
-				        <Button colored><Link to={`moviedetails/${uid}`}>View Details</Link></Button>
+				        <Button colored><Link to={`showdetails/${uid}`}>View Details</Link></Button>
 				        {inmywishlist}
 		     		</CardActions>
 				</Card>);
@@ -77,7 +74,7 @@ export default class TrendingMovies extends React.Component{
 	render(){
 		return(
 			<div>
-				{this._setTrendingMoviesUI()}
+				{this._setMyShowsUI()}
 			</div>
 		);
 	}

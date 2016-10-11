@@ -49,9 +49,10 @@ export default class TrendingMovies extends React.Component{
 		super();
 		this.state = {
 			movieDetails : [],
+			showId: '',
 			movieId: '',
 			inMyWishList: false,
-			buttonText: 'Add',
+			buttonText: '',
 			userType : Api._getKey('user_type') ? Api._getKey('user_type') : null,
 			openTheatreDialogue : false,
 			theatreDetails: {},
@@ -63,7 +64,8 @@ export default class TrendingMovies extends React.Component{
 	}
 
 	componentWillMount(){
-		let id = this.props.params.movieId;
+		let id = this.props.params.showId;
+		console.log('id', id);
 		MovieDetailsAction._getMovieDetails({id: id});
 		MovieDetailsStore.on('change',this._getMovieDetailsfromStore); 
 		MyWishListStore.on('change', this._getWishListStoreData);
@@ -74,18 +76,26 @@ export default class TrendingMovies extends React.Component{
 		MyWishListStore.removeListener('change', this._getWishListStoreData);
 	}
 
-	componentWillReceiveProps(newKey){
-		MovieDetailsAction._getMovieDetails({id: newKey.params.movieId});
-	}
+	// componentWillReceiveProps(newKey){
+	// 	console.log('no', newKey.params.showId);
+	// 	MovieDetailsAction._getMovieDetails({id: newKey.params.showId});
+	// }
 
 	_getMovieDetailsfromStore(type){		
 		if(type == 'MovieDetails'){
+			let text = "";
 			let details = MovieDetailsStore._getMovieDetails();
-			let text = this.state.userType == "theatre" ? "Add to my Shows" : details.inmywishlist ? "Remove from WishList" : "Add to WishList"; 
+			if(this.state.userType == "theatre"){
+				text = details.in_my_show ? "Cancel" : "";
+			}else{
+				text = details.in_my_show ? "Cancel Ticket" : "Book Ticket"
+			}
+			// let text = this.state.userType == "theatre" ? "" : details.in_my_show ? "Cancel" : "Book Ticket"; 
 			this.setState({
-				movieId: this.props.params.movieId,
+				showId: this.props.params.showId,
+				movieId: details.movie.movieid.uid,
 				movieDetails: details,
-				inMyWishList: details.inmywishlist,
+				inMyShows: details.in_my_show,
 				buttonText: text
 			});
 		}
@@ -108,19 +118,19 @@ export default class TrendingMovies extends React.Component{
 		});
 	}
 
-	_addToWishList(){
+	_handleCommonAction(){
 		if(this.state.userType == 'theatre'){
-			this.setState({
-				openTheatreDialogue: true,
-				theatreDetails: {},
-			});
+			// this.setState({
+			// 	openTheatreDialogue: true,
+			// 	theatreDetails: {},
+			// });
 		}else{
-			let query = {movieid: this.state.movieId}
-			if(this.state.buttonText == 'Add to WishList'){
-				MyWishListAction._addToWishList(query);
-			}else{
-				MyWishListAction._removeFromWishList(query);
-			}
+			// let query = {id: this.state.showId}
+			// if(this.state.buttonText == 'Add to WishList'){
+			// 	MyWishListAction._addToWishList(query);
+			// }else{
+			// 	MyWishListAction._removeFromWishList(query);
+			// }
 		}
 	}
 
@@ -132,7 +142,7 @@ export default class TrendingMovies extends React.Component{
 
 	_handleTheatreDetailsDialogSubmit(){
 		let data = Object.assign(this.state.theatreDetails);
-		data['movie_id'] = this.props.params.movieId;
+		data['movie_id'] = this.state.movieId;
 		MyWishListAction._addToMyShows(data);
 	}
 
@@ -209,23 +219,21 @@ export default class TrendingMovies extends React.Component{
                     onRequestClose={this._handleTheatreDialogCancel}
                     >
                 	{this._setTheatreDetailsUI()}       
-                </Dialog>               
-					<Grid>
-						<Cell col={6}>
-							<img style={{ width: '60%', marginLeft: '10%'}} src={this.state.movieDetails.poster_url}/>
-						</Cell>
-						<Cell col={6} style={{marginTop: '10px'}}>	
-							<p style={styles.leftMargin}>Movie: {this.state.movieDetails.title}</p>									      
-						    <p style={styles.leftMargin}>Cast: {this.state.movieDetails.cast ? this.state.movieDetails.cast.join(', ') : []}</p>
-						    <p style={styles.leftMargin}>Released: {this.state.movieDetails.release}</p>
-						    <p style={styles.leftMargin}>Director: {this.state.movieDetails.director ? this.state.movieDetails.director.join(', '): []}</p>
-						    <p style={styles.leftMargin}>Producer: {this.state.movieDetails.producer ? this.state.movieDetails.producer.join(', ') : []}</p>
-						    <p style={styles.leftMargin}>Music Director: {this.state.movieDetails.music_director ? this.state.movieDetails.music_director.join(',') : []}</p>
-						    <p style={styles.leftMargin}>Production House: {this.state.movieDetails.production_house ? this.state.movieDetails.production_house.join(', ') : []}</p>
-						    <p style={styles.leftMargin}>Likes: {this.state.movieDetails.wishcount}</p>			   
-						    <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._addToWishList.bind(this)}/>
-						</Cell>
-					</Grid>				
+                </Dialog>                 
+				<Grid>					
+					<Cell col={6}>
+						<img style={{ width: '60%', marginLeft: '10%'}} src={this.state.movieDetails.movie ? this.state.movieDetails.movie.movieid.poster_url : ''}/>
+					</Cell>
+					<Cell col={6} style={{marginTop: '10px'}}>	
+						<p style={styles.leftMargin}>Movie: {this.state.movieDetails.movie ? this.state.movieDetails.movie.movieid.title : ''}</p>									      
+					    <p style={styles.leftMargin}>Min Seats: {this.state.movieDetails.min_seats}</p>	
+					    <p style={styles.leftMargin}>Total Seats: {this.state.movieDetails.no_of_seats}</p>	
+					    <p style={styles.leftMargin}>Ticket Price: {this.state.movieDetails.ticket_price}</p>	
+					    <p style={styles.leftMargin}>Show Time: {new Date(this.state.movieDetails.show_time).toDateString() || ""}</p>					   
+					    <p style={styles.leftMargin}>Theatre: {this.state.movieDetails.theatre ? this.state.movieDetails.theatre.userid.username : ''}</p>
+					    {this.state.buttonText != "" ? <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._handleCommonAction.bind(this)}/> : "" }
+					</Cell>
+				</Grid>
 			</Paper>
 		);
 	}

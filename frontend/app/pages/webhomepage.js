@@ -55,7 +55,7 @@ export default class HomePage extends React.Component {
         super();
         this.state = {
             filterValue : 'title',
-            userTypeValue: 'user',
+            // userTypeValue: 'viewer',
             searchString: '',
             searchResultOpen: false,
             openUserOption: false,
@@ -67,6 +67,7 @@ export default class HomePage extends React.Component {
             loginData: {},
             openSnackBar: false,
             snackbarMsg: '',
+            userType : null,
         };
         this._getMovieList = this._getMovieList.bind(this);
         this._loginStoreChange = this._loginStoreChange.bind(this);
@@ -99,9 +100,12 @@ export default class HomePage extends React.Component {
 
     _loginStoreChange(type){
         if(type == 'Login_Success'){
+            let userType = Api._getKey('user_type');
+            console.log('user_type', userType);
             this.setState({
                 isLoggedin: true,
                 openLoginDialogue: false,
+                userType: userType ? userType : null,
             });
         }else if(type == 'User_Reg_Success'){
             this.setState({
@@ -188,7 +192,11 @@ export default class HomePage extends React.Component {
         });
     }
 
-    _handleCommonLoginChange(type, event, value){
+    _handleCommonLoginChange(type, event, value, index){
+        if(type == "user_type"){
+            value = index;
+            console.log('va', value);
+        }
         let loginData = this.state.loginData;
         loginData[type] = value;
         this.setState({
@@ -260,11 +268,11 @@ export default class HomePage extends React.Component {
                             autoWidth={true}
                             labelStyle={{padding: '0px'}} 
                             floatingLabelStyle={styles.floatingLabelStyle}
-                            value={this.state.userTypeValue}
-                            onChange={this._handleUserTypeChange.bind(this)}
+                            value={this.state.loginData.user_type || ""}
+                            onChange={this._handleCommonLoginChange.bind(this, 'user_type')}
                             floatingLabelText="Select Type"
                         >                                    
-                            <MenuItem key={1} value="user" primaryText="Viewer" />
+                            <MenuItem key={1} value="viewer" primaryText="Viewer" />
                             <MenuItem key={2} value="theatre" primaryText="Theatre" />
                         </SelectField>
                     </Cell>
@@ -305,11 +313,11 @@ export default class HomePage extends React.Component {
         }
     }
 
-    _handleUserTypeChange(event, index, value){
-        this.setState({
-            userTypeValue : value
-        });
-    }
+    // _handleUserTypeChange(event, index, value){
+    //     this.setState({
+    //         userTypeValue : value
+    //     });
+    // }
 
     _checkandSetLoginUi(){
         if(this.state.isLoggedin){
@@ -397,7 +405,7 @@ export default class HomePage extends React.Component {
                                 <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
                                     <li>
                                         <Avatar
-                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : "login.png"}
+                                            src={this.state.isLoggedin ? this.state.userType == "viewer" ? "user.png" : "theatre.jpg" : "login.png"}
                                         >
                                         </Avatar>
                                     </li>
@@ -423,10 +431,10 @@ export default class HomePage extends React.Component {
                            
                             <HeaderRow>                                
                                 <Navigation>
-                                    {this.state.isLoggedin? <Link to="/mywishlist">My Wishlist</Link> : null}
-                                    {this.state.isLoggedin?<Link to="#">My Bookings</Link>: null}
+                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
+                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}
                                     <Link to="#">Trending movies</Link>             
-                                    <Link to="#">Upcoming shows</Link>
+                                    <Link to="/upcomingshows">Upcoming shows</Link>
                                     <Link to="#">Top Watched movies</Link>  
                                 </Navigation>
                             </HeaderRow>
