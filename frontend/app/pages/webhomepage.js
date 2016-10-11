@@ -392,7 +392,7 @@ export default class HomePage extends React.Component {
                                     floatingLabelStyle={styles.floatingLabelStyle}
                                     value={this.state.filterValue}
                                     onChange={this._handleFilterChange.bind(this)}
-                                    floatingLabelText="Select Filter"
+                                    floatingLabelText="Search By"
                                 >                                    
                                     <MenuItem key={1} value="title" primaryText="Title" />
                                     <MenuItem key={2} value="actor" primaryText="Actor" />
