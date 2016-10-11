@@ -64,7 +64,7 @@ export default class TrendingMovies extends React.Component{
 
 	componentWillMount(){
 		let id = this.props.params.movieId;
-		MovieDetailsAction._getMovieDetails({movieid: id});
+		MovieDetailsAction._getMovieDetails({id: id});
 		MovieDetailsStore.on('change',this._getMovieDetailsfromStore); 
 		MyWishListStore.on('change', this._getWishListStoreData);
 	}
@@ -75,7 +75,7 @@ export default class TrendingMovies extends React.Component{
 	}
 
 	componentWillReceiveProps(newKey){
-		MovieDetailsAction._getMovieDetails({movieid: newKey.params.movieId});
+		MovieDetailsAction._getMovieDetails({id: newKey.params.movieId});
 	}
 
 	_getMovieDetailsfromStore(type){		
@@ -84,7 +84,7 @@ export default class TrendingMovies extends React.Component{
 			let text = this.state.userType == "theatre" ? "Add to my Shows" : details.inmywishlist ? "Remove from WishList" : "Add to WishList"; 
 			this.setState({
 				movieId: this.props.params.movieId,
-				movieDetails: details,
+				movieDetails: details.movie.movieid,
 				inMyWishList: details.inmywishlist,
 				buttonText: text
 			});
@@ -200,35 +200,36 @@ export default class TrendingMovies extends React.Component{
 
 		return(
 			<Paper>
-				<Grid>
-					<Cell col={12}>
-						<Dialog
-                            title="Details"
-                            actions={TheatreAction}
-                            modal={false}
-                            open={this.state.openTheatreDialogue}
-                            autoScrollBodyContent = {true}
-                            onRequestClose={this._handleTheatreDialogCancel}
-                            >
-                        	{this._setTheatreDetailsUI()}       
-                        </Dialog>
-					</Cell>
-					<Cell col={6}>
-						<img style={{ width: '60%', marginLeft: '10%'}} src={this.state.movieDetails.poster_url}/>
-					</Cell>
-					<Cell col={6} style={{marginTop: '10px'}}>	
-						<p style={styles.leftMargin}>Movie: {this.state.movieDetails.title}</p>									      
-					    <p style={styles.leftMargin}>Cast: {this.state.movieDetails.cast ? this.state.movieDetails.cast.join(', ') : []}</p>
-					    <p style={styles.leftMargin}>Released: {this.state.movieDetails.release}</p>
-					    <p style={styles.leftMargin}>Director: {this.state.movieDetails.director ? this.state.movieDetails.director.join(', '): []}</p>
-					    <p style={styles.leftMargin}>Producer: {this.state.movieDetails.producer ? this.state.movieDetails.producer.join(', ') : []}</p>
-					    <p style={styles.leftMargin}>Music Director: {this.state.movieDetails.music_director ? this.state.movieDetails.music_director.join(',') : []}</p>
-					    <p style={styles.leftMargin}>Production House: {this.state.movieDetails.production_house ? this.state.movieDetails.production_house.join(', ') : []}</p>
-					    <p style={styles.leftMargin}>Likes: {this.state.movieDetails.wishcount}</p>			   
-					    <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._addToWishList.bind(this)}/>
-								
-					</Cell>
-				</Grid>
+				<Dialog
+                    title="Details"
+                    actions={TheatreAction}
+                    modal={false}
+                    open={this.state.openTheatreDialogue}
+                    autoScrollBodyContent = {true}
+                    onRequestClose={this._handleTheatreDialogCancel}
+                    >
+                	{this._setTheatreDetailsUI()}       
+                </Dialog>               
+					<Grid>
+						<Cell col={12}>
+							
+						</Cell>
+						<Cell col={6}>
+							<img style={{ width: '60%', marginLeft: '10%'}} src={this.state.movieDetails.poster_url}/>
+						</Cell>
+						<Cell col={6} style={{marginTop: '10px'}}>	
+							<p style={styles.leftMargin}>Movie: {this.state.movieDetails.title}</p>									      
+						    <p style={styles.leftMargin}>Cast: {this.state.movieDetails.cast ? this.state.movieDetails.cast.join(', ') : []}</p>
+						    <p style={styles.leftMargin}>Released: {this.state.movieDetails.release}</p>
+						    <p style={styles.leftMargin}>Director: {this.state.movieDetails.director ? this.state.movieDetails.director.join(', '): []}</p>
+						    <p style={styles.leftMargin}>Producer: {this.state.movieDetails.producer ? this.state.movieDetails.producer.join(', ') : []}</p>
+						    <p style={styles.leftMargin}>Music Director: {this.state.movieDetails.music_director ? this.state.movieDetails.music_director.join(',') : []}</p>
+						    <p style={styles.leftMargin}>Production House: {this.state.movieDetails.production_house ? this.state.movieDetails.production_house.join(', ') : []}</p>
+						    <p style={styles.leftMargin}>Likes: {this.state.movieDetails.wishcount}</p>			   
+						    <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._addToWishList.bind(this)}/>
+									
+						</Cell>
+					</Grid>				
 			</Paper>
 		);
 	}

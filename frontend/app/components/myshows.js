@@ -59,7 +59,8 @@ export default class MyShows extends React.Component{
 				    <CardTitle expand style={{color: '#fff', background: `url(${imageUrl}) no-repeat #46B6AC `}}/>
 				    <CardText  style = {{'fontSize': '12px'}}>
 				    	{movieName}<br/>
-				        Wish Count: {wishCount}
+				        Wish Count: {wishCount}<br/>
+				        Show Time: {new Date(item.show_time).toDateString() || ""}
 				    </CardText>
 				    <CardActions border>
 				        <Button colored><Link to={`moviedetails/${uid}`}>View Details</Link></Button>
