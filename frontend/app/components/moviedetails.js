@@ -84,7 +84,7 @@ export default class TrendingMovies extends React.Component{
 			let text = this.state.userType == "theatre" ? "Add to my Shows" : details.inmywishlist ? "Remove from WishList" : "Add to WishList"; 
 			this.setState({
 				movieId: this.props.params.movieId,
-				movieDetails: details.movie.movieid,
+				movieDetails: details,
 				inMyWishList: details.inmywishlist,
 				buttonText: text
 			});
@@ -173,8 +173,8 @@ export default class TrendingMovies extends React.Component{
                             floatingLabelText="Min Seats"
                             floatingLabelStyle={styles.floatingLabelStyle}
                             fullWidth={true}
-                            value={this.state.theatreDetails.min_seat || ''}
-                            onChange={this._handleCommonDetailChange.bind(this, 'min_seat')}                                  
+                            value={this.state.theatreDetails.min_seats || ''}
+                            onChange={this._handleCommonDetailChange.bind(this, 'min_seats')}                                  
                         />
                     </Cell>
                     <Cell col={12}>
@@ -211,9 +211,6 @@ export default class TrendingMovies extends React.Component{
                 	{this._setTheatreDetailsUI()}       
                 </Dialog>               
 					<Grid>
-						<Cell col={12}>
-							
-						</Cell>
 						<Cell col={6}>
 							<img style={{ width: '60%', marginLeft: '10%'}} src={this.state.movieDetails.poster_url}/>
 						</Cell>
@@ -227,7 +224,6 @@ export default class TrendingMovies extends React.Component{
 						    <p style={styles.leftMargin}>Production House: {this.state.movieDetails.production_house ? this.state.movieDetails.production_house.join(', ') : []}</p>
 						    <p style={styles.leftMargin}>Likes: {this.state.movieDetails.wishcount}</p>			   
 						    <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._addToWishList.bind(this)}/>
-									
 						</Cell>
 					</Grid>				
 			</Paper>

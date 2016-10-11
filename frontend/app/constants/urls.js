@@ -10,4 +10,5 @@ module.exports = {
 	LOG_OUT: 'logout',
 	GET_MY_SHOWS: 'getmyshows/',
 	ADD_SHOW: 'addshow/',
+	UPCOMING_SHOWS: 'getupcomingshows/',
 }

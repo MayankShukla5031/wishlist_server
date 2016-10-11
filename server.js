@@ -117,7 +117,8 @@ db.once('open', function callback () {});
     producer: Number,
     musicdirector: Number,
     productionhouse: Number,
-    user: Number
+    user: Number,
+    show: Number
   } , {collection : 'countcollection'});
 
   var Count = mongoose.model('countcollection', countSchema);
@@ -135,10 +136,12 @@ db.once('open', function callback () {});
   var User = mongoose.model('usercollection', userSchema);
 
   var showsSchema = new Schema({ 
+    uid: String,
     theatre:{userid:{ type : ObjectId, ref: 'usercollection' }},
     show_time:{ type : Date, default: Date.now },
     ticket_price: { type : Number , default : 0 },
     no_of_seats: { type : Number , default : 0 },
+    min_seats:  { type : Number , default : 0 },
     movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }}
   } , {collection : 'showcollection'});
 
@@ -506,53 +509,88 @@ app.get('/:action', function (req, res)
     }
     else if(action== "getdetails")
     {
-    	if( req.query.movieid != undefined)
+    	if( req.query.id != undefined)
         {
-          validateToken(req);
-      
-			    Movie.findOne({'uid' : req.query.movieid}, function (err, movie) {		          
-			          
-					if(err) 
+          if(req.query.id.includes("MVI"))
             {
-              res.end("{}");
-            }
-			     else  
-			      {
-			        		var moviePresent = false;
+              validateToken(req);
+          
+    			    Movie.findOne({'uid' : req.query.id}, function (err, movie) 
+              { 
+    			          
+      					if(err) 
+                  {
+                    res.end("{}");
+                  }
+      			     else  
+      			      {
+                      if(movie== null)
+                      {
+                        sendResponse(res, 500, "Error getting movie");
+                        return;
+                      }
+      			        		var moviePresent = false;
 
-                  if(req.session.user != undefined)
+                        if(req.session.user != undefined)
+                        {
+        			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
+        		    			          
+          	    					if(err)
+          	    					{
+          	    							sendResponse(res, 500, "Error getting user");  
+          	    					}
+          	    			    else
+          	    			    {
+                  									if(containsMovie(movie, user['wishlist']))
+                  									{
+                  										    movie.inmywishlist= true;
+                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
+                                          res.end(JSON.stringify(movie));
+                  		    			    }
+                  		    			     else
+                  		    			    {
+                  		    			        	movie.inmywishlist= false;
+                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
+                  			        					res.end(JSON.stringify(movie));
+                  		    			    }            										    			        	
+        					        }	
+        					    	  });		
+                        }
+                        else
+                        {
+                         movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid; 
+                         res.end(JSON.stringify(movie));  
+                        }
+      			      }			            
+    			     });
+            }
+            else if(req.query.id.includes("SHO"))
+            {
+              Show.findOne({'uid' : req.query.id}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
+              function (err, show) {              
+                
+                if(err) 
                   {
-  			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
-  		    			          
-    	    					if(err)
-    	    						{
-    	    							sendResponse(res, 500, "Error getting user");  
-    	    						}
-    	    			      else
-    	    			      {
-            									if(containsMovie(movie, user['wishlist']))
-            									{
-            										    movie.inmywishlist= true;
-                                    movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
-                                    res.end(JSON.stringify(movie));
-            		    			    }
-            		    			     else
-            		    			    {
-            		    			        	movie.inmywishlist= false;
-                                    movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
-            			        					res.end(JSON.stringify(movie));
-            		    			    }            										    			        	
-  					          }	
-  					    	  });		
+                    res.end("{}");
                   }
-                  else
-                  {
-                   movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid; 
-                   res.end(JSON.stringify(movie));  
-                  }
-			      }			            
-			         });
-	       }
+                 else  
+                  {     
+                    if(show== null)
+                        {
+                          sendResponse(res, 500, "Error getting show");
+                          return;
+                        }                  
+
+                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid; 
+                        res.end(JSON.stringify(show));                         
+                  }                 
+               });
+            }
+    	   }
+         else 
+         {
+           sendResponse(res, 400, "Bad Request"); 
+         } 
     }
     else if(action== "getmywishlist")
     {
@@ -601,6 +639,10 @@ app.get('/:action', function (req, res)
         
           res.end(JSON.stringify(user));          });
         }
+          else 
+          {
+           sendResponse(res, 401, "Unauthorized"); 
+          } 
     }
     else if(action== "trendingmovies")
     {
@@ -660,20 +702,31 @@ app.get('/:action', function (req, res)
                                                         
                     console.log('getting shows for theatre:'+ user.uid);    
                     Show.find({'theatre.userid' : user._id}).populate({path:'movie.movieid'}).exec( 
-                              function(err, shows) {                                                              
-                              res.end(JSON.stringify(shows));
+                              function(err, shows) {    
+
+                              var list=[];
+                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats};}); 
+                                                                   
+                              res.end(JSON.stringify(list));
                                          });
                   });              
-          }                
+          }   
+          else 
+          {
+           sendResponse(res, 401, "Unauthorized"); 
+          }              
     }
     else if(action== "getupcomingshows")
-    {
-         
-       Show.find().populate({path:'movie.movieid'}).exec( 
-           function(err, shows) {                                                              
-           res.end(JSON.stringify(shows));
+    { 
+       Show.find().populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec( 
+           function(err, shows) {       
+
+                              var list=[];
+                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username};}); 
+                                                                   
+                              res.end(JSON.stringify(list));
            });       
-    }
+    }    
     else
     {
     	 res.end("unknown request" );
@@ -737,7 +790,6 @@ app.post("/:action", function (req, res)
 		        }
 		      else
 		            res.end("Can not add BLANK Director");
-
 		    }
 		    else if(req.body["Producer"]!= undefined)
 		    {
@@ -761,8 +813,7 @@ app.post("/:action", function (req, res)
 		            res.end("Added Producer: "+ req.body["Producer"]);
 		        }
 		              else
-		                    res.end("Can not add BLANK Producer");
-		    
+		                    res.end("Can not add BLANK Producer");		    
 		    }
 		    else if(req.body["MusicDirector"]!= undefined)
 		    {
@@ -991,8 +1042,7 @@ app.post("/:action", function (req, res)
 	    			      {
                       if(user==null)
                       {
-                        console.log('Null user');
-                        res.end("Null user");
+                        sendResponse(res, 500, "null user");
                         return;
                       }
 		    			        	var movieid = req.body["movieid"];	
@@ -1130,8 +1180,7 @@ app.post("/:action", function (req, res)
                   {
                       if(user==null)
                       {
-                        console.log('Null user');
-                        res.end("Null user");
+                        sendResponse(res, 500, "null user");
                         return;
                       }
                         var movieid = req.body["movie_id"];
@@ -1143,6 +1192,9 @@ app.post("/:action", function (req, res)
                               {
                                 if(movie!=null)
                                   {
+                                    Count.findOne({}, function (err, count) 
+                                        {
+
                                             var movieObject={};
                                             movieObject.movieid = movie._id ; 
 
@@ -1150,10 +1202,12 @@ app.post("/:action", function (req, res)
                                             userObject.userid = user._id   ; 
 
                                             var show = new Show({
+                                            uid: "SHO100000" + count.show,
                                             theatre:userObject,
                                             show_time: new Date(req.body["show_time"]),
                                             ticket_price: req.body["ticket_price"],
                                             no_of_seats: req.body["no_of_seats"],
+                                            min_seats:req.body["min_seats"],
                                             movie: movieObject
                                             });
 
@@ -1162,9 +1216,19 @@ app.post("/:action", function (req, res)
                                                       console.log(err);
                                                     else {
                                                       console.log('Added Show');
+
+                                                        count.show= count.show+1;
+                                                        count.save(function(err, user) {
+                                                              if (err)
+                                                                  console.log(err);
+                                                                });
+
                                                       sendResponse(res, 200, "success"); 
+
                                                       }                                                    
                                                     });
+
+                                          });
                                   }
                               });                                                    
                                                                 
@@ -1238,6 +1302,7 @@ function validateToken(req)
 {
   try 
   {
+    req.session.user =null;
     var token="";
 
     if(req.get('token') != undefined )

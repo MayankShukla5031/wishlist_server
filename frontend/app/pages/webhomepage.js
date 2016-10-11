@@ -434,7 +434,7 @@ export default class HomePage extends React.Component {
                                     {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
                                     {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}
                                     <Link to="#">Trending movies</Link>             
-                                    <Link to="#">Upcoming shows</Link>
+                                    <Link to="/upcomingshows">Upcoming shows</Link>
                                     <Link to="#">Top Watched movies</Link>  
                                 </Navigation>
                             </HeaderRow>

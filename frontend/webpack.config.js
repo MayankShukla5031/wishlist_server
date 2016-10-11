@@ -1,6 +1,12 @@
-var debug = process.env.NODE_ENV !== "production";
+
 var webpack = require('webpack');
-console.log('NODE_ENV', process.env.NODE_ENV, debug);
+
+if (process.argv.indexOf('-p') !== -1) {
+  process.env.NODE_ENV = "production";
+}
+
+var debug = process.env.NODE_ENV !== "production";
+console.log('NODE_ENV:', process.env.NODE_ENV, " Debugging:"+debug);
 // var path = require('path');
 
 module.exports = {
