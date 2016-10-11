@@ -176,6 +176,9 @@ export default class HomePage extends React.Component {
 
     _showMovieDetails(event, menuItem, index){
         console.log('id' , menuItem.props.value, index);
+        this.setState({
+            searchResultOpen: false,
+        });
     }
 
     _openLoginDialogue(){
