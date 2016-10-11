@@ -175,6 +175,9 @@ export default class HomePage extends React.Component {
 
     _showMovieDetails(event, menuItem, index){
         console.log('id' , menuItem.props.value, index);
+        this.setState({
+            searchResultOpen: false,
+        });
     }
 
     _openLoginDialogue(){
@@ -429,7 +432,7 @@ export default class HomePage extends React.Component {
                             </HeaderRow>
                                                      
                         </Header>
-                        <Drawer title="Panel Items" style={{}}> 
+                        <Drawer title="Options" style={{}}> 
                             <Navigation>
                                 {this.state.isLoggedin? <Link to="/mywishlist">My Wishlist</Link> : null}
                                 {this.state.isLoggedin?<Link to="#">My Bookings</Link>: null}
