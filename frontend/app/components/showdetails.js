@@ -52,7 +52,7 @@ export default class TrendingMovies extends React.Component{
 			showId: '',
 			movieId: '',
 			inMyWishList: false,
-			buttonText: 'Add',
+			buttonText: '',
 			userType : Api._getKey('user_type') ? Api._getKey('user_type') : null,
 			openTheatreDialogue : false,
 			theatreDetails: {},
@@ -83,14 +83,19 @@ export default class TrendingMovies extends React.Component{
 
 	_getMovieDetailsfromStore(type){		
 		if(type == 'MovieDetails'){
+			let text = "";
 			let details = MovieDetailsStore._getMovieDetails();
-			console.log('details', details);
-			let text = this.state.userType == "theatre" ? "Add to my Shows" : details.inmywishlist ? "Cancel" : "Book Ticket"; 
+			if(this.state.userType == "theatre"){
+				text = details.in_my_show ? "Cancel" : "";
+			}else{
+				text = details.in_my_show ? "Cancel Ticket" : "Book Ticket"
+			}
+			// let text = this.state.userType == "theatre" ? "" : details.in_my_show ? "Cancel" : "Book Ticket"; 
 			this.setState({
 				showId: this.props.params.showId,
 				movieId: details.movie.movieid.uid,
 				movieDetails: details,
-				inMyWishList: details.inmywishlist,
+				inMyShows: details.in_my_show,
 				buttonText: text
 			});
 		}
@@ -115,17 +120,17 @@ export default class TrendingMovies extends React.Component{
 
 	_handleCommonAction(){
 		if(this.state.userType == 'theatre'){
-			this.setState({
-				openTheatreDialogue: true,
-				theatreDetails: {},
-			});
+			// this.setState({
+			// 	openTheatreDialogue: true,
+			// 	theatreDetails: {},
+			// });
 		}else{
-			let query = {id: this.state.showId}
-			if(this.state.buttonText == 'Add to WishList'){
-				MyWishListAction._addToWishList(query);
-			}else{
-				MyWishListAction._removeFromWishList(query);
-			}
+			// let query = {id: this.state.showId}
+			// if(this.state.buttonText == 'Add to WishList'){
+			// 	MyWishListAction._addToWishList(query);
+			// }else{
+			// 	MyWishListAction._removeFromWishList(query);
+			// }
 		}
 	}
 
@@ -221,11 +226,12 @@ export default class TrendingMovies extends React.Component{
 					</Cell>
 					<Cell col={6} style={{marginTop: '10px'}}>	
 						<p style={styles.leftMargin}>Movie: {this.state.movieDetails.movie ? this.state.movieDetails.movie.movieid.title : ''}</p>									      
-					    <p style={styles.leftMargin}>Show Time: {this.state.movieDetails.show_time}</p>					   
 					    <p style={styles.leftMargin}>Min Seats: {this.state.movieDetails.min_seats}</p>	
+					    <p style={styles.leftMargin}>Total Seats: {this.state.movieDetails.no_of_seats}</p>	
 					    <p style={styles.leftMargin}>Ticket Price: {this.state.movieDetails.ticket_price}</p>	
+					    <p style={styles.leftMargin}>Show Time: {new Date(this.state.movieDetails.show_time).toDateString() || ""}</p>					   
 					    <p style={styles.leftMargin}>Theatre: {this.state.movieDetails.theatre ? this.state.movieDetails.theatre.userid.username : ''}</p>
-					    <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._handleCommonAction.bind(this)}/>
+					    {this.state.buttonText != "" ? <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._handleCommonAction.bind(this)}/> : "" }
 					</Cell>
 				</Grid>
 			</Paper>

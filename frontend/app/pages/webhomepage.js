@@ -55,7 +55,7 @@ export default class HomePage extends React.Component {
         super();
         this.state = {
             filterValue : 'title',
-            userTypeValue: 'user',
+            // userTypeValue: 'viewer',
             searchString: '',
             searchResultOpen: false,
             openUserOption: false,
@@ -405,7 +405,7 @@ export default class HomePage extends React.Component {
                                 <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
                                     <li>
                                         <Avatar
-                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : "login.png"}
+                                            src={this.state.isLoggedin ? this.state.userType == "viewer" ? "user.png" : "theatre.jpg" : "login.png"}
                                         >
                                         </Avatar>
                                     </li>
