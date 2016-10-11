@@ -521,6 +521,11 @@ app.get('/:action', function (req, res)
             }
 			     else  
 			      {
+              if(movie== null)
+              {
+                sendResponse(res, 500, "Error getting movie");
+                return;
+              }
 			        		var moviePresent = false;
 
                   if(req.session.user != undefined)
@@ -704,7 +709,12 @@ app.get('/:action', function (req, res)
                     res.end("{}");
                   }
                  else  
-                  {                       
+                  {     if(show== null)
+                        {
+                          sendResponse(res, 500, "Error getting show");
+                          return;
+                        }                  
+                        
                         show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid; 
                         res.end(JSON.stringify(show));                         
                   }                 
