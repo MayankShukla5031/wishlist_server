@@ -117,7 +117,8 @@ db.once('open', function callback () {});
     producer: Number,
     musicdirector: Number,
     productionhouse: Number,
-    user: Number
+    user: Number,
+    show: Number
   } , {collection : 'countcollection'});
 
   var Count = mongoose.model('countcollection', countSchema);
@@ -135,10 +136,12 @@ db.once('open', function callback () {});
   var User = mongoose.model('usercollection', userSchema);
 
   var showsSchema = new Schema({ 
+    uid: String,
     theatre:{userid:{ type : ObjectId, ref: 'usercollection' }},
     show_time:{ type : Date, default: Date.now },
     ticket_price: { type : Number , default : 0 },
     no_of_seats: { type : Number , default : 0 },
+    min_seats:  { type : Number , default : 0 },
     movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }}
   } , {collection : 'showcollection'});
 
@@ -601,6 +604,10 @@ app.get('/:action', function (req, res)
         
           res.end(JSON.stringify(user));          });
         }
+          else 
+          {
+           sendResponse(res, 401, "Unauthorized"); 
+          } 
     }
     else if(action== "trendingmovies")
     {
@@ -660,19 +667,53 @@ app.get('/:action', function (req, res)
                                                         
                     console.log('getting shows for theatre:'+ user.uid);    
                     Show.find({'theatre.userid' : user._id}).populate({path:'movie.movieid'}).exec( 
-                              function(err, shows) {                                                              
-                              res.end(JSON.stringify(shows));
+                              function(err, shows) {    
+
+                              var list=[];
+                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats};}); 
+                                                                   
+                              res.end(JSON.stringify(list));
                                          });
                   });              
-          }                
+          }   
+          else 
+          {
+           sendResponse(res, 401, "Unauthorized"); 
+          }              
     }
     else if(action== "getupcomingshows")
-    {
-         
-       Show.find().populate({path:'movie.movieid'}).exec( 
-           function(err, shows) {                                                              
-           res.end(JSON.stringify(shows));
+    { 
+       Show.find().populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec( 
+           function(err, shows) {       
+
+                              var list=[];
+                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_tiny?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username};}); 
+                                                                   
+                              res.end(JSON.stringify(list));
            });       
+    }
+    else if(action== "getshowdetails")
+    {
+      if( req.query.showid != undefined)
+        {      
+          Show.findOne({'uid' : req.query.showid}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
+             function (err, show) {              
+                
+                if(err) 
+                  {
+                    res.end("{}");
+                  }
+                 else  
+                  {                       
+                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid; 
+                        res.end(JSON.stringify(show));                         
+                  }                 
+               });
+         }
+          else 
+          {
+           sendResponse(res, 400, "Bad Request"); 
+          } 
     }
     else
     {
@@ -737,7 +778,6 @@ app.post("/:action", function (req, res)
 		        }
 		      else
 		            res.end("Can not add BLANK Director");
-
 		    }
 		    else if(req.body["Producer"]!= undefined)
 		    {
@@ -761,8 +801,7 @@ app.post("/:action", function (req, res)
 		            res.end("Added Producer: "+ req.body["Producer"]);
 		        }
 		              else
-		                    res.end("Can not add BLANK Producer");
-		    
+		                    res.end("Can not add BLANK Producer");		    
 		    }
 		    else if(req.body["MusicDirector"]!= undefined)
 		    {
@@ -991,8 +1030,7 @@ app.post("/:action", function (req, res)
 	    			      {
                       if(user==null)
                       {
-                        console.log('Null user');
-                        res.end("Null user");
+                        sendResponse(res, 500, "null user");
                         return;
                       }
 		    			        	var movieid = req.body["movieid"];	
@@ -1130,8 +1168,7 @@ app.post("/:action", function (req, res)
                   {
                       if(user==null)
                       {
-                        console.log('Null user');
-                        res.end("Null user");
+                        sendResponse(res, 500, "null user");
                         return;
                       }
                         var movieid = req.body["movie_id"];
@@ -1143,6 +1180,9 @@ app.post("/:action", function (req, res)
                               {
                                 if(movie!=null)
                                   {
+                                    Count.findOne({}, function (err, count) 
+                                        {
+
                                             var movieObject={};
                                             movieObject.movieid = movie._id ; 
 
@@ -1150,10 +1190,12 @@ app.post("/:action", function (req, res)
                                             userObject.userid = user._id   ; 
 
                                             var show = new Show({
+                                            uid: "SHO100000" + count.show,
                                             theatre:userObject,
                                             show_time: new Date(req.body["show_time"]),
                                             ticket_price: req.body["ticket_price"],
                                             no_of_seats: req.body["no_of_seats"],
+                                            min_seats:req.body["min_seats"],
                                             movie: movieObject
                                             });
 
@@ -1162,9 +1204,19 @@ app.post("/:action", function (req, res)
                                                       console.log(err);
                                                     else {
                                                       console.log('Added Show');
+
+                                                        count.show= count.show+1;
+                                                        count.save(function(err, user) {
+                                                              if (err)
+                                                                  console.log(err);
+                                                                });
+
                                                       sendResponse(res, 200, "success"); 
+
                                                       }                                                    
                                                     });
+
+                                          });
                                   }
                               });                                                    
                                                                 
@@ -1238,6 +1290,7 @@ function validateToken(req)
 {
   try 
   {
+    req.session.user =null;
     var token="";
 
     if(req.get('token') != undefined )
