@@ -509,14 +509,15 @@ app.get('/:action', function (req, res)
     }
     else if(action== "getdetails")
     {
-    	if( req.query.movieid != undefined)
+    	if( req.query.id != undefined)
         {
 
           if(req.query.movieid.includes("MVI"))
             {
               validateToken(req);
           
-    			    Movie.findOne({'uid' : req.query.movieid}, function (err, movie) { 
+    			    Movie.findOne({'uid' : req.query.id}, function (err, movie) 
+              { 
     			          
       					if(err) 
                   {
@@ -562,11 +563,11 @@ app.get('/:action', function (req, res)
                          res.end(JSON.stringify(movie));  
                         }
       			      }			            
-    			         });
+    			     });
             }
             else if(req.query.movieid.includes("SHO"))
             {
-              Show.findOne({'uid' : req.query.showid}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
+              Show.findOne({'uid' : req.query.id}).populate({path:'movie.movieid'}).populate({path:'theatre.userid'}).exec(
              function (err, show) {              
                 
                 if(err) 
