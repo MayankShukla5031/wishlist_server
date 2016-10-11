@@ -8,4 +8,6 @@ module.exports = {
 	USER_REGISTRATION: 'register/',
 	TRENDING_MOVIES: 'trendingmovies/',
 	LOG_OUT: 'logout',
+	GET_MY_SHOWS: 'getmyshows/',
+	ADD_SHOW: 'addshow/',
 }

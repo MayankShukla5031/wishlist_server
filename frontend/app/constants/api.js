@@ -5,8 +5,6 @@ import dispatcher from "../dispatchers/dispatcher";
 import $ from 'jquery';
 import BASEURL from '../../config';
 
-
-
 module.exports ={
 
 	_callAPI : function(url,method,data,target){
@@ -31,8 +29,9 @@ module.exports ={
 	        		this._setKey('token',jqXHR.getResponseHeader('Authorization'));
 	        	}
 	        	if(url == "login"){
-	        		console.log("login", data.result.username);
+	        		console.log("login", data.result.user_type);
 	        		this._setKey('username', data.result.username);
+	        		this._setKey('user_type', data.result.user_type);
 	        	}
 	        	target('success',data);        	
 	        },
@@ -42,6 +41,7 @@ module.exports ={
                 if(jqXhr.status == 401){
                 	// this._removeKey('token');
                 	this._clearStorage();
+                	hashHistory.push('/');
                 	dispatcher.dispatch({
                 		type: 'SNACKBAR',
                 		msg: 'Kindly Login First'
@@ -67,8 +67,8 @@ module.exports ={
 	// 	return data;
 	// },
 
+
 	_setKey: function(key,value){
-		// console.log('set key', key, value);
 		localStorage.setItem('wishlist.'+ key, value);
 	},
 
@@ -79,7 +79,6 @@ module.exports ={
 
 	_removeKey: function(key){
 		localStorage.removeItem('wishlist.' + key);
-		console.log('token removed');
 	},
 
 	_clearStorage: function(){
@@ -91,4 +90,5 @@ module.exports ={
             }
         }
 	},
+	
 }

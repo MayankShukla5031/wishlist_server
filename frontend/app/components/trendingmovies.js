@@ -54,7 +54,7 @@ export default class TrendingMovies extends React.Component{
 			wishCount = item.count || 0;
 			imageUrl = item.poster_url || "http://www.getmdl.io/assets/demos/dog.png";
 			uid = item.uid || item;
-			inmywishlist= item.inmywishlist== true? <img src="heart.png" alt="Yes" style={{width: '15px', height: '15px'}}/>: '' ;
+			inmywishlist= item.inmywishlist== true? <img src="heart.png" alt="Yes" style={{width: '15px', height: '15px', float: 'right', marginTop: '10px'}}/>: '' ;
 
 			 //console.log('item', item.inmywishlist);
 			return(
@@ -62,10 +62,11 @@ export default class TrendingMovies extends React.Component{
 				    <CardTitle expand style={{color: '#fff', background: `url(${imageUrl}) no-repeat #46B6AC `}}/>
 				    <CardText  style = {{'fontSize': '12px'}}>
 				    	{movieName}<br/>
-				        Wish Count: {wishCount}    {inmywishlist}
+				        Wish Count: {wishCount}
 				    </CardText>
 				    <CardActions border>
 				        <Button colored><Link to={`moviedetails/${uid}`}>View Details</Link></Button>
+				        {inmywishlist}
 		     		</CardActions>
 				</Card>);
 		});
