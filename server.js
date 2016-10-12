@@ -539,21 +539,21 @@ app.get('/:action', function (req, res)
           	    					{
           	    							sendResponse(res, 500, "Error getting user");  
           	    					}
-          	    			    else
-          	    			    {
-                  									if(containsMovie(movie, user['wishlist']))
-                  									{
-                  										    movie.inmywishlist= true;
-                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
-                                          res.end(JSON.stringify(movie));
-                  		    			    }
-                  		    			     else
-                  		    			    {
-                  		    			        	movie.inmywishlist= false;
-                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
-                  			        					res.end(JSON.stringify(movie));
-                  		    			    }            										    			        	
-        					        }	
+	          	    			    else
+	          	    			    {
+	                  						if(containsMovie(movie, user['wishlist']))
+	                  						{
+	                  						  movie.inmywishlist= true;
+	                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
+	                                          res.end(JSON.stringify(movie));
+	                  		    			 }
+	                  		    			 else
+	                  		    			 {
+	                  		    			    movie.inmywishlist= false;
+	                                          	movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
+	                  			        					res.end(JSON.stringify(movie));
+	                  		    			 }            										    			        	
+	        					        }	
         					    	  });		
                         }
                         else
@@ -581,7 +581,8 @@ app.get('/:action', function (req, res)
                           return;
                         }                  
 
-                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid; 
+                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid;
+                        show.theatre.userid.password='*******'; 
                         res.end(JSON.stringify(show));                         
                   }                 
                });
