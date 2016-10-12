@@ -1246,6 +1246,27 @@ app.post("/:action", function (req, res)
         sendResponse(res, 401, "Unauthorized"); 
       }
   }
+  else if (action=="cancelshow")
+  {
+      validateToken(req);
+      
+      if (req.session.user !=undefined)
+      {
+          	console.log('Canceling show:' + req.body.show_id);
+
+            Show.findOne({'uid' : req.body.show_id}).populate({path:'theatre.userid'}).remove(function(err, item2) 
+                           {
+                             if (err)
+                              	 sendResponse(res, 500, "Error deleting show");
+                              	else 
+                       			 sendResponse(res, 200, "success");
+                       	 	});
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
+  }
   else
   {
     res.end("unknown request" );
