@@ -723,7 +723,7 @@ app.get('/:action', function (req, res)
            function(err, shows) {       
 
                               var list=[];
-                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username, 'ticket_price':a.ticket_price};}); 
+                              list= shows.map(function(a) {return { 'show_id':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username, 'thetre_id':a.theatre.userid.uid, 'ticket_price':a.ticket_price};}); 
                                                                    
                               res.end(JSON.stringify(list));
            });       
@@ -1007,6 +1007,7 @@ app.post("/:action", function (req, res)
               ret.result={};
               ret.result.username= user.username;
               ret.result.user_type= user.user_type;
+              ret.result.user_id= user.uid;
               var token= generateToken(req, user.uid);
               res.set('Authorization', token);
               res.end(JSON.stringify(ret));
