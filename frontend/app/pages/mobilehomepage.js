@@ -434,11 +434,11 @@ export default class HomePage extends React.Component {
                         </Header>
                         <Drawer title="Options" style={{}}> 
                             <Navigation>
-                                {this.state.isLoggedin? <Link to="/mywishlist">My Wishlist</Link> : null}
-                                {this.state.isLoggedin?<Link to="#">My Bookings</Link>: null}
-                                <Link to="#">Trending movies</Link>             
-                                <Link to="#">Upcoming shows</Link>
-                                <Link to="#">Top Watched movies</Link>                             
+                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
+                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}
+                                    <Link to="#">Trending movies</Link>             
+                                    <Link to="/upcomingshows">Upcoming shows</Link>
+                                    <Link to="#">Top Watched movies</Link>  
                             </Navigation>
                         </Drawer>             
 
