@@ -539,21 +539,21 @@ app.get('/:action', function (req, res)
           	    					{
           	    							sendResponse(res, 500, "Error getting user");  
           	    					}
-          	    			    else
-          	    			    {
-                  									if(containsMovie(movie, user['wishlist']))
-                  									{
-                  										    movie.inmywishlist= true;
-                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
-                                          res.end(JSON.stringify(movie));
-                  		    			    }
-                  		    			     else
-                  		    			    {
-                  		    			        	movie.inmywishlist= false;
-                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
-                  			        					res.end(JSON.stringify(movie));
-                  		    			    }            										    			        	
-        					        }	
+	          	    			    else
+	          	    			    {
+	                  						if(containsMovie(movie, user['wishlist']))
+	                  						{
+	                  						  movie.inmywishlist= true;
+	                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
+	                                          res.end(JSON.stringify(movie));
+	                  		    			 }
+	                  		    			 else
+	                  		    			 {
+	                  		    			    movie.inmywishlist= false;
+	                                          	movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
+	                  			        					res.end(JSON.stringify(movie));
+	                  		    			 }            										    			        	
+	        					        }	
         					    	  });		
                         }
                         else
@@ -581,7 +581,8 @@ app.get('/:action', function (req, res)
                           return;
                         }                  
 
-                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid; 
+                        show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid;
+                        show.theatre.userid.password='*******'; 
                         res.end(JSON.stringify(show));                         
                   }                 
                });
@@ -722,7 +723,7 @@ app.get('/:action', function (req, res)
            function(err, shows) {       
 
                               var list=[];
-                              list= shows.map(function(a) {return { 'uid':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username};}); 
+                              list= shows.map(function(a) {return { 'show_id':a.uid, 'title':a.movie.movieid.title, 'poster_url':imageServerUrl+"/poster_small?movieid="+a.movie.movieid.uid , 'show_time': a.show_time , 'min_seats': a.min_seats, 'theatre': a.theatre.userid.username, 'thetre_id':a.theatre.userid.uid, 'ticket_price':a.ticket_price};}); 
                                                                    
                               res.end(JSON.stringify(list));
            });       
@@ -1006,6 +1007,7 @@ app.post("/:action", function (req, res)
               ret.result={};
               ret.result.username= user.username;
               ret.result.user_type= user.user_type;
+              ret.result.user_id= user.uid;
               var token= generateToken(req, user.uid);
               res.set('Authorization', token);
               res.end(JSON.stringify(ret));
@@ -1239,6 +1241,27 @@ app.post("/:action", function (req, res)
                         }                         
                   } 
               });
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
+  }
+  else if (action=="cancelshow")
+  {
+      validateToken(req);
+      
+      if (req.session.user !=undefined)
+      {
+          	console.log('Canceling show:' + req.body.show_id);
+
+            Show.findOne({'uid' : req.body.show_id}).populate({path:'theatre.userid'}).remove(function(err, item2) 
+                           {
+                             if (err)
+                              	 sendResponse(res, 500, "Error deleting show");
+                              	else 
+                       			 sendResponse(res, 200, "success");
+                       	 	});
       }
       else
       {

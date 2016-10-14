@@ -26,13 +26,16 @@ import SnackBarStore from '../stores/snackbarstore';
 
 const styles = {
 	MenuStyle : {
-		fontSize: '10px',
+		fontSize: '12px',
 		fontWeight: 'normal',
 	},
     SearchFieldFontStyling: {
-        fontSize: '10px',
+        fontSize: '12px',
         padding : '0px',
         fontWeight: 'normal',
+        width: '100px',
+        position: 'absolute',
+        right: '0px'
     },
     floatingLabelStyle:{
         fontSize: '12px',
@@ -172,6 +175,9 @@ export default class HomePage extends React.Component {
 
     _showMovieDetails(event, menuItem, index){
         console.log('id' , menuItem.props.value, index);
+        this.setState({
+            searchResultOpen: false,
+        });
     }
 
     _openLoginDialogue(){
@@ -413,20 +419,20 @@ export default class HomePage extends React.Component {
                                     labelStyle={{padding: '0px'}} 
                                     value={this.state.filterValue}
                                     onChange={this._handleFilterChange.bind(this)}
-                                    floatingLabelText="Filter"
+                                    floatingLabelText="Search By"
                                 >                                    
-                                    <MenuItem style={{fontSize: '8px'}} key={1} value="title" primaryText="Title" />
-                                    <MenuItem style={{fontSize: '8px'}} key={2} value="actor" primaryText="Actor" />
-                                    <MenuItem style={{fontSize: '8px'}} key={3} value="director" primaryText="Director" />
-                                    <MenuItem style={{fontSize: '8px'}} key={4} value="producer" primaryText="Producer" />
-                                    <MenuItem style={{fontSize: '8px'}} key={5} value="music director" primaryText="Music Director" />  
-                                    <MenuItem style={{fontSize: '8px'}} key={6} value="production house" primaryText="Production House" />                                  
+                                    <MenuItem style={{fontSize: '12px'}} key={1} value="title" primaryText="Title" />
+                                    <MenuItem style={{fontSize: '12px'}} key={2} value="actor" primaryText="Actor" />
+                                    <MenuItem style={{fontSize: '12px'}} key={3} value="director" primaryText="Director" />
+                                    <MenuItem style={{fontSize: '12px'}} key={4} value="producer" primaryText="Producer" />
+                                    <MenuItem style={{fontSize: '12px'}} key={5} value="music director" primaryText="Music Director" />  
+                                    <MenuItem style={{fontSize: '12px'}} key={6} value="production house" primaryText="Production House" />                                  
                                 </SelectField>
 
                             </HeaderRow>
                                                      
                         </Header>
-                        <Drawer title="Panel Items" style={{}}> 
+                        <Drawer title="Options" style={{}}> 
                             <Navigation>
                                 {this.state.isLoggedin? <Link to="/mywishlist">My Wishlist</Link> : null}
                                 {this.state.isLoggedin?<Link to="#">My Bookings</Link>: null}
