@@ -38,6 +38,11 @@ const styles = {
         fontWeight: 'normal',
         padding: '0px'
     },
+    floatingLabelStyleForSearch:{
+        fontSize: '14px',
+        fontWeight: 'normal',
+        color: '#ffffff'
+    },
     cancelButtonStyle: {
         backgroundColor: '#ffffff',
         color: 'black'
@@ -68,7 +73,7 @@ export default class HomePage extends React.Component {
     constructor(){
         super();
         this.state = {
-            filterValue : 'title',
+            filterValue : 'Title',
             // userTypeValue: 'viewer',
             searchString: '',
             searchResultOpen: false,
@@ -85,7 +90,6 @@ export default class HomePage extends React.Component {
             activeTab:'',
             showLoader: false,
         };
-        console.log('constructor');
         this._getMovieList = this._getMovieList.bind(this);
         this._loginStoreChange = this._loginStoreChange.bind(this);
         this._snackbarStoreChange = this._snackbarStoreChange.bind(this);
@@ -95,7 +99,6 @@ export default class HomePage extends React.Component {
     }
 
     componentWillMount(){
-        console.log('componentWillMount');
         LoginStore.on('change',this._loginStoreChange); 
         MoviesSearchStore.on('change',this._getMovieList); 
         SnackBarStore.on('change', this._snackbarStoreChange);
@@ -103,7 +106,6 @@ export default class HomePage extends React.Component {
     }
 
     componentWillUnmount(){
-        console.log('componentWillUnmount');
         LoginStore.removeListener('change', this._loginStoreChange);
         MoviesSearchStore.removeListener('change', this._getMovieList);
         SnackBarStore.removeListener('change', this._snackbarStoreChange);
@@ -118,7 +120,6 @@ export default class HomePage extends React.Component {
     }
 
     _loginStoreChange(type){
-        console.log('_loginStoreChange', type);
         if(type == 'Login_Success'){
             let userType = Api._getKey('user_type');
             this.setState({
@@ -184,6 +185,7 @@ export default class HomePage extends React.Component {
     }
 
     _handleFilterChange(event, index, value){
+        console.log('event', event, event.target.value);
         this.setState({
             filterValue : value
         });
@@ -439,6 +441,10 @@ export default class HomePage extends React.Component {
         this.setState({activeTab: tabValue})
     }
 
+    _handleMenuItemClick(tabName,event){
+        console.log(tabName);
+    }
+
     render() {
 
         const LoginOptionAction = [
@@ -455,7 +461,9 @@ export default class HomePage extends React.Component {
                             <HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
                                 <TextField
                                     hintText="e.g-Sultan"
-                                    floatingLabelText="Search"
+                                    floatingLabelText={this.state.filterValue || "Search"}
+                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
+                                    hintStyle={styles.floatingLabelStyleForSearch}
                                     value={this.state.searchString}
                                     onChange={this._handleSearchChange.bind(this)} 
                                     autoFocus={true}                             
@@ -477,17 +485,18 @@ export default class HomePage extends React.Component {
                                 <SelectField
                                     style={styles.SearchFieldFontStyling}
                                     labelStyle={{padding: '0px'}} 
-                                    floatingLabelStyle={styles.floatingLabelStyle}
                                     value={this.state.filterValue}
                                     onChange={this._handleFilterChange.bind(this)}
                                     floatingLabelText="Search By"
+                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
+                                    labelStyle={styles.floatingLabelStyleForSearch}
                                 >                                    
-                                    <MenuItem key={1} value="title" primaryText="Title" />
-                                    <MenuItem key={2} value="actor" primaryText="Actor" />
-                                    <MenuItem key={3} value="director" primaryText="Director" />
-                                    <MenuItem key={4} value="producer" primaryText="Producer" />
-                                    <MenuItem key={5} value="music director" primaryText="Music Director" />  
-                                    <MenuItem key={6} value="production house" primaryText="Production House" />                                  
+                                    <MenuItem key={1} value="Title" primaryText="Title" />
+                                    <MenuItem key={2} value="Actor" primaryText="Actor" />
+                                    <MenuItem key={3} value="Director" primaryText="Director" />
+                                    <MenuItem key={4} value="Producer" primaryText="Producer" />
+                                    <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
+                                    <MenuItem key={6} value="Production House" primaryText="Production House" />                                  
                                 </SelectField>
 
                                 <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
