@@ -1,11 +1,12 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link, hashHistory} from 'react-router';
 
 import Avatar from 'material-ui/Avatar';
 import Divider from 'material-ui/Divider';
+import CircularProgress from 'material-ui/CircularProgress';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import {Grid, Cell, Layout, Header, HeaderRow, Navigation, Drawer, Content, Icon, Textfield} from 'react-mdl';
+import {Grid, Cell, Layout, Header, HeaderTabs, Tab, HeaderRow, Navigation, Drawer, Content, Icon, Textfield} from 'react-mdl';
 import MenuItem from 'material-ui/MenuItem';
 import Menu from 'material-ui/Menu';
 import Paper from 'material-ui/Paper';
@@ -13,6 +14,8 @@ import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
+import DropDownMenu from 'material-ui/dropdownmenu';
+import List from 'material-ui/list';
 
 import Api from '../constants/api';
 
@@ -26,16 +29,20 @@ import SnackBarStore from '../stores/snackbarstore';
 const styles = {
 
     SearchFieldFontStyling: {
-        width: '20%',
+        width: '30px',
         fontSize: '14px',
-        padding : '0px',
-        fontWeight: 'normal',
-        marginLeft: '20px'
+        paddingRight : '10px',
+        fontWeight: 'normal'
     },
     floatingLabelStyle:{
         fontSize: '14px',
         fontWeight: 'normal',
         padding: '0px'
+    },
+    floatingLabelStyleForSearch:{
+        fontSize: '14px',
+        fontWeight: 'normal',
+        color: '#ffffff'
     },
     cancelButtonStyle: {
         backgroundColor: '#ffffff',
@@ -46,6 +53,19 @@ const styles = {
         backgroundColor: '#77ADFC',
         color: 'white',
     },
+    mainLoader:{
+        display: 'inline-block',
+        margin: 0,
+        paddingTop: '15%',
+        position: 'absolute',
+        top: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 3000,
+        backgroundColor: '#000000',
+        opacity: 0.5,
+        textAlign: 'center',
+    },
 
 };
 
@@ -54,7 +74,7 @@ export default class HomePage extends React.Component {
     constructor(){
         super();
         this.state = {
-            filterValue : 'title',
+            filterValue : 'Title',
             // userTypeValue: 'viewer',
             searchString: '',
             searchResultOpen: false,
@@ -67,7 +87,9 @@ export default class HomePage extends React.Component {
             loginData: {},
             openSnackBar: false,
             snackbarMsg: '',
-            userType : null,
+            userType : Api._getKey('user_type') || null,
+            activeTab:'',
+            showLoader: false,
         };
         this._getMovieList = this._getMovieList.bind(this);
         this._loginStoreChange = this._loginStoreChange.bind(this);
@@ -101,7 +123,6 @@ export default class HomePage extends React.Component {
     _loginStoreChange(type){
         if(type == 'Login_Success'){
             let userType = Api._getKey('user_type');
-            console.log('user_type', userType);
             this.setState({
                 isLoggedin: true,
                 openLoginDialogue: false,
@@ -113,12 +134,23 @@ export default class HomePage extends React.Component {
                 loginData: {}
             });
         }else if(type == 'Logout'){
+            let tabValue = this._checkTabValue(false);
             this.setState({
                 isLoggedin: false,
+                activeTab: tabValue,
                 // openUserOption: false,
             });
         }else if(type == 'Logged_In_Last_Time'){
-            this.setState({isLoggedin: true});
+            let tabValue = this._checkTabValue(true);
+            this.setState({
+                isLoggedin: true,
+                activeTab: tabValue,
+            });
+        }else if(type == 'Loader'){
+            let showLoader = LoginStore._getLoaderValue();
+            this.setState({
+                showLoader: showLoader
+            });
         }
     }
 
@@ -131,22 +163,46 @@ export default class HomePage extends React.Component {
         }
     }
 
+    _checkTabValue(isLoggedIn){
+        let tabValue;
+        let isViewer = this.state.userType == "viewer" ? true : false;
+        let urlQuery = location.hash;
+        if(urlQuery.indexOf("upcoming") > 0){
+            tabValue = isLoggedIn ? isViewer ? 3 : 2 : 1;
+        }else if(urlQuery.indexOf("mywishlist") > 0){
+            tabValue = 0;
+        }else if(urlQuery.indexOf("myshows") > 0){
+            tabValue = 0;
+        }else if(urlQuery.length < 15){
+            tabValue = isLoggedIn ? isViewer ? 2 : 1 : 0;
+        }else{
+            tabValue = "";
+        }
+        console.log('_checkTabId', tabValue);
+        return tabValue;
+        // this.setState({
+        //     activeTab: tabValue
+        // });
+    }
+
     _handleFilterChange(event, index, value){
+        console.log('event', event, event.target.value);
         this.setState({
             filterValue : value
         });
-    }
+    }   
 
     _handleSearchChange(event, value){
         let query = {};
         query[this.state.filterValue] = event.target.value;
         MovieSearchAction._searchMovie(query);
         this.setState({searchString: value, anchorSearchResult: event.target, searchResultOpen: true});
-        
     }
 
     _handleSearchResultClose(){
-        this.setState({searchResultOpen : false});
+        this.setState({
+            searchResultOpen : false
+        });
     }
 
     _showMoviesName(){
@@ -355,6 +411,41 @@ export default class HomePage extends React.Component {
         });
     }
 
+    _setTabNames(){
+        let uiItems = [];
+        if(this.state.isLoggedin){
+            if(this.state.userType == 'viewer'){
+               uiItems.push(
+                    <Tab key={0} onTouchTap={this._handleTabClick.bind(this, '/mywishlist')}>My Wishlist</Tab>,
+                    <Tab key={1} onTouchTap={this._handleTabClick.bind(this, '#')}>My Bookings</Tab>,
+                );
+            }else{
+               uiItems.push(
+                    <Tab key={1} onTouchTap={this._handleTabClick.bind(this, '/myshows')}>My Shows</Tab>,
+                );
+            }            
+        }
+        uiItems.push(
+            <Tab key={3} onTouchTap={this._handleTabClick.bind(this, "#")}>Trending movies</Tab>,             
+            <Tab key={4} onTouchTap={this._handleTabClick.bind(this, '/upcomingshows')}>Upcoming shows</Tab>,
+            <Tab key={5} onTouchTap={this._handleTabClick.bind(this, '#')}>Top Watched movies</Tab>,  
+        );
+        return uiItems;
+    }
+
+    _handleTabClick(route){
+        hashHistory.push(route);
+    }
+
+    _handleTabChange(tabValue){
+        console.log('Tab onChange', tabValue);
+        this.setState({activeTab: tabValue})
+    }
+
+    _handleMenuItemClick(tabName,event){
+        console.log(tabName);
+    }
+
     render() {
 
         const LoginOptionAction = [
@@ -365,15 +456,19 @@ export default class HomePage extends React.Component {
 
         return (
                 <div className="demo-big-content">
+                    {this.state.showLoader ? <CircularProgress size={2} style={styles.mainLoader}/> : ''}
                     <Layout fixedHeader>
                         <Header>
                             <HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
                                 <TextField
-                                    hintText="e.g-Sultan"
-                                    floatingLabelText="Search"
+                                    hintText=""
+                                    floatingLabelText={'Search Movies By: '+ this.state.filterValue}
+                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
+                                    hintStyle={styles.floatingLabelStyleForSearch}
                                     value={this.state.searchString}
-                                    onChange={this._handleSearchChange.bind(this)} 
-                                    autoFocus={true}                             
+                                    onChange={this._handleSearchChange.bind(this)}
+                                    autoFocus={true}
+                                    inputStyle={styles.floatingLabelStyleForSearch}                    
                                 />
                                 <Popover
                                     open={this.state.searchResultOpen}
@@ -381,7 +476,7 @@ export default class HomePage extends React.Component {
                                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                                     targetOrigin={{horizontal: 'left', vertical: 'top'}}
                                     onRequestClose={this._handleSearchResultClose.bind(this)}
-                                    style = {{width: '500px'}}
+                                    style = {{width: '300px'}}
                                     animation={PopoverAnimationVertical}
                                 >
                                    <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
@@ -389,21 +484,21 @@ export default class HomePage extends React.Component {
                                    </Menu>
                                 </Popover>
                                 
-                                <SelectField
+                                <DropDownMenu
                                     style={styles.SearchFieldFontStyling}
-                                    labelStyle={{padding: '0px'}} 
-                                    floatingLabelStyle={styles.floatingLabelStyle}
                                     value={this.state.filterValue}
                                     onChange={this._handleFilterChange.bind(this)}
-                                    floatingLabelText="Search By"
+                                    labelStyle={{color:'#ffffff', opacity:'0'}}
                                 >                                    
-                                    <MenuItem key={1} value="title" primaryText="Title" />
-                                    <MenuItem key={2} value="actor" primaryText="Actor" />
-                                    <MenuItem key={3} value="director" primaryText="Director" />
-                                    <MenuItem key={4} value="producer" primaryText="Producer" />
-                                    <MenuItem key={5} value="music director" primaryText="Music Director" />  
-                                    <MenuItem key={6} value="production house" primaryText="Production House" />                                  
-                                </SelectField>
+                                    <List style={{padding:'20px'}}>Search Movies By: </List>
+                                    <Divider/>
+                                    <MenuItem key={1} value="Title" primaryText="Title" />
+                                    <MenuItem key={2} value="Actor" primaryText="Actor" />
+                                    <MenuItem key={3} value="Director" primaryText="Director" />
+                                    <MenuItem key={4} value="Producer" primaryText="Producer" />
+                                    <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
+                                    <MenuItem key={6} value="Production House" primaryText="Production House" />                                  
+                                </DropDownMenu>
 
                                 <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
                                     <li>
@@ -432,7 +527,8 @@ export default class HomePage extends React.Component {
 
                             </HeaderRow>
                            
-                            <HeaderRow>                                
+                            {/*
+                                <HeaderRow>  
                                 <Navigation>
                                     {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
                                     {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}
@@ -440,7 +536,12 @@ export default class HomePage extends React.Component {
                                     <Link to="/upcomingshows">Upcoming shows</Link>
                                     <Link to="#">Top Watched movies</Link>  
                                 </Navigation>
-                            </HeaderRow>
+                                </HeaderRow>
+                            */}
+
+                            <HeaderTabs ripple activeTab={this.state.activeTab} onChange={this._handleTabChange.bind(this)}>
+                                {this._setTabNames()}
+                            </HeaderTabs>
                         </Header>
                                    
                         <Content>

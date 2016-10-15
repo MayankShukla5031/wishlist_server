@@ -6,6 +6,10 @@ import dispatcher from "../dispatchers/dispatcher";
 module.exports = {
 
 	_getUpcomingShowsList : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
 		Api._callAPI(Url.UPCOMING_SHOWS, 'get',query,(type,data)=> {
             if(type == 'success'){  
                 dispatcher.dispatch({
@@ -20,6 +24,10 @@ module.exports = {
                 });
             }
 	    });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
 	},
 
 
