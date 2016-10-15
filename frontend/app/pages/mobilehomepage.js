@@ -14,6 +14,8 @@ import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
+import DropDownMenu from 'material-ui/dropdownmenu';
+import List from 'material-ui/list';
 
 import Api from '../constants/api';
 
@@ -26,17 +28,27 @@ import SnackBarStore from '../stores/snackbarstore';
 
 
 const styles = {
+
+   
+    floatingLabelStyle:{
+        fontSize: '14px',
+        fontWeight: 'normal',
+        padding: '0px'
+    },
+    floatingLabelStyleForSearch:{
+        fontSize: '14px',
+        fontWeight: 'normal',
+        color: '#ffffff'
+    },
 	MenuStyle : {
 		fontSize: '12px',
 		fontWeight: 'normal',
 	},
     SearchFieldFontStyling: {
         fontSize: '12px',
-        padding : '0px',
+        paddingRight : '10px',
         fontWeight: 'normal',
-        width: '100px',
-        position: 'absolute',
-        right: '0px'
+        width: '30px'
     },
     floatingLabelStyle:{
         fontSize: '12px',
@@ -59,7 +71,7 @@ export default class HomePage extends React.Component {
     constructor(){
         super();
         this.state = {
-            filterValue : 'title',
+            filterValue : 'Title',
             userTypeValue: 'user',
             searchString: '',
             searchResultOpen: false,
@@ -393,12 +405,15 @@ export default class HomePage extends React.Component {
                             </HeaderRow>    
                             <HeaderRow>
                                 <TextField
-                                	style={{width: window.innerWidth/2 - 10}}
-                                    hintText="e.g-Sultan"
-                                    floatingLabelText="Search"
-                                    autoFocus={true}
+                                    hintText=""
+                                    floatingLabelText={'Search Movies By: '+ this.state.filterValue}
+                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
+                                    hintStyle={styles.floatingLabelStyleForSearch}
                                     value={this.state.searchString}
-                                    onChange={this._handleSearchChange.bind(this)}                                  
+                                    onChange={this._handleSearchChange.bind(this)}
+                                    autoFocus={true}
+                                    inputStyle={styles.floatingLabelStyleForSearch}          
+                                	style={{width: window.innerWidth*4/5 - 30 }}                               
                                 />
                                 <Popover
                                     open={this.state.searchResultOpen}
@@ -409,26 +424,27 @@ export default class HomePage extends React.Component {
                                     style = {{width: window.innerWidth}}
                                     animation={PopoverAnimationVertical}
                                 >
-                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true}>
+                                   <Menu desktop={false} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true}>
                                         {this._showMoviesName()}
                                    </Menu>
                                 </Popover>
                            
-                                <SelectField   
+                                <DropDownMenu 
+                                    floatingLabelText=""
+                                    labelStyle={{color:'#ffffff', opacity:'0'}}  
                                     style={styles.SearchFieldFontStyling}
-                                    floatingLabelStyle={styles.floatingLabelStyle}
-                                    labelStyle={{padding: '0px'}} 
                                     value={this.state.filterValue}
                                     onChange={this._handleFilterChange.bind(this)}
-                                    floatingLabelText="Search By"
                                 >                                    
-                                    <MenuItem style={{fontSize: '12px'}} key={1} value="title" primaryText="Title" />
-                                    <MenuItem style={{fontSize: '12px'}} key={2} value="actor" primaryText="Actor" />
-                                    <MenuItem style={{fontSize: '12px'}} key={3} value="director" primaryText="Director" />
-                                    <MenuItem style={{fontSize: '12px'}} key={4} value="producer" primaryText="Producer" />
-                                    <MenuItem style={{fontSize: '12px'}} key={5} value="music director" primaryText="Music Director" />  
-                                    <MenuItem style={{fontSize: '12px'}} key={6} value="production house" primaryText="Production House" />                                  
-                                </SelectField>
+                                   <List style={{padding:'20px'}}>Search Movies By: </List>
+                                    <Divider/>
+                                    <MenuItem key={1} value="Title" primaryText="Title" />
+                                    <MenuItem key={2} value="Actor" primaryText="Actor" />
+                                    <MenuItem key={3} value="Director" primaryText="Director" />
+                                    <MenuItem key={4} value="Producer" primaryText="Producer" />
+                                    <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
+                                    <MenuItem key={6} value="Production House" primaryText="Production House" />                                  
+                                 </DropDownMenu>
 
                             </HeaderRow>
                                                      

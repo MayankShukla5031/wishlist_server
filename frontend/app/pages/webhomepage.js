@@ -14,6 +14,8 @@ import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
+import DropDownMenu from 'material-ui/dropdownmenu';
+import List from 'material-ui/list';
 
 import Api from '../constants/api';
 
@@ -27,11 +29,10 @@ import SnackBarStore from '../stores/snackbarstore';
 const styles = {
 
     SearchFieldFontStyling: {
-        width: '20%',
+        width: '30px',
         fontSize: '14px',
-        padding : '0px',
-        fontWeight: 'normal',
-        marginLeft: '20px'
+        paddingRight : '10px',
+        fontWeight: 'normal'
     },
     floatingLabelStyle:{
         fontSize: '14px',
@@ -460,13 +461,14 @@ export default class HomePage extends React.Component {
                         <Header>
                             <HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
                                 <TextField
-                                    hintText="e.g-Sultan"
-                                    floatingLabelText={this.state.filterValue || "Search"}
+                                    hintText=""
+                                    floatingLabelText={'Search Movies By: '+ this.state.filterValue}
                                     floatingLabelStyle={styles.floatingLabelStyleForSearch}
                                     hintStyle={styles.floatingLabelStyleForSearch}
                                     value={this.state.searchString}
-                                    onChange={this._handleSearchChange.bind(this)} 
-                                    autoFocus={true}                             
+                                    onChange={this._handleSearchChange.bind(this)}
+                                    autoFocus={true}
+                                    inputStyle={styles.floatingLabelStyleForSearch}                    
                                 />
                                 <Popover
                                     open={this.state.searchResultOpen}
@@ -474,7 +476,7 @@ export default class HomePage extends React.Component {
                                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                                     targetOrigin={{horizontal: 'left', vertical: 'top'}}
                                     onRequestClose={this._handleSearchResultClose.bind(this)}
-                                    style = {{width: '500px'}}
+                                    style = {{width: '300px'}}
                                     animation={PopoverAnimationVertical}
                                 >
                                    <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
@@ -482,22 +484,22 @@ export default class HomePage extends React.Component {
                                    </Menu>
                                 </Popover>
                                 
-                                <SelectField
+                                <DropDownMenu
                                     style={styles.SearchFieldFontStyling}
-                                    labelStyle={{padding: '0px'}} 
                                     value={this.state.filterValue}
                                     onChange={this._handleFilterChange.bind(this)}
-                                    floatingLabelText="Search By"
-                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
-                                    labelStyle={styles.floatingLabelStyleForSearch}
+                                    floatingLabelText=""
+                                    labelStyle={{color:'#ffffff', opacity:'0'}}
                                 >                                    
+                                    <List style={{padding:'20px'}}>Search Movies By: </List>
+                                    <Divider/>
                                     <MenuItem key={1} value="Title" primaryText="Title" />
                                     <MenuItem key={2} value="Actor" primaryText="Actor" />
                                     <MenuItem key={3} value="Director" primaryText="Director" />
                                     <MenuItem key={4} value="Producer" primaryText="Producer" />
                                     <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
                                     <MenuItem key={6} value="Production House" primaryText="Production House" />                                  
-                                </SelectField>
+                                </DropDownMenu>
 
                                 <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
                                     <li>
