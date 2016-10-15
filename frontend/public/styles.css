@@ -92,6 +92,16 @@ a{
 .mdl-layout__tab-bar-right-button, .mdl-layout__tab-bar-left-button{
   opacity: 0 !important;
 }
+
+/*.mdl-layout__tab-bar-container{
+  background-color: #3F51B5 !important;
+}*/
+
+.mdl-layout__tab:hover{
+  background-color: #3949AB !important;
+  color: white !important;
+}
+
 /*
 .activeTab {
   color:#ffffff;
