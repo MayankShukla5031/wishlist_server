@@ -88,6 +88,10 @@
 a{
   text-decoration: none !important;
 }
+
+.mdl-layout__tab-bar-right-button, .mdl-layout__tab-bar-left-button{
+  opacity: 0 !important;
+}
 /*
 .activeTab {
   color:#ffffff;

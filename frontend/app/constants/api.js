@@ -29,9 +29,9 @@ module.exports ={
 	        		this._setKey('token',jqXHR.getResponseHeader('Authorization'));
 	        	}
 	        	if(url == "login"){
-	        		console.log("login", data.result.user_type);
 	        		this._setKey('username', data.result.username);
 	        		this._setKey('user_type', data.result.user_type);
+	        		this._setKey('user_id', data.result.user_id);
 	        	}
 	        	target('success',data);        	
 	        },

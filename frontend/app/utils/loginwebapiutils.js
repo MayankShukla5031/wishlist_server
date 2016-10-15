@@ -6,6 +6,10 @@ import dispatcher from "../dispatchers/dispatcher";
 module.exports = {
 
 	_userLogin : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
 		Api._callAPI(Url.LOGIN, 'post',query,(type,data)=> {
             if(type == 'success'){  
                 dispatcher.dispatch({
@@ -19,9 +23,17 @@ module.exports = {
                 });
             }
 	    });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
 	},
 
     _userRegistration : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
         Api._callAPI(Url.USER_REGISTRATION, 'post',query,(type,data)=> {
             if(type == 'success'){  
                 //console.log('success');           
@@ -37,9 +49,17 @@ module.exports = {
                 });
             }
         });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
     },
 
     _userLogOut: function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
         Api._callAPI(Url.LOG_OUT, 'post',query,(type,data)=> {
             if(type == 'success'){
                 hashHistory.push('/');
@@ -54,6 +74,10 @@ module.exports = {
                     msg: 'Something went wrong, Kindly try after some time'
                 });
             }
+        });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
         });       
     },  
 

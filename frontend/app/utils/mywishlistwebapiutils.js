@@ -6,24 +6,36 @@ import dispatcher from "../dispatchers/dispatcher";
 module.exports = {
 
 	_getMyWishList : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
 		Api._callAPI(Url.GET_WISHLIST,'get',query,(type,data)=> {
-	            if(type == 'success'){  
-	            	//console.log('success');           
-	                dispatcher.dispatch({
-	                    type:'MyWishList',
-	                    data: data,
-	                });
-	            }
-	            else{   
-	            	//console.log('error');             
-	                dispatcher.dispatch({
-	                    
-	                });
-	            }
+            if(type == 'success'){  
+            	//console.log('success');           
+                dispatcher.dispatch({
+                    type:'MyWishList',
+                    data: data,
+                });
+            }
+            else{   
+               dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  data.responseJSON.result || 'Something went wrong, Kindly try after some time'
+                });
+            }
 	    });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
 	},
 
 	_addToWishList : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
 		Api._callAPI(Url.ADD_TO_WISHLIST,'post',query,(type,data)=> {
             if(type == 'success'){   
             	console.log('success add to MyWishList'); 
@@ -32,15 +44,23 @@ module.exports = {
                 });
             }
             else{   
-            	//console.log('error');             
                 dispatcher.dispatch({
-                    
+                    type: 'SNACKBAR',
+                    msg:  data.responseJSON.result || 'Something went wrong, Kindly try after some time'
                 });
             }
 	    });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
 	},
 
 	_removeFromWishList : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
 		Api._callAPI(Url.REMOVE_FROM_WISHLIST,'post',query,(type,data)=> {
             if(type == 'success'){   
             	console.log('success remove from MyWishList');
@@ -49,15 +69,23 @@ module.exports = {
                 });
             }
             else{   
-            	//console.log('error');             
                 dispatcher.dispatch({
-                    
+                    type: 'SNACKBAR',
+                    msg:  data.responseJSON.result || 'Something went wrong, Kindly try after some time'
                 });
             }
 	    });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
 	},
 
 	_addToMyShows : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
 		Api._callAPI(Url.ADD_SHOW,'post',query,(type,data)=> {
             if(type == 'success'){   
                 dispatcher.dispatch({
@@ -65,13 +93,16 @@ module.exports = {
                 });
             }
             else{   
-            	//console.log('error');             
                 dispatcher.dispatch({
-                    type: 'snackbar',
-                    str: "something went wrong"
+                    type: 'SNACKBAR',
+                    msg:  data.responseJSON.result || 'Something went wrong, Kindly try after some time'
                 });
             }
 	    });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
 	}
 
 }

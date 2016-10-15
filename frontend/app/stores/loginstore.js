@@ -4,6 +4,16 @@ import dispatcher from "../dispatchers/dispatcher";
 class LoginStore extends EventEmitter{
 	constructor(){
 		super();
+		this.showLoader = false;
+	}
+
+	_setLoaderValue(value){
+		this.showLoader = value;
+		this.emit('change', 'Loader');
+	}
+
+	_getLoaderValue(){
+		return this.showLoader;
 	}
 	
 
@@ -23,6 +33,11 @@ class LoginStore extends EventEmitter{
 			}
 			case 'Logged_In_Last_Time': {
 				this.emit('change', 'Logged_In_Last_Time');
+				break;
+			}
+			case 'LOADER': {
+				console.log('LoginStore', action.value);
+				this._setLoaderValue(action.value);
 				break;
 			}
 		}

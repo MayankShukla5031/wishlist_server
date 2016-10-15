@@ -6,21 +6,28 @@ import dispatcher from "../dispatchers/dispatcher";
 module.exports = {
 
 	_getMovieDetails : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
 		Api._callAPI(Url.GET_MOVIE_DETAILS,'get',query,(type,data)=> {
             if(type == 'success'){  
-            	//console.log('success');           
                 dispatcher.dispatch({
                     type:'MOVIE_DETAILS',
                     data: data,
                 });
             }
             else{   
-            	//console.log('error');             
                 dispatcher.dispatch({
-                    
+                    type: 'SNACKBAR',
+                    msg:  data.responseJSON.result || 'Something went wrong, Kindly try after some time'
                 });
             }
 	    });
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: false,
+        });
 	},
 
 }

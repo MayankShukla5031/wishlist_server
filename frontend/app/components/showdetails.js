@@ -56,6 +56,7 @@ export default class TrendingMovies extends React.Component{
 			userType : Api._getKey('user_type') ? Api._getKey('user_type') : null,
 			openTheatreDialogue : false,
 			theatreDetails: {},
+			userId: Api._getKey('user_id') ? Api._getKey('user_id') : null, 
 		};
 		this._handleTheatreDialogCancel = this._handleTheatreDialogCancel.bind(this);
 		this._handleTheatreDetailsDialogSubmit = this._handleTheatreDetailsDialogSubmit.bind(this);
@@ -86,7 +87,7 @@ export default class TrendingMovies extends React.Component{
 			let text = "";
 			let details = MovieDetailsStore._getMovieDetails();
 			if(this.state.userType == "theatre"){
-				text = details.in_my_show ? "Cancel" : "";
+				text = details.theatre.userid.uid == this.state.userId ? "Cancel" : "";
 			}else{
 				text = details.in_my_show ? "Cancel Ticket" : "Book Ticket"
 			}
