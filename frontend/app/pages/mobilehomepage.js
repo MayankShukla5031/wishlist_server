@@ -14,8 +14,8 @@ import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
-import DropDownMenu from 'material-ui/dropdownmenu';
-import List from 'material-ui/list';
+import DropDownMenu from 'material-ui/Dropdownmenu';
+import List from 'material-ui/List';
 
 import Api from '../constants/api';
 
@@ -376,8 +376,7 @@ export default class HomePage extends React.Component {
 					<Layout fixedHeader>
                         <Header>
                         	<HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
-
-                                
+                               
                                 
                             </HeaderRow>    
                             <HeaderRow>
