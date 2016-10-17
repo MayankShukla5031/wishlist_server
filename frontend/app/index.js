@@ -15,6 +15,7 @@ import MyWishList from './components/mywishlist';
 import MyShows from './components/myshows';
 import ShowDetails from './components/showdetails';
 import UpcomingShows from './components/upcomingshows';
+import Profile from './components/desktop/profile'
 
 //import injectTapEventPlugin from 'react-tap-event-plugin';
 //injectTapEventPlugin();
@@ -33,6 +34,7 @@ ReactDOM.render((
 		    	<Route path="/mywishlist" component={MyWishList}/>
 		    	<Route path="/myshows" component={MyShows}/>
 		    	<Route path="/upcomingshows" component={UpcomingShows}/>
+		    	<route path='/profile' component={Profile}/>
 		    </Route>
 		</Router>
 	</MuiThemeProvider>

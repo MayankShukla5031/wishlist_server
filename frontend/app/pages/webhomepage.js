@@ -14,8 +14,10 @@ import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
-import DropDownMenu from 'material-ui/dropdownmenu';
-import List from 'material-ui/list';
+// import DropDownMenu from 'material-ui/dropdownmenu';
+import DropDownMenu from 'material-ui/DropDownMenu';
+// import List from 'material-ui/list';
+import List from 'material-ui/List'
 
 import Api from '../constants/api';
 
@@ -405,6 +407,10 @@ export default class HomePage extends React.Component {
         });
     }
 
+    _handleProfileClick(){
+        hashHistory.push('/profile');
+    }
+
     _handleRequestClose(){
         this.setState({
             openSnackBar: false,
@@ -520,7 +526,7 @@ export default class HomePage extends React.Component {
                                     animation={PopoverAnimationVertical}
                                 >
                                     <Menu desktop={true}>
-                                        <MenuItem primaryText="Profile" />
+                                        <MenuItem primaryText="Profile" onClick={this._handleProfileClick.bind(this)}/>
                                         <MenuItem primaryText="Settings" />
                                         {this._checkandSetLoginUi()}
                                     </Menu>
