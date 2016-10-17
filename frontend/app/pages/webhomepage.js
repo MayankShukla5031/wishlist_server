@@ -14,8 +14,8 @@ import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
-import DropDownMenu from 'material-ui/dropdownmenu';
-import List from 'material-ui/list';
+import DropDownMenu from 'material-ui/Dropdownmenu';
+import List from 'material-ui/List';
 
 import Api from '../constants/api';
 
@@ -29,10 +29,12 @@ import SnackBarStore from '../stores/snackbarstore';
 const styles = {
 
     SearchFieldFontStyling: {
-        width: '30px',
+        width: '50px',
         fontSize: '14px',
-        paddingRight : '10px',
-        fontWeight: 'normal'
+        fontWeight: 'normal',
+        marginTop:'-10px',
+        marginRight:'-0px',
+        position:'float'
     },
     floatingLabelStyle:{
         fontSize: '14px',
@@ -459,7 +461,17 @@ export default class HomePage extends React.Component {
                     {this.state.showLoader ? <CircularProgress size={2} style={styles.mainLoader}/> : ''}
                     <Layout fixedHeader>
                         <Header>
-                            <HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
+                            <HeaderRow >
+                            <Grid style={{width:window.innerWidth+20, height:'65px', backgroundColor:'#262626', marginLeft:'-100px', marginRight:'-100px'}}>
+                            <Cell col={1} style={{ height:'65px'}}>
+                            <a href="#/" style={{textDecoration: 'none'}}><img src='logo.png' style={{height:'30px', marginLeft:'20px', marginTop:'-0px'}} /></a>
+                            </Cell>
+                            <Cell col={8} style={{backgroundColor:'#262626', height:'40px', contentAlign:'center'}}>
+                                <HeaderTabs ripple activeTab={this.state.activeTab} style={{width:'auto', height:'40px', align:'center', marginTop:'-5px', padding:'0px', backgroundColor:'#262626'}} onChange={this._handleTabChange.bind(this)}>
+                                    {this._setTabNames()}
+                                </HeaderTabs>
+                            </Cell>
+                            <Cell col={2} style={{ height:'65px', marginTop:'-20px'}}>
                                 <TextField
                                     hintText=""
                                     floatingLabelText={'Search Movies By: '+ this.state.filterValue}
@@ -468,7 +480,8 @@ export default class HomePage extends React.Component {
                                     value={this.state.searchString}
                                     onChange={this._handleSearchChange.bind(this)}
                                     autoFocus={true}
-                                    inputStyle={styles.floatingLabelStyleForSearch}                    
+                                    inputStyle={styles.floatingLabelStyleForSearch}   
+                                    style={{width:'200px'}}                 
                                 />
                                 <Popover
                                     open={this.state.searchResultOpen}
@@ -476,45 +489,31 @@ export default class HomePage extends React.Component {
                                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                                     targetOrigin={{horizontal: 'left', vertical: 'top'}}
                                     onRequestClose={this._handleSearchResultClose.bind(this)}
-                                    style = {{width: '300px'}}
+                                    style = {{width: '260px'}}
                                     animation={PopoverAnimationVertical}
                                 >
                                    <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
                                         {this._showMoviesName()}
                                    </Menu>
                                 </Popover>
-                                
-                                <DropDownMenu
-                                    style={styles.SearchFieldFontStyling}
-                                    value={this.state.filterValue}
-                                    onChange={this._handleFilterChange.bind(this)}
-                                    labelStyle={{color:'#ffffff', opacity:'0'}}
-                                >                                    
-                                    <List style={{padding:'20px'}}>Search Movies By: </List>
-                                    <Divider/>
-                                    <MenuItem key={1} value="Title" primaryText="Title" />
-                                    <MenuItem key={2} value="Actor" primaryText="Actor" />
-                                    <MenuItem key={3} value="Director" primaryText="Director" />
-                                    <MenuItem key={4} value="Producer" primaryText="Producer" />
-                                    <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
-                                    <MenuItem key={6} value="Production House" primaryText="Production House" />                                  
-                                </DropDownMenu>
-
-                                <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
-                                    <li>
-                                        <Avatar
-                                            src={this.state.isLoggedin ? this.state.userType == "viewer" ? "user.png" : "theatre.jpg" : "login.png"}
-                                        >
-                                        </Avatar>
-                                    </li>
-                                    {Api._getKey("username") ? <li style={{fontSize: '10px'}}>{Api._getKey("username")}</li> : "Login"}
-                                </ul>
-                                <Popover
+                            </Cell>
+                            <Cell col={1} style={{height:'100%', backgroundColor:'Blue', padding:'0px', margin:'0px'}}>
+                                <Grid>
+                                    
+                                    <Cell col={12} style={{ backgroundColor:'Red', padding:'0px', margin:'0px'}}>
+                                    </Cell>
+                                    <Cell col={6} style={{ backgroundColor:'Green', padding:'0px', margin:'0px'}}>
+                                    
+                                    
+                                    </Cell>
+                                </Grid>
+                            </Cell>
+                            <Popover
                                     open={this.state.openUserOption}
                                     anchorEl={this.state.anchorUserOption}
                                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
                                     targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                                    style = {{width: '200px'}}
+                                    style = {{width: '100px'}}
                                     onRequestClose={this._handleUserOptionClose.bind(this)}
                                     animation={PopoverAnimationVertical}
                                 >
@@ -524,24 +523,10 @@ export default class HomePage extends React.Component {
                                         {this._checkandSetLoginUi()}
                                     </Menu>
                                 </Popover>
+                        </Grid>
+                            </HeaderRow>                                                     
 
-                            </HeaderRow>
                            
-                            {/*
-                                <HeaderRow>  
-                                <Navigation>
-                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
-                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}
-                                    <Link to="#">Trending movies</Link>             
-                                    <Link to="/upcomingshows">Upcoming shows</Link>
-                                    <Link to="#">Top Watched movies</Link>  
-                                </Navigation>
-                                </HeaderRow>
-                            */}
-
-                            <HeaderTabs ripple activeTab={this.state.activeTab} onChange={this._handleTabChange.bind(this)}>
-                                {this._setTabNames()}
-                            </HeaderTabs>
                         </Header>
                                    
                         <Content>
