@@ -462,7 +462,7 @@ export default class HomePage extends React.Component {
                     <Layout fixedHeader>
                         <Header>
                             <HeaderRow >
-                            <Grid style={{width:window.innerWidth+20, height:'65px', backgroundColor:'#262626', marginLeft:'-100px', marginRight:'-100px'}}>
+                            <Grid style={{width:window.innerWidth, height:'65px', backgroundColor:'#262626', marginLeft:'-80px', marginRight:'0px'}}>
                             <Cell col={1} style={{ height:'65px'}}>
                             <a href="#/" style={{textDecoration: 'none'}}><img src='logo.png' style={{height:'30px', marginLeft:'20px', marginTop:'-0px'}} /></a>
                             </Cell>
@@ -471,42 +471,44 @@ export default class HomePage extends React.Component {
                                     {this._setTabNames()}
                                 </HeaderTabs>
                             </Cell>
-                            <Cell col={2} style={{ height:'65px', marginTop:'-20px'}}>
-                                <TextField
-                                    hintText=""
-                                    floatingLabelText={'Search Movies By: '+ this.state.filterValue}
-                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
-                                    hintStyle={styles.floatingLabelStyleForSearch}
-                                    value={this.state.searchString}
-                                    onChange={this._handleSearchChange.bind(this)}
-                                    autoFocus={true}
-                                    inputStyle={styles.floatingLabelStyleForSearch}   
-                                    style={{width:'200px'}}                 
-                                />
-                                <Popover
-                                    open={this.state.searchResultOpen}
-                                    anchorEl={this.state.anchorSearchResult}
-                                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                                    onRequestClose={this._handleSearchResultClose.bind(this)}
-                                    style = {{width: '260px'}}
-                                    animation={PopoverAnimationVertical}
-                                >
-                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
-                                        {this._showMoviesName()}
-                                   </Menu>
-                                </Popover>
-                            </Cell>
-                            <Cell col={1} style={{height:'100%', backgroundColor:'Blue', padding:'0px', margin:'0px'}}>
-                                <Grid>
+                            <Cell col={4} style={{ height:'65px'}}>
+                             
+                                  <Cell col={9} style={{height:'100%', backgroundColor:'Blue', padding:'0px', margin:'0px'}}>
+                            
+                                    <TextField
+                                        hintText=""
+                                        floatingLabelText={'Search Movies By: '+ this.state.filterValue}
+                                        floatingLabelStyle={styles.floatingLabelStyleForSearch}
+                                        hintStyle={styles.floatingLabelStyleForSearch}
+                                        value={this.state.searchString}
+                                        onChange={this._handleSearchChange.bind(this)}
+                                        autoFocus={true}
+                                        inputStyle={styles.floatingLabelStyleForSearch}   
+                                        style={{width:'200px'}}                 
+                                    />
+                                    <Popover
+                                        open={this.state.searchResultOpen}
+                                        anchorEl={this.state.anchorSearchResult}
+                                        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                        onRequestClose={this._handleSearchResultClose.bind(this)}
+                                        style = {{width: '260px'}}
+                                        animation={PopoverAnimationVertical}
+                                    >
+                                       <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
+                                            {this._showMoviesName()}
+                                       </Menu>
+                                    </Popover>
+                                  </Cell>
+                                   
                                     
-                                    <Cell col={12} style={{ backgroundColor:'Red', padding:'0px', margin:'0px'}}>
+                                    <Cell col={1} style={{ backgroundColor:'Red', padding:'0px', margin:'0px'}}>
                                     </Cell>
-                                    <Cell col={6} style={{ backgroundColor:'Green', padding:'0px', margin:'0px'}}>
+                                    <Cell col={2} style={{ backgroundColor:'Green', padding:'0px', margin:'0px'}}>
                                     
                                     
-                                    </Cell>
-                                </Grid>
+                                  </Cell>
+                              
                             </Cell>
                             <Popover
                                     open={this.state.openUserOption}
