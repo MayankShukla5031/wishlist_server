@@ -379,31 +379,8 @@ export default class HomePage extends React.Component {
                         <Header>
                         	<HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
 
-                                <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
-                                    <li>
-                                        <Avatar
-                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : "login.png"}
-                                        >
-                                        </Avatar>
-                                    </li>
-                                    {Api._getKey("username") ? <li style={{fontSize: '10px'}}>{Api._getKey("username")}</li> : "Login"}
-                                </ul>
                                 
-                                <Popover
-                                    open={this.state.openUserOption}
-                                    anchorEl={this.state.anchorUserOption}
-                                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                                    style = {{width: window.innerWidth - 100}}
-                                    onRequestClose={this._handleUserOptionClose.bind(this)}
-                                    animation={PopoverAnimationVertical}
-                                >
-                                    <Menu desktop={true}>
-                                        <MenuItem primaryText="Profile" />
-                                        <MenuItem primaryText="Settings" />
-                                        {this._checkandSetLoginUi()}
-                                    </Menu>
-                                </Popover>
+                                
                             </HeaderRow>    
                             <HeaderRow>
                                 <TextField
@@ -432,7 +409,6 @@ export default class HomePage extends React.Component {
                                 </Popover>
                            
                                 <DropDownMenu 
-                                    floatingLabelText=""
                                     labelStyle={{color:'#ffffff', opacity:'0'}}  
                                     style={styles.SearchFieldFontStyling}
                                     value={this.state.filterValue}
@@ -451,7 +427,33 @@ export default class HomePage extends React.Component {
                             </HeaderRow>
                                                      
                         </Header>
-                        <Drawer title="Options" style={{}}> 
+                        <Drawer title="Menu" > 
+
+                                <Divider style={{marginBottom:'10px', marginTop:'-10px'}}/>
+                                <ul style={{listStyle: "none", cursor: 'pointer', height: '100px', textAlign: 'center', backgroundColor:'#1f5dc1', color:'#ffffff'}} onClick={this._openUserOption.bind(this)}>
+                                    <li style={{textAlign:'center', display:'inline-block', marginTop:'20px', marginRight:'30px'}}>
+                                        <Avatar 
+                                            src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : "login.png"}                                        
+                                        >
+                                        </Avatar>
+                                    </li><br/>
+                                    {Api._getKey("username")? <li style={{fontSize: '12px', marginRight:'30px'}}>{Api._getKey("username")}</li> : <li style={{fontSize: '12px', marginRight:'30px'}}>Login</li>}
+                                </ul>
+                                <Popover
+                                    open={this.state.openUserOption}
+                                    anchorEl={this.state.anchorUserOption}
+                                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                    style = {{width: window.innerWidth - 100}}
+                                    onRequestClose={this._handleUserOptionClose.bind(this)}
+                                    animation={PopoverAnimationVertical}
+                                >
+                                    <Menu desktop={true}>
+                                        <MenuItem primaryText="Profile" />
+                                        <MenuItem primaryText="Settings" />
+                                        {this._checkandSetLoginUi()}
+                                    </Menu>
+                                </Popover>
                             <Navigation>
                                     {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
                                     {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}

@@ -494,7 +494,6 @@ export default class HomePage extends React.Component {
                                     style={styles.SearchFieldFontStyling}
                                     value={this.state.filterValue}
                                     onChange={this._handleFilterChange.bind(this)}
-                                    floatingLabelText=""
                                     labelStyle={{color:'#ffffff', opacity:'0'}}
                                 >                                    
                                     <List style={{padding:'20px'}}>Search Movies By: </List>
