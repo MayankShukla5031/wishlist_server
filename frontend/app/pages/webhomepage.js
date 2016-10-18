@@ -462,55 +462,93 @@ export default class HomePage extends React.Component {
                     <Layout fixedHeader>
                         <Header>
                             <HeaderRow >
-                            <Grid style={{width:window.innerWidth, height:'65px', backgroundColor:'#262626', marginLeft:'-80px', marginRight:'0px'}}>
-                            <Cell col={1} style={{ height:'65px'}}>
-                            <a href="#/" style={{textDecoration: 'none'}}><img src='logo.png' style={{height:'30px', marginLeft:'20px', marginTop:'-0px'}} /></a>
+                            <div style={{width:window.innerWidth +80, height:'80', backgroundColor:'#262626', marginLeft:'-80px'}}>
+                            <Grid style={{width:window.innerWidth, height:'80', margin:'0px', padding:'0px'}}>
+                            <Cell col={1} style={{ height:'80'}}>
+                            <a href="#/" style={{textDecoration: 'none'}}><img src='logo.png' style={{height:'35px', marginLeft:'10px', marginTop:'15px'}} /></a>
                             </Cell>
-                            <Cell col={8} style={{backgroundColor:'#262626', height:'40px', contentAlign:'center'}}>
-                                <HeaderTabs ripple activeTab={this.state.activeTab} style={{width:'auto', height:'40px', align:'center', marginTop:'-5px', padding:'0px', backgroundColor:'#262626'}} onChange={this._handleTabChange.bind(this)}>
-                                    {this._setTabNames()}
-                                </HeaderTabs>
+                            <Cell col={10} style={{backgroundColor:'#262626', padding:'0px', margin:'0px'}}>
+                                
+                                <Grid style={{ height:'100%', width:'100%',padding:'0px', margin:'0px'}}>
+                                <Cell col={12} style={{backgroundColor:'Green',height:'40px', padding:'0px', margin:'0px'}}>
+                                    <HeaderTabs ripple activeTab={this.state.activeTab} style={{width:'100%', height:'40px', align:'top', marginTop:'-0px', padding:'0px', backgroundColor:'#262626'}} onChange={this._handleTabChange.bind(this)}>
+                                        {this._setTabNames()}
+                                    </HeaderTabs>
+                                </Cell>
+                                <Cell col={12} style={{ height:'30px',padding:'0px', margin:'0px'}}>
+
+                                    <Grid style={{ height:'100%', width:'100%',padding:'0px', margin:'0px'}}>
+                                        <Cell col={3} style={{ padding:'0px', margin:'0px'}}>
+                                        
+                                        </Cell>
+                                      <Cell col={5} style={{ padding:'0px', margin:'-0px', backgroundColor:'#363636'}}>
+                                        <TextField                                           
+                                            hintText={'Search Movies By: '+ this.state.filterValue}
+                                            value={this.state.searchString}
+                                            onChange={this._handleSearchChange.bind(this)}
+                                            autoFocus={true}
+                                            inputStyle={{color:'#dddddd'}}   
+                                            hintStyle={{color:'#969696'}}
+                                            style={{width:'100%', height:'40px', align:'bottom'} }               
+                                        />
+                                        <Popover
+                                            open={this.state.searchResultOpen}
+                                            anchorEl={this.state.anchorSearchResult}
+                                            anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                                            targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                            onRequestClose={this._handleSearchResultClose.bind(this)}
+                                            style = {{width:'400px'}}
+                                            animation={PopoverAnimationVertical}
+                                        >
+                                           <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
+                                                {this._showMoviesName()}
+                                           </Menu>
+                                        </Popover>
+                                        
+                                        
+                                      </Cell>
+                                       
+                                        
+                                        <Cell col={1} style={{ padding:'0px', margin:'0px'}}>
+                                        <DropDownMenu
+                                                style={{width:'30px', align:'center', marginLeft:'10px', marginTop:'-10px'}}
+                                                value={this.state.filterValue}
+                                                onChange={this._handleFilterChange.bind(this)}
+                                                labelStyle={{color:'#ffffff', opacity:'0'}}
+                                            >                    
+                                                <List style={{padding:'20px'}} disabled={true}>Search Movies By: </List>
+                                                <Divider/>
+                                                <MenuItem key={1} value="Title" primaryText="Title" />
+                                                <MenuItem key={2} value="Actor" primaryText="Actor" />
+                                                <MenuItem key={3} value="Director" primaryText="Director" />
+                                                <MenuItem key={4} value="Producer" primaryText="Producer" />
+                                                <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
+                                                <MenuItem key={6} value="Production House" primaryText="Production House" /> 
+                                                                             
+                                        </DropDownMenu>
+                                                                                    
+                                            
+                                        </Cell>
+                                        <Cell col={3} style={{ padding:'0px', margin:'0px'}}>
+                                        
+                                        </Cell>
+                                  </Grid>
+                                </Cell>
+                                </Grid>
                             </Cell>
-                            <Cell col={4} style={{ height:'65px'}}>
-                             
-                                  <Cell col={9} style={{height:'100%', backgroundColor:'Blue', padding:'0px', margin:'0px'}}>
-                            
-                                    <TextField
-                                        hintText=""
-                                        floatingLabelText={'Search Movies By: '+ this.state.filterValue}
-                                        floatingLabelStyle={styles.floatingLabelStyleForSearch}
-                                        hintStyle={styles.floatingLabelStyleForSearch}
-                                        value={this.state.searchString}
-                                        onChange={this._handleSearchChange.bind(this)}
-                                        autoFocus={true}
-                                        inputStyle={styles.floatingLabelStyleForSearch}   
-                                        style={{width:'200px'}}                 
-                                    />
+                            <Cell col={1} style={{ padding:'10px', margin:'0px'}}>                                  
+                                    
+                                    <div style={{listStyle: "none", marginTop:'5px', marginLeft:'20px', cursor: 'pointer', width:'40px', align:'center'}} onClick={this._openUserOption.bind(this)}>
+                                        
+                                            <Avatar style={{ marginLeft:'0px'}}
+                                                src={this.state.isLoggedin ? this.state.userType == "viewer" ? "user.png" : "theatre.jpg" : "login.png"}
+                                            >
+                                            </Avatar>
+                                        
+                                        {Api._getKey("username") ? <div style={{fontSize: '12px', textAlign:'center', width:'inherit', margin:'0px'}}>{Api._getKey("username")}</div> : <div style={{fontSize: '12px', textAlign:'center'}}>Login</div>}
+                                    </div>
+
                                     <Popover
-                                        open={this.state.searchResultOpen}
-                                        anchorEl={this.state.anchorSearchResult}
-                                        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                                        onRequestClose={this._handleSearchResultClose.bind(this)}
-                                        style = {{width: '260px'}}
-                                        animation={PopoverAnimationVertical}
-                                    >
-                                       <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
-                                            {this._showMoviesName()}
-                                       </Menu>
-                                    </Popover>
-                                  </Cell>
-                                   
-                                    
-                                    <Cell col={1} style={{ backgroundColor:'Red', padding:'0px', margin:'0px'}}>
-                                    </Cell>
-                                    <Cell col={2} style={{ backgroundColor:'Green', padding:'0px', margin:'0px'}}>
-                                    
-                                    
-                                  </Cell>
-                              
-                            </Cell>
-                            <Popover
                                     open={this.state.openUserOption}
                                     anchorEl={this.state.anchorUserOption}
                                     anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
@@ -525,7 +563,11 @@ export default class HomePage extends React.Component {
                                         {this._checkandSetLoginUi()}
                                     </Menu>
                                 </Popover>
-                        </Grid>
+                            </Cell>
+                            
+                            </Grid>
+
+                            </div>
                             </HeaderRow>                                                     
 
                            
