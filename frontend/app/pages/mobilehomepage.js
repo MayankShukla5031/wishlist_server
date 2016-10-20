@@ -64,6 +64,19 @@ const styles = {
         backgroundColor: '#77ADFC',
         color: 'white',
     },
+    mainLoader:{
+        display: 'inline-block',
+        margin: 0,
+        paddingTop: '15%',
+        position: 'absolute',
+        top: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 3000,
+        backgroundColor: '#000000',
+        opacity: 0.5,
+        textAlign: 'center',
+    },
 
 };
 
