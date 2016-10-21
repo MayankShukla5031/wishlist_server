@@ -2,3 +2,4 @@ frontend/node_modules
 frontend/npm-debug.log
 frontend/app/format.js
 /node_modules
+.idea
