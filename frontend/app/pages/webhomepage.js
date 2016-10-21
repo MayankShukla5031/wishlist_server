@@ -26,6 +26,8 @@ import LoginStore from '../stores/loginstore';
 import MoviesSearchStore from '../stores/moviessearchstore';
 import SnackBarStore from '../stores/snackbarstore';
 
+import appConfig from '../appConfig';
+
 const styles = {
 
     SearchFieldFontStyling: {
@@ -66,6 +68,7 @@ const styles = {
         opacity: 0.5,
         textAlign: 'center',
     },
+    
 
 };
 
@@ -455,52 +458,69 @@ export default class HomePage extends React.Component {
         ];
 
         return (
-                <div className="demo-big-content">
+                <div className="demo-big-content"  style={{margin:'0px', padding:'0px'}}>
                     {this.state.showLoader ? <CircularProgress size={2} style={styles.mainLoader}/> : ''}
                     <Layout fixedHeader>
-                        <Header>
-                            <HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
-                                <TextField
-                                    hintText=""
-                                    floatingLabelText={'Search Movies By: '+ this.state.filterValue}
-                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
-                                    hintStyle={styles.floatingLabelStyleForSearch}
-                                    value={this.state.searchString}
-                                    onChange={this._handleSearchChange.bind(this)}
-                                    autoFocus={true}
-                                    inputStyle={styles.floatingLabelStyleForSearch}                    
-                                />
-                                <Popover
-                                    open={this.state.searchResultOpen}
-                                    anchorEl={this.state.anchorSearchResult}
-                                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                                    onRequestClose={this._handleSearchResultClose.bind(this)}
-                                    style = {{width: '300px'}}
-                                    animation={PopoverAnimationVertical}
-                                >
-                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
-                                        {this._showMoviesName()}
-                                   </Menu>
-                                </Popover>
-                                
-                                <DropDownMenu
-                                    style={styles.SearchFieldFontStyling}
-                                    value={this.state.filterValue}
-                                    onChange={this._handleFilterChange.bind(this)}
-                                    labelStyle={{color:'#ffffff', opacity:'0'}}
-                                >                                    
-                                    <List style={{padding:'20px'}}>Search Movies By: </List>
-                                    <Divider/>
-                                    <MenuItem key={1} value="Title" primaryText="Title" />
-                                    <MenuItem key={2} value="Actor" primaryText="Actor" />
-                                    <MenuItem key={3} value="Director" primaryText="Director" />
-                                    <MenuItem key={4} value="Producer" primaryText="Producer" />
-                                    <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
-                                    <MenuItem key={6} value="Production House" primaryText="Production House" />                                  
-                                </DropDownMenu>
+                        <Header style={{ backgroundColor:appConfig.baseColor , height:appConfig.headerHeight, margin:'0px', padding:'0px'}}>
+                            <HeaderRow style={{margin:'0px', padding:'0px' }} title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff', marginLeft:'20px'}}><img style={{height:'30px', marginTop:'40px'}} src='title1.png' /><img style={{height:'50px', marginTop:'40px'}} src='logo.png' /><img style={{height:'30px', marginTop:'40px', marginLeft:'-10px'}} src='title2.png' /></a>}>
+                               
+                            <p style={{width:'800px', height:'40px', border:'1px solid #999999', borderRaduis:'20px', backgroundColor:'white', position:'absolute', marginLeft:'220px', marginTop:'20px'}}>
 
-                                <ul style={{listStyle: "none", marginTop: '20px', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
+                                <Grid style={{margin:'0px', padding:'0px'}}>
+                                    <div style={{width:'100px'}}>
+                                                                <DropDownMenu
+                                                                    style={{color:'#000000', height:'38px', marginTop:'0px', position:'float', marginLeft:'0px', backgroundColor:'#eeeeee'}}
+                                                                    value={this.state.filterValue}
+                                                                    onChange={this._handleFilterChange.bind(this)}
+                                                                    labelStyle={{color:'#777777', marginTop:'-10px'}}
+                                                                >                                    
+                                                                    <List style={{padding:'20px'}}>Search Movies By: </List>
+                                                                    <Divider/>
+                                                                    <MenuItem key={1} value="Title" primaryText="Title" />
+                                                                    <MenuItem key={2} value="Actor" primaryText="Actor" />
+                                                                    <MenuItem key={3} value="Director" primaryText="Director" />
+                                                                    <MenuItem key={4} value="Producer" primaryText="Producer" />
+                                                                    <MenuItem key={5} value="Music Director" primaryText="Music Director" />  
+                                                                    <MenuItem key={6} value="Production House" primaryText="Production House" />                                  
+                                                                </DropDownMenu>
+
+                                    </div>
+                                    
+                                    <div>
+                                                                <TextField
+                                                                    hintText=""
+                                                                    floatingLabelText=''
+                                                                    floatingLabelStyle={styles.floatingLabelStyleForSearch}
+                                                                    underlineDisabledStyle={{borderColor:'white', width:'600px'}}
+                                                                    underlineFocusStyle={{borderColor:'white', width:'600px'}}
+                                                                    underlineStyle={{borderColor:'white', width:'600px'}}
+                                                                    hintStyle={{color:'#cccccc'}}
+                                                                    value={this.state.searchString}
+                                                                    onChange={this._handleSearchChange.bind(this)}
+                                                                    autoFocus={true}
+                                                                    inputStyle={{color:'#333333', marginTop:'5px', marginLeft:'20px'}}
+                                                                    style={{position:'float', marginLeft:'0px',marginTop:'0px', width:'600px', backgroundColor:'white', height:'30px'}}                  
+                                                                />
+                                                                <Popover
+                                                                    open={this.state.searchResultOpen}
+                                                                    anchorEl={this.state.anchorSearchResult}
+                                                                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                                                                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                                                    onRequestClose={this._handleSearchResultClose.bind(this)}
+                                                                    style = {{width: '300px'}}
+                                                                    animation={PopoverAnimationVertical}
+                                                                >
+                                                                   <Menu desktop={true} onItemTouchTap={this._showMovieDetails.bind(this)} disableAutoFocus={true} >
+                                                                        {this._showMoviesName()}
+                                                                   </Menu>
+                                                                </Popover>
+                                                                
+                                                                
+
+                                    </div>
+                                </Grid>
+                            </p>
+                                <ul style={{listStyle: "none", marginTop: '40px', marginRight:'20px', align:'center', cursor: 'pointer', height: '48px', textAlign: 'center'}} onClick={this._openUserOption.bind(this)}>
                                     <li>
                                         <Avatar
                                             src={this.state.isLoggedin ? this.state.userType == "viewer" ? "user.png" : "theatre.jpg" : "login.png"}
@@ -527,19 +547,7 @@ export default class HomePage extends React.Component {
 
                             </HeaderRow>
                            
-                            {/*
-                                <HeaderRow>  
-                                <Navigation>
-                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="/mywishlist">My Wishlist</Link> : <Link to="/myshows">My Shows</Link> : null}
-                                    {this.state.isLoggedin? this.state.userType == 'viewer' ? <Link to="#">My Bookings</Link>: null:null}
-                                    <Link to="#">Trending movies</Link>             
-                                    <Link to="/upcomingshows">Upcoming shows</Link>
-                                    <Link to="#">Top Watched movies</Link>  
-                                </Navigation>
-                                </HeaderRow>
-                            */}
-
-                            <HeaderTabs ripple activeTab={this.state.activeTab} onChange={this._handleTabChange.bind(this)}>
+                            <HeaderTabs ripple activeTab={this.state.activeTab} onChange={this._handleTabChange.bind(this)} style={{ backgroundColor:appConfig.baseColor, marginTop:'0px', marginLeft:'220px', marginBottom:'0px', width:'900px', height:'60px', padding:'0px', zIndex:'-1'}}>
                                 {this._setTabNames()}
                             </HeaderTabs>
                         </Header>
