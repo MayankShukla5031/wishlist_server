@@ -1,0 +1,7 @@
+{
+  "domain":           "http://localhost:9000",
+  "subfolder":        "",
+
+  "GCM_SENDER_KEY":       "<Key goes here>",
+  "LOC_FREQ_MINS":        5
+}

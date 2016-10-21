@@ -3,7 +3,6 @@
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var crypto = require('crypto');
-var nodemailer = require('nodemailer');
 var User = require('./user.model');
 var config = require('../../config/environment');
 var authParameters = require('../../config/auth.config.js');
@@ -11,9 +10,6 @@ var jwt = require('jsonwebtoken');
 var auth = require('../../auth/auth.service');
 var async = require('async');
 var fs = require('fs');
-var socket = require('../../utils/AdminLogsSocketConnection');
-var mailer = require('../../utils/mailer.js');
-var DateUtils = require('../../utils/dateUtils');
 
 /**
  * Get list of users
