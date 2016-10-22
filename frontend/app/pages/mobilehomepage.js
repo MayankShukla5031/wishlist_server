@@ -390,10 +390,10 @@ export default class HomePage extends React.Component {
 
 					<Layout fixedHeader>
                         <Header style={{ backgroundColor:appConfig.baseColor , height:appConfig.headerHeight, margin:'0px', padding:'0px'}}>
-                        	<HeaderRow style={{marginTop:'-20px',marginLeft:'50px', padding:'0px' }} title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff', marginLeft:'20px'}}><img style={{height:'30px', marginTop:'40px'}} src='title1.png' /><img style={{height:'50px', marginTop:'40px'}} src='logo.png' /><img style={{height:'30px', marginTop:'40px', marginLeft:'-10px'}} src='title2.png' /></a>}>
+                        	<HeaderRow style={{marginTop:'-10px',marginLeft:'50px', padding:'0px' }} title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff', marginLeft:'20px'}}><img style={{height:'30px', marginTop:'40px'}} src='title1.png' /><img style={{height:'50px', marginTop:'40px'}} src='logo.png' /><img style={{height:'30px', marginTop:'40px', marginLeft:'-10px'}} src='title2.png' /></a>}>
                                                               
                             </HeaderRow>    
-                            <HeaderRow>
+                            <HeaderRow style={{marginTop:'10px'}}>
                                 <TextField
                                     hintText=""
                                     floatingLabelText={'Search Movies By: '+ this.state.filterValue}
@@ -438,7 +438,7 @@ export default class HomePage extends React.Component {
                             </HeaderRow>
                                                      
                         </Header>
-                        <Drawer title="Menu" > 
+                        <Drawer title="Menu" style={{ marginTop:'0px'}}> 
 
                                 <Divider style={{marginBottom:'10px', marginTop:'-10px'}}/>
                                 <ul style={{listStyle: "none", cursor: 'pointer', height: '100px', textAlign: 'center', backgroundColor:appConfig.baseColor, color:'#ffffff'}} onClick={this._openUserOption.bind(this)}>
