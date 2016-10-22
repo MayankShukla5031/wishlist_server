@@ -119,7 +119,7 @@ db.once('open', function callback () {});
     productionhouse: Number,
     user: Number,
     show: Number,
-    screens: Number
+    screen: Number
   } , {collection : 'countcollection'});
 
   var Count = mongoose.model('countcollection', countSchema);
@@ -156,7 +156,7 @@ db.once('open', function callback () {});
     name:String,
     address:String,
     no_of_seats: { type : Number , default : 0 },
-    layout:{type: Object, default:{}}
+    layout:Object
   } , {collection : 'screencollection'});
 
   var Screen = mongoose.model('screencollection', screenSchema);
@@ -515,9 +515,9 @@ app.get('/:action', function (req, res)
                           }
                             else
                             {
-                                if(containsMovie(movie, user['wishlist']))
+                                if(containsItem(user['wishlist'], movie, movieid))
                                 {
-                                  movie.inmywishlist= true;
+                                            movie.inmywishlist= true;
                                             movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
                                             res.end(JSON.stringify(movie));
                                    }
@@ -644,7 +644,7 @@ app.get('/:action', function (req, res)
                               
                               for (i=0; i< list.length; i++)
                               {                        
-                                list[i].inmywishlist= ContainsItem(wishlist, list[i].uid);                        
+                                list[i].inmywishlist= listContainsItem(wishlist, list[i].uid);                        
                               }
 
                               res.end(JSON.stringify(list));
@@ -983,6 +983,10 @@ app.post("/:action", function (req, res)
               ret.result={};
               ret.result.username= user.username;
               ret.result.user_type= user.user_type;
+
+              if(user.user_type =='theatre')
+                ret.result.screens= user.screens;
+
               ret.result.user_id= user.uid;
               var token= generateToken(req, user.uid);
               res.set('Authorization', token);
@@ -1101,7 +1105,7 @@ app.post("/:action", function (req, res)
                           Movie.findOne({'uid' : req.body["movieid"]}, function (err, movie) 
                           {
                                             
-                                                user['wishlist']= removeMovie(movie, user['wishlist']);
+                                                user['wishlist']= removeItem(user['wishlist'], movie, 'movieid');
                                                             
                                                 user.save(function(err, item2) {
 
@@ -1236,7 +1240,7 @@ app.post("/:action", function (req, res)
                              if (err)
                                  sendResponse(res, 500, "Error deleting show");
                                 else 
-                             sendResponse(res, 200, "success");
+                               sendResponse(res, 200, "success");
                           });
       }
       else
@@ -1265,53 +1269,56 @@ app.post("/:action", function (req, res)
                         sendResponse(res, 500, "null user");
                         return;
                       }
-                        var movieid = req.body["movie_id"];
-                        console.log(movieid);
+                        var screenid = req.body["screen_id"];
 
                         try
-                        {                         
-                           Movie.findOne({'uid' : movieid}, function (err, movie) 
-                              {
-                                if(movie!=null)
-                                  {
+                        {                                                   
                                     Count.findOne({}, function (err, count) 
                                         {
-
-                                            var movieObject={};
-                                            movieObject.movieid = movie._id ; 
-
-                                            var userObject={};
-                                            userObject.userid = user._id   ; 
-
-                                            var show = new Show({
-                                            uid: "SHO100000" + count.show,
-                                            theatre:userObject,
-                                            show_time: new Date(req.body["show_time"]),
-                                            ticket_price: req.body["ticket_price"],
+                                            var screen = new Screen({
+                                            uid: "SCR100000" + count.screen,
+                                            name:req.body["name"],
+                                            address:req.body["address"],
                                             no_of_seats: req.body["no_of_seats"],
-                                            min_seats:req.body["min_seats"],
-                                            movie: movieObject
+                                            layout:JSON.parse(req.body["layout"])
                                             });
 
-                                            show.save(function(err, user) {
+                                            var screenObject={};
+                                            screenObject.screenid = screen._id ; 
+
+                                            screen.save(function(err, screen1) {
                                                   if (err)
                                                       console.log(err);
                                                     else {
-                                                      console.log('Added Show');
+                                                                                                            
+                                                      if(user['screens']== undefined )
+                                                       user['screens']=[];
 
-                                                        count.show= count.show+1;
-                                                        count.save(function(err, user) {
-                                                              if (err)
-                                                                  console.log(err);
-                                                                });
+                                                        user['screens'].push(screenObject);
 
-                                                      sendResponse(res, 200, "success"); 
+                                                        user.save(function(err, user1) {
 
-                                                      }                                                    
-                                                    });
+                                                          if (err)
+                                                              console.log(err);
+                                                            else {
 
-                                          });
-                                  }
+                                                                count.screen= count.screen+1;
+                                                                count.save(function(err, item) {
+                                                                      if (err)
+                                                                          console.log(err);
+                                                                      else         
+                                                                      {    
+
+                                                                        console.log('Added Screen');                                                       
+                                                                       sendResponse(res, 200, "success"); 
+                                                                     }
+                                                                        });
+                                                              }                                                    
+                                                            });
+                                                      }
+
+                                              });
+                                  
                               });                                                    
                                                                 
                         }
@@ -1327,39 +1334,90 @@ app.post("/:action", function (req, res)
         sendResponse(res, 401, "Unauthorized"); 
       }
   }
-  else if (action=="cancelshow")
+  else if (action=="removescreen")
   {
       validateToken(req);
       
       if (req.session.user !=undefined)
       {
-            console.log('Canceling show:' + req.body.show_id);
+            console.log('Removing screen:' + req.body.screen_id);
+             User.findOne({'uid' : req.session.user}, function (err, user) {             
+                        
+                  if(err) 
+                  {
+                    sendResponse(res, 500, "Error getting user");
+                  }
+                  else
+                  {
+                      if(user==null)
+                      {
+                        sendResponse(res, 500, "null user");
+                        return;
+                      }
+                        var screenid = req.body["screen_id"];
 
-            Show.findOne({'uid' : req.body.show_id}).populate({path:'theatre.userid'}).remove(function(err, item2) 
-                           {
+                        try
+                        {                         
+                           Screen.findOne({'_id' : screenid}, function (err, screen) {                             
+                           
                              if (err)
-                                 sendResponse(res, 500, "Error deleting show");
-                                else 
-                             sendResponse(res, 200, "success");
-                          });
+                                 sendResponse(res, 500, "Error deleting screen");
+                              else 
+                                {
+                                  if(screen==null)
+                                  {
+                                    sendResponse(res, 500, "null screen");
+                                    return;
+                                  }
+
+                                user['screens']= removeItem(user['screens'], screen, 'screenid');
+                                screen.remove(function(err, item2) {
+                                  if (err)
+                                       sendResponse(res, 500, "Error deleting screen");
+                                    else 
+                                     {
+                                       user.save(function(err, user1) {
+                                                          if (err)
+                                                              console.log(err);
+                                                            else {
+
+                                                              sendResponse(res, 200, "success");
+                                                            }
+                                     
+                                        });
+                                
+                                    }
+                              
+                                });
+
+                              }
+                              });            
+                                                                
+                        }
+                        catch(e)
+                        {
+                          console.log(e);
+                        }                         
+                  } 
+              });
+           
       }
       else
       {
         sendResponse(res, 401, "Unauthorized"); 
       }
   }
-
   else
   {
     res.end("unknown request" );
   }
 });
 
-function containsMovie(movie, list) 
+function containsItem(list, item, itemid) 
 {
     var i;
     for (i = 0; i < list.length; i++) {
-        if (list[i].movieid.equals(movie._id)) {
+        if (list[i][itemid].equals(item._id)) {
 
             return true;
         }
@@ -1367,19 +1425,19 @@ function containsMovie(movie, list)
     return false;
 }
 
-function removeMovie(movie, list) 
+function removeItem(list, item, itemid) 
 {
     var i;
     var newList=[];
     for (i = 0; i < list.length; i++) {
-        if (!list[i].movieid.equals(movie._id)) {
+        if (!list[i][itemid].equals(item._id)) {
             newList.push(list[i]);
         }
     }
     return newList;
 }
 
-function ContainsItem(list, item) 
+function listContainsItem(list, item) 
 {
     var i;
     for (i = 0; i < list.length; i++) {
