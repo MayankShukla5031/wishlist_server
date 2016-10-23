@@ -6,5 +6,9 @@ module.exports = {
 	_getMovieDetails : function(inpulvalues){
 		MovieDetailsWebApiUtils._getMovieDetails(inpulvalues);
 	},
+
+	_cancelMyShow : function(inpulvalues){
+		MovieDetailsWebApiUtils._cancelMyShow(inpulvalues);
+	}
 	
 }
