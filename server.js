@@ -561,6 +561,27 @@ app.get('/:action', function (req, res)
                   }                 
                });
             }
+            else if(req.query.id.includes("SCR"))
+            {
+              Screen.findOne({'uid' : req.query.id},
+              function (err, screen) {              
+                
+                if(err) 
+                  {
+                    res.end("{}");
+                  }
+                 else  
+                  {     
+                    if(screen== null)
+                        {
+                          sendResponse(res, 500, "Error getting screen");
+                          return;
+                        }                  
+
+                        res.end(JSON.stringify(screen));                         
+                  }                 
+               });
+            }
          }
          else 
          {
@@ -974,23 +995,39 @@ app.post("/:action", function (req, res)
     }
     else
     {
-      User.findOne( { $and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} , 
+      User.findOne( { $and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} ).populate({path:'screens.screenid'}).exec(
         function(err,user){
 
           if(user!=undefined && user!={}) 
             {
+              console.log(user);
+
               var ret= {};
               ret.result={};
               ret.result.username= user.username;
               ret.result.user_type= user.user_type;
 
               if(user.user_type =='theatre')
-                ret.result.screens= user.screens;
+              {
 
-              ret.result.user_id= user.uid;
-              var token= generateToken(req, user.uid);
-              res.set('Authorization', token);
-              res.end(JSON.stringify(ret));
+                
+                                    ret.result.screens=[];
+
+                                    ret.result.screens= user.screens.map(function(a) {return { 'uid':a.screenid.uid};}); 
+                                    ret.result.user_id= user.uid;
+                                    var token= generateToken(req, user.uid);
+                                    res.set('Authorization', token);
+                                    res.end(JSON.stringify(ret));                                      
+              }
+              else
+              {
+                ret.result.user_id= user.uid;
+                var token= generateToken(req, user.uid);
+                res.set('Authorization', token);
+                res.end(JSON.stringify(ret));
+              }
+
+              
             }
             else
             {
@@ -1358,7 +1395,7 @@ app.post("/:action", function (req, res)
 
                         try
                         {                         
-                           Screen.findOne({'_id' : screenid}, function (err, screen) {                             
+                           Screen.findOne({'uid' : screenid}, function (err, screen) {                             
                            
                              if (err)
                                  sendResponse(res, 500, "Error deleting screen");
