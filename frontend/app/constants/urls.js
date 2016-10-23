@@ -11,4 +11,5 @@ module.exports = {
 	GET_MY_SHOWS: 'getmyshows/',
 	ADD_SHOW: 'addshow/',
 	UPCOMING_SHOWS: 'getupcomingshows/',
+	CANCEL_SHOW: 'cancelshow',
 }
