@@ -11,6 +11,7 @@ var UserSchema = new Schema({
         lowercase: true,
         unique: true
     },
+    phoneNumber: String,
     hashedPassword: String,
     passwordHistory:[{password:{type:String}}],
     salt: String,
