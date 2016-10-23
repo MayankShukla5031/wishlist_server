@@ -202,7 +202,7 @@ export default class TrendingMovies extends React.Component{
 		
 		const TheatreAction = [
 			<FlatButton style={styles.cancelButtonStyle} hoverColor="#237BFB" label="Cancel" primary={true} onTouchTap={this._handleTheatreDialogCancel}/>,
-            <FlatButton style={styles.saveButtonStyle}  label="Add to MyShows" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
+            <FlatButton style={styles.saveButtonStyle}  label="Create a Show" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
 		];
 
 		return(

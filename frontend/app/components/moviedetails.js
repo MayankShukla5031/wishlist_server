@@ -81,7 +81,7 @@ export default class TrendingMovies extends React.Component{
 	_getMovieDetailsfromStore(type){		
 		if(type == 'MovieDetails'){
 			let details = MovieDetailsStore._getMovieDetails();
-			let text = this.state.userType == "theatre" ? "Add to my Shows" : details.inmywishlist ? "Remove from WishList" : "Add to WishList"; 
+			let text = this.state.userType == "theatre" ? "Create a Show" : details.inmywishlist ? "Remove from WishList" : "Add to WishList"; 
 			this.setState({
 				movieId: this.props.params.movieId,
 				movieDetails: details,
@@ -195,7 +195,7 @@ export default class TrendingMovies extends React.Component{
 		
 		const TheatreAction = [
 			<FlatButton style={styles.cancelButtonStyle} hoverColor="#237BFB" label="Cancel" primary={true} onTouchTap={this._handleTheatreDialogCancel}/>,
-            <FlatButton style={styles.saveButtonStyle}  label="Add to MyShows" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
+            <FlatButton style={styles.saveButtonStyle}  label="Create a Show" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
 		];
 
 		return(
