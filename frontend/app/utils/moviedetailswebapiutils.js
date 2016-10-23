@@ -30,4 +30,26 @@ module.exports = {
         });
 	},
 
+    _cancelMyShow : function(query){
+        dispatcher.dispatch({
+            type: 'LOADER',
+            value: true,
+        });
+        Api._callAPI(Url.CANCEL_SHOW,'post',query,(type,data)=> {
+            if(type == 'success'){  
+                hashHistory.push('/myshows');
+            }
+            else{   
+                // dispatcher.dispatch({
+                //     type: 'SNACKBAR',
+                //     msg:  data.responseJSON.result || 'Something went wrong, Kindly try after some time'
+                // });
+            }
+            dispatcher.dispatch({
+                type: 'LOADER',
+                value: false,
+            });
+        });       
+    }
+
 }

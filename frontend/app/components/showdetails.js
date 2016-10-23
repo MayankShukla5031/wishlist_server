@@ -66,7 +66,6 @@ export default class TrendingMovies extends React.Component{
 
 	componentWillMount(){
 		let id = this.props.params.showId;
-		console.log('id', id);
 		MovieDetailsAction._getMovieDetails({id: id});
 		MovieDetailsStore.on('change',this._getMovieDetailsfromStore); 
 		MyWishListStore.on('change', this._getWishListStoreData);
@@ -87,7 +86,7 @@ export default class TrendingMovies extends React.Component{
 			let text = "";
 			let details = MovieDetailsStore._getMovieDetails();
 			if(this.state.userType == "theatre"){
-				text = details.theatre.userid.uid == this.state.userId ? "Cancel" : "";
+				text = details.theatre.userid.uid == this.state.userId ? "Cancel Show" : "";
 			}else{
 				text = details.in_my_show ? "Cancel Ticket" : "Book Ticket"
 			}
@@ -121,10 +120,7 @@ export default class TrendingMovies extends React.Component{
 
 	_handleCommonAction(){
 		if(this.state.userType == 'theatre'){
-			// this.setState({
-			// 	openTheatreDialogue: true,
-			// 	theatreDetails: {},
-			// });
+			MovieDetailsAction._cancelMyShow({show_id:this.state.showId});
 		}else{
 			// let query = {id: this.state.showId}
 			// if(this.state.buttonText == 'Add to WishList'){
