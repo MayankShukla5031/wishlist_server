@@ -1270,15 +1270,20 @@ app.post("/:action", function (req, res)
       
       if (req.session.user !=undefined)
       {
-            console.log('Canceling show:' + req.body.show_id);
+        User.findOne({'uid' : req.session.user }, function (err, user) {          
+                        
 
-            Show.findOne({'uid' : req.body.show_id}).populate({path:'theatre.userid'}).remove(function(err, item2) 
+            Show.findOne({'uid' : req.body.show_id, 'theatre.userid': user._id}).remove(function(err, item2) 
                            {
                              if (err)
                                  sendResponse(res, 500, "Error deleting show");
                                 else 
+                                {
+                               console.log('Canceling show:' + req.body.show_id);
                                sendResponse(res, 200, "success");
+                             }
                           });
+            });
       }
       else
       {
