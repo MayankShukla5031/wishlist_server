@@ -12,6 +12,11 @@ module.exports = function(app) {
     //app.all('/api/*', authService.isAuthenticated());
 
     app.use('/api/users', require('./api/user'));
+    app.use('/api/movies', require('./api/movie'));
+    app.use('/api/artists', require('./api/artist'));
+    app.use('/api/productionHouses', require('./api/productionHouse'));
+    app.use('/api/screens', require('./api/screen'));
+    app.use('/api/shows', require('./api/show'));
     app.use('/auth', require('./auth'));
     app.route('/config')
     .get(function(req, res) {
