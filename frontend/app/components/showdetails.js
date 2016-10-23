@@ -120,7 +120,7 @@ export default class TrendingMovies extends React.Component{
 
 	_handleCommonAction(){
 		if(this.state.userType == 'theatre'){
-			MovieDetailsAction._cancelMyShow({showid:this.state.showId});
+			MovieDetailsAction._cancelMyShow({show_id:this.state.showId});
 		}else{
 			// let query = {id: this.state.showId}
 			// if(this.state.buttonText == 'Add to WishList'){

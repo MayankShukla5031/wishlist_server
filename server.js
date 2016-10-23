@@ -515,7 +515,7 @@ app.get('/:action', function (req, res)
                           }
                             else
                             {
-                                if(containsItem(user['wishlist'], movie, movieid))
+                                if(containsItem(user['wishlist'], movie, 'movieid'))
                                 {
                                             movie.inmywishlist= true;
                                             movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
