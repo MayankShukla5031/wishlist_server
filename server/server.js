@@ -118,7 +118,8 @@ db.once('open', function callback () {});
     musicdirector: Number,
     productionhouse: Number,
     user: Number,
-    show: Number
+    show: Number,
+    screen: Number
   } , {collection : 'countcollection'});
 
   var Count = mongoose.model('countcollection', countSchema);
@@ -129,8 +130,10 @@ db.once('open', function callback () {});
     password: String,
     email_id: String,
     phone_number: String,
+    address: String,
     user_type: String,
-    wishlist:[{movieid:{ type : ObjectId, ref: 'moviecollection' }}]
+    wishlist:[{movieid:{ type : ObjectId, ref: 'moviecollection' }}],
+    screens:[{screenid:{ type : ObjectId, ref: 'screencollection' }}]
   } , {collection : 'usercollection'});
 
   var User = mongoose.model('usercollection', userSchema);
@@ -142,15 +145,26 @@ db.once('open', function callback () {});
     ticket_price: { type : Number , default : 0 },
     no_of_seats: { type : Number , default : 0 },
     min_seats:  { type : Number , default : 0 },
-    movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }}
+    movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }},
+    screen:{screenid:{ type : ObjectId, ref: 'screencollection' }}
   } , {collection : 'showcollection'});
 
   var Show = mongoose.model('showcollection', showsSchema);
 
+  var screenSchema = new Schema({ 
+    uid: String,
+    name:String,
+    address:String,
+    no_of_seats: { type : Number , default : 0 },
+    layout:Object
+  } , {collection : 'screencollection'});
+
+  var Screen = mongoose.model('screencollection', screenSchema);
+
 app.get('/', function (req, res) 
 {
-	 res.writeHead(301, {'Location': '/index'});	
-	 res.end();
+   res.writeHead(301, {'Location': '/index'});  
+   res.end();
 });
 
 app.get('/:action', function (req, res) 
@@ -158,57 +172,17 @@ app.get('/:action', function (req, res)
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
-	  if(action== "login")
-    {
-      res.end( "<html>\
-			<body><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script>\
-				  <h1>User is not Signed in...</h1>\
-	        <a href='javascript:DoPost()'>Sign in as SK</a>\
-				  <script language='javascript'>\
-				  		function DoPost(){\
-				  			 $.post('/login', { user: 'SK', password: 'onshivay'} ,function( data ) {  if(data!='Unauthorized') window.location.assign( data); else alert(data);});\
-				  				}\
-				  </script></body></html>");
-    }
-    else if(action=="index")
+     if(action=="index")
     {
       fs.readFile('frontend/public/index.html' , function(err, contents) {
 
-  		res.writeHead(200, {'Content-Type': 'text/html'});
+      res.writeHead(200, {'Content-Type': 'text/html'});
           res.end(contents);
         });
     }
-    else if(action== "home")
-    {
-       res.end("<html><head><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'></script></head>\
-                  <body>\
-                    <input type='text'  onchange='searchByTitle(this)' placeholder='Search By Movie Title'><br/><br/>\
-                    <input type='text'  onchange='searchByActor(this)' placeholder='Search By Actor'><br/><br/>\
-                    <input type='text'  onchange='searchByDirector(this)' placeholder='Search By Director'><br/><br/>\
-                    <input type='text'  onchange='searchByProducer(this)' placeholder='Search By Producer'><br/><br/>\
-                    <input type='text'  onchange='searchByMusicDirector(this)' placeholder='Search By Music Director'><br/><br/>\
-                    <input type='text'  onchange='searchByProductionHouse(this)' placeholder='Search By Production House'><br/><br/>\
-                    <p id='search_output'>result</p>\
-                    <script>function searchByTitle(obj){ showResult ('title', obj.value);}\
-                      function searchByActor(obj){ showResult ('actor', obj.value);}\
-                      function searchByDirector(obj){ showResult ('director', obj.value);}\
-                      function searchByProducer(obj){ showResult ('producer', obj.value);}\
-                      function searchByMusicDirector(obj){ showResult ('music_director', obj.value);}\
-                      function searchByProductionHouse(obj){ showResult ('production_house', obj.value);}\
-                      function showResult( searchType, searchString)\
-                        {  var searchUrl='/search?'+searchType+'='+ searchString;\
-                           $.ajax(\
-                                  {type: 'GET', url: searchUrl, success:function(result)\
-                                                                        { \
-                                                                          $('#search_output').html(result); \
-                                                                        }\
-                                  });\
-                        }\
-                    </script></body></html>");
-    }
     else if(action== "search")
     {
-    	if( req.query.title != undefined && req.query.title !='')
+      if( req.query.title != undefined && req.query.title !='')
         {
           Movie.find({'title' : new RegExp(req.query.title, 'i')}, function (err, str) {
           var list=[];
@@ -509,60 +483,60 @@ app.get('/:action', function (req, res)
     }
     else if(action== "getdetails")
     {
-    	if( req.query.id != undefined)
+      if( req.query.id != undefined)
         {
           if(req.query.id.includes("MVI"))
             {
               validateToken(req);
           
-    			    Movie.findOne({'uid' : req.query.id}, function (err, movie) 
+              Movie.findOne({'uid' : req.query.id}, function (err, movie) 
               { 
-    			          
-      					if(err) 
+                    
+                if(err) 
                   {
                     res.end("{}");
                   }
-      			     else  
-      			      {
+                 else  
+                  {
                       if(movie== null)
                       {
                         sendResponse(res, 500, "Error getting movie");
                         return;
                       }
-      			        		var moviePresent = false;
+                        var moviePresent = false;
 
                         if(req.session.user != undefined)
                         {
-        			        	  User.findOne({'uid' : req.session.user}, function (err, user) {
-        		    			          
-          	    					if(err)
-          	    					{
-          	    							sendResponse(res, 500, "Error getting user");  
-          	    					}
-	          	    			    else
-	          	    			    {
-	                  						if(containsMovie(movie, user['wishlist']))
-	                  						{
-	                  						  movie.inmywishlist= true;
-	                                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
-	                                          res.end(JSON.stringify(movie));
-	                  		    			 }
-	                  		    			 else
-	                  		    			 {
-	                  		    			    movie.inmywishlist= false;
-	                                          	movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
-	                  			        					res.end(JSON.stringify(movie));
-	                  		    			 }            										    			        	
-	        					        }	
-        					    	  });		
+                          User.findOne({'uid' : req.session.user}, function (err, user) {
+                                
+                          if(err)
+                          {
+                              sendResponse(res, 500, "Error getting user");  
+                          }
+                            else
+                            {
+                                if(containsItem(user['wishlist'], movie, 'movieid'))
+                                {
+                                            movie.inmywishlist= true;
+                                            movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
+                                            res.end(JSON.stringify(movie));
+                                   }
+                                   else
+                                   {
+                                      movie.inmywishlist= false;
+                                              movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;  
+                                            res.end(JSON.stringify(movie));
+                                   }                                                    
+                            } 
+                          });   
                         }
                         else
                         {
                          movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid; 
                          res.end(JSON.stringify(movie));  
                         }
-      			      }			            
-    			     });
+                  }                 
+               });
             }
             else if(req.query.id.includes("SHO"))
             {
@@ -587,7 +561,28 @@ app.get('/:action', function (req, res)
                   }                 
                });
             }
-    	   }
+            else if(req.query.id.includes("SCR"))
+            {
+              Screen.findOne({'uid' : req.query.id},
+              function (err, screen) {              
+                
+                if(err) 
+                  {
+                    res.end("{}");
+                  }
+                 else  
+                  {     
+                    if(screen== null)
+                        {
+                          sendResponse(res, 500, "Error getting screen");
+                          return;
+                        }                  
+
+                        res.end(JSON.stringify(screen));                         
+                  }                 
+               });
+            }
+         }
          else 
          {
            sendResponse(res, 400, "Bad Request"); 
@@ -597,40 +592,40 @@ app.get('/:action', function (req, res)
     {
         validateToken(req);
       
-      	if( req.session.user != undefined)
+        if( req.session.user != undefined)
           {
-    			   User.findOne({'uid' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
+             User.findOne({'uid' : req.session.user}).populate({path:'wishlist.movieid'}).exec(function(err, user)
                    {
                     var list=[];
                     list= user.wishlist.map(function(a) {return { uid:a.movieid.uid, title:a.movieid.title, poster_url:imageServerUrl+"/poster_small?movieid="+a.movieid.uid, count:a.movieid.wishcount};});
                     res.end(JSON.stringify(list));             
                     
                   });              
-      	  }
-  	      else 
-  	      {
-  	       sendResponse(res, 401, "Unauthorized"); 
-  	      }			             
+          }
+          else 
+          {
+           sendResponse(res, 401, "Unauthorized"); 
+          }                  
     }
     else if(action.endsWith(".css") || action.endsWith(".js") || action.endsWith(".css.map") || action.endsWith(".js.map") ||action.endsWith(".png") ||action.endsWith(".jpg") || action.endsWith(".ico") || action.endsWith(".min.css"))
     {
-    	fs.readFile('frontend/public/'+ action, function(err, contents) {
+      fs.readFile('frontend/public/'+ action, function(err, contents) {
 
-	        if (err) console.log(err);
-	        else 
-	        	{
-			        if(action.endsWith(".css") || action.endsWith("css.map") || action.endsWith(".min.css"))
-			        	res.writeHead(200, {'Content-Type': 'text/css'});
+          if (err) console.log(err);
+          else 
+            {
+              if(action.endsWith(".css") || action.endsWith("css.map") || action.endsWith(".min.css"))
+                res.writeHead(200, {'Content-Type': 'text/css'});
 
-			        else if(action.endsWith(".js")|| action.endsWith("js.map"))
-			        	res.writeHead(200, {'Content-Type': 'text/javascript'});
+              else if(action.endsWith(".js")|| action.endsWith("js.map"))
+                res.writeHead(200, {'Content-Type': 'text/javascript'});
 
-			        res.write(contents);
-			        res.end();
-	    		}
-        });	
+              res.write(contents);
+              res.end();
+          }
+        }); 
     }
-    else if(action== "getuserprofile")
+    else if(action== "userprofile")
     {
       validateToken(req);
       
@@ -638,7 +633,9 @@ app.get('/:action', function (req, res)
         {
           User.findOne({'uid' : req.session.user }, function (err, user) {          
         
-          res.end(JSON.stringify(user));          });
+          user.password='******';
+          res.end(JSON.stringify(user));          
+          });
         }
           else 
           {
@@ -668,7 +665,7 @@ app.get('/:action', function (req, res)
                               
                               for (i=0; i< list.length; i++)
                               {                        
-                                list[i].inmywishlist= ContainsItem(wishlist, list[i].uid);                        
+                                list[i].inmywishlist= listContainsItem(wishlist, list[i].uid);                        
                               }
 
                               res.end(JSON.stringify(list));
@@ -730,7 +727,7 @@ app.get('/:action', function (req, res)
     }    
     else
     {
-    	 res.end("unknown request" );
+       res.end("unknown request" );
     }
 })
 
@@ -741,162 +738,162 @@ app.post("/:action", function (req, res)
 
   if(action=="add")
   {
-	    Count.findOne({}, function (err, count) 
-	    {
-		    if(req.body["Actor"]!= undefined)
-		    {
-		      if(req.body["Actor"]!="")
-		        {
-		          var actor = new Actor({
-		                uid: "ACT100000" + count.actor,
-		                title: req.body["Actor"]
-		                });
-		            actor.save(function(err, user) {
-		                  if (err)
-		                      console.log(err);
-		                    });
+      Count.findOne({}, function (err, count) 
+      {
+        if(req.body["Actor"]!= undefined)
+        {
+          if(req.body["Actor"]!="")
+            {
+              var actor = new Actor({
+                    uid: "ACT100000" + count.actor,
+                    title: req.body["Actor"]
+                    });
+                actor.save(function(err, user) {
+                      if (err)
+                          console.log(err);
+                        });
 
-		            count.actor= count.actor+1;
-		            count.save(function(err, user) {
-		                  if (err)
-		                      console.log(err);
-		                    });
+                count.actor= count.actor+1;
+                count.save(function(err, user) {
+                      if (err)
+                          console.log(err);
+                        });
 
-		          res.end("Added Actor: "+ req.body["Actor"]);
-		        }
-		      else
-		            res.end("Can not add BLANK Actor");
+              res.end("Added Actor: "+ req.body["Actor"]);
+            }
+          else
+                res.end("Can not add BLANK Actor");
 
-		    }
-		    else if(req.body["Director"]!= undefined)
-		    {
-		      if(req.body["Director"]!="")
-		        {
-		          var director = new Director({
-		                uid: "DIR100000" + count.director,
-		                title: req.body["Director"]
-		                });
-		            director.save(function(err, user) {
-		                  if (err)
-		                      console.log(err);
-		                    });
+        }
+        else if(req.body["Director"]!= undefined)
+        {
+          if(req.body["Director"]!="")
+            {
+              var director = new Director({
+                    uid: "DIR100000" + count.director,
+                    title: req.body["Director"]
+                    });
+                director.save(function(err, user) {
+                      if (err)
+                          console.log(err);
+                        });
 
-		            count.director= count.director+1;
-		            count.save(function(err, user) {
-		                  if (err)
-		                      console.log(err);
-		                    });
+                count.director= count.director+1;
+                count.save(function(err, user) {
+                      if (err)
+                          console.log(err);
+                        });
 
-		          res.end("Added Director: "+ req.body["Director"]);
-		        }
-		      else
-		            res.end("Can not add BLANK Director");
-		    }
-		    else if(req.body["Producer"]!= undefined)
-		    {
-		      if(req.body["Producer"]!="")
-		        {
-		          var producer = new Producer({
-		                  uid: "PRO100000" + count.producer,
-		                  title: req.body["Producer"]
-		                  });
-		              producer.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);
-		                      });
+              res.end("Added Director: "+ req.body["Director"]);
+            }
+          else
+                res.end("Can not add BLANK Director");
+        }
+        else if(req.body["Producer"]!= undefined)
+        {
+          if(req.body["Producer"]!="")
+            {
+              var producer = new Producer({
+                      uid: "PRO100000" + count.producer,
+                      title: req.body["Producer"]
+                      });
+                  producer.save(function(err, user) {
+                        if (err)
+                            console.log(err);
+                          });
 
-		              count.producer= count.producer+1;
-		              count.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);
-		                      });
+                  count.producer= count.producer+1;
+                  count.save(function(err, user) {
+                        if (err)
+                            console.log(err);
+                          });
 
-		            res.end("Added Producer: "+ req.body["Producer"]);
-		        }
-		              else
-		                    res.end("Can not add BLANK Producer");		    
-		    }
-		    else if(req.body["MusicDirector"]!= undefined)
-		    {
+                res.end("Added Producer: "+ req.body["Producer"]);
+            }
+                  else
+                        res.end("Can not add BLANK Producer");        
+        }
+        else if(req.body["MusicDirector"]!= undefined)
+        {
 
-		      if(req.body["MusicDirector"]!="")
-		        {
-		          var musicdirector = new MusicDirector({
-		                  uid: "MDR100000" + count.musicdirector,
-		                  title: req.body["MusicDirector"]
-		                  });
-		              musicdirector.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);
-		                      });
+          if(req.body["MusicDirector"]!="")
+            {
+              var musicdirector = new MusicDirector({
+                      uid: "MDR100000" + count.musicdirector,
+                      title: req.body["MusicDirector"]
+                      });
+                  musicdirector.save(function(err, user) {
+                        if (err)
+                            console.log(err);
+                          });
 
-		              count.musicdirector= count.musicdirector+1;
-		              count.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);
-		                      });
+                  count.musicdirector= count.musicdirector+1;
+                  count.save(function(err, user) {
+                        if (err)
+                            console.log(err);
+                          });
 
-		            
-		            res.end("Added Music Director: "+ req.body["MusicDirector"]);
-		        }
-		              else
-		                    res.end("Can not add BLANK Music Director");
-		    }
-		    else if(req.body["ProductionHouse"]!= undefined)
-		    {
-		      if(req.body["ProductionHouse"]!="")
-		        {
-		          var productionhouse = new ProductionHouse({
-		                  uid: "PRH100000" + count.productionhouse,
-		                  title: req.body["ProductionHouse"]
-		                  });
-		              productionhouse.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);
-		                      });
+                
+                res.end("Added Music Director: "+ req.body["MusicDirector"]);
+            }
+                  else
+                        res.end("Can not add BLANK Music Director");
+        }
+        else if(req.body["ProductionHouse"]!= undefined)
+        {
+          if(req.body["ProductionHouse"]!="")
+            {
+              var productionhouse = new ProductionHouse({
+                      uid: "PRH100000" + count.productionhouse,
+                      title: req.body["ProductionHouse"]
+                      });
+                  productionhouse.save(function(err, user) {
+                        if (err)
+                            console.log(err);
+                          });
 
-		              count.productionhouse= count.productionhouse+1;
-		              count.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);
-		                      });
+                  count.productionhouse= count.productionhouse+1;
+                  count.save(function(err, user) {
+                        if (err)
+                            console.log(err);
+                          });
 
-		            res.end("Added Production House: "+ req.body["ProductionHouse"]);
-		        }
-		              else
-		                    res.end("Can not add BLANK Production House");
-		    }
-		    else if(req.body["MovieName"]!= undefined)
-		    {
-		      if(req.body["MovieName"]!="")
-		        {
-		          var movie = new Movie({
-		                  uid: "MVI100000" + count.movie,
-		                  title: req.body["MovieName"],
-		                  cast: req.body["MovieCast"],
-		                  director: req.body["MovieDirector"],
-		                  producer: req.body["MovieProducer"],
-		                  music_director: req.body["MovieMusicDirector"],
-		                  production_house: req.body["MovieProductionHouse"],
-		                  poster_url: req.body["MoviePoster"]
-		                  });
-		              movie.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);                
-		                });
+                res.end("Added Production House: "+ req.body["ProductionHouse"]);
+            }
+                  else
+                        res.end("Can not add BLANK Production House");
+        }
+        else if(req.body["MovieName"]!= undefined)
+        {
+          if(req.body["MovieName"]!="")
+            {
+              var movie = new Movie({
+                      uid: "MVI100000" + count.movie,
+                      title: req.body["MovieName"],
+                      cast: req.body["MovieCast"],
+                      director: req.body["MovieDirector"],
+                      producer: req.body["MovieProducer"],
+                      music_director: req.body["MovieMusicDirector"],
+                      production_house: req.body["MovieProductionHouse"],
+                      poster_url: req.body["MoviePoster"]
+                      });
+                  movie.save(function(err, user) {
+                        if (err)
+                            console.log(err);                
+                    });
 
-		              count.movie= count.movie+1;
-		              count.save(function(err, user) {
-		                    if (err)
-		                        console.log(err);
-		                      });
-		            
-		            res.end("Added Movie: "+ req.body["MovieName"]);
-		        }
-		              else
-		                    res.end("Can not add BLANK Movie Name");
-		    }
-	  	});
+                  count.movie= count.movie+1;
+                  count.save(function(err, user) {
+                        if (err)
+                            console.log(err);
+                          });
+                
+                res.end("Added Movie: "+ req.body["MovieName"]);
+            }
+                  else
+                        res.end("Can not add BLANK Movie Name");
+        }
+      });
   }
   else if(action=="register")
   {
@@ -998,26 +995,46 @@ app.post("/:action", function (req, res)
     }
     else
     {
-      User.findOne( { $and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} , 
+      User.findOne( { $and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} ).populate({path:'screens.screenid'}).exec(
         function(err,user){
 
           if(user!=undefined && user!={}) 
             {
+              console.log(user);
+
               var ret= {};
               ret.result={};
               ret.result.username= user.username;
               ret.result.user_type= user.user_type;
-              ret.result.user_id= user.uid;
-              var token= generateToken(req, user.uid);
-              res.set('Authorization', token);
-              res.end(JSON.stringify(ret));
+
+              if(user.user_type =='theatre')
+              {
+
+                
+                                    ret.result.screens=[];
+
+                                    ret.result.screens= user.screens.map(function(a) {return { 'uid':a.screenid.uid};}); 
+                                    ret.result.user_id= user.uid;
+                                    var token= generateToken(req, user.uid);
+                                    res.set('Authorization', token);
+                                    res.end(JSON.stringify(ret));                                      
+              }
+              else
+              {
+                ret.result.user_id= user.uid;
+                var token= generateToken(req, user.uid);
+                res.set('Authorization', token);
+                res.end(JSON.stringify(ret));
+              }
+
+              
             }
             else
             {
               sendResponse(res, 400, "error: username or password is invalid");  
             }
       });
-    }	    
+    }     
   }
   else if(action== "logout")
   {
@@ -1030,44 +1047,44 @@ app.post("/:action", function (req, res)
   {
       validateToken(req);
       
-	    if (req.session.user !=undefined)
-	    {
-		  		console.log('Adding to wishlist of user:' + req.session.user);
+      if (req.session.user !=undefined)
+      {
+          console.log('Adding to wishlist of user:' + req.session.user);
 
-		        User.findOne({'uid' : req.session.user}, function (err, user) {		          
-		    			          
-	    					  if(err) 
-	    						{
+            User.findOne({'uid' : req.session.user}, function (err, user) {             
+                        
+                  if(err) 
+                  {
                     sendResponse(res, 500, "Error getting user");
-	    						}
-	    			      else
-	    			      {
+                  }
+                  else
+                  {
                       if(user==null)
                       {
                         sendResponse(res, 500, "null user");
                         return;
                       }
-		    			        	var movieid = req.body["movieid"];	
+                        var movieid = req.body["movieid"];  
 
-        								try
-        								{        									
+                        try
+                        {                         
                            Movie.findOne({'uid' : movieid}, function (err, movie) 
                                   {
                                         if(movie!=null)
                                         {                                          
                                             var movieObject={};
-                                            movieObject.movieid = movie._id 	;	
+                                            movieObject.movieid = movie._id   ; 
 
                                               if(movieObject!=null)
                                               {
-                            										user['wishlist'].push(movieObject);
-                            			    			        	
-                            			    			        	user.save(function(err, item2) 
+                                                user['wishlist'].push(movieObject);
+                                                      
+                                                      user.save(function(err, item2) 
                                                       {
-                            						                  if (err)
-                            						                      console.log('save error:'+err);
-                              			    			        	  else 
-                              			    			        	  {
+                                                          if (err)
+                                                              console.log('save error:'+err);
+                                                          else 
+                                                          {
 
                                                             movie.wishcount++;
                                                             movie.save(function(err, item3) 
@@ -1081,8 +1098,8 @@ app.post("/:action", function (req, res)
                                                                   }
                                                               }); 
 
-                              			    			        	  }
-                            						              }); 
+                                                          }
+                                                      }); 
                                                     
                                               }
                                               else
@@ -1090,42 +1107,42 @@ app.post("/:action", function (req, res)
                                         }                            
                                       
                                   }); 
-        		    			        	        		    			        	
-        								}
-        								catch(e)
-        								{
-        									console.log(e);
-        								}			    			        	
-					        }	
-					    });
-	    }
-	    else
-	    {
-	  	  sendResponse(res, 401, "Unauthorized"); 
-	    }
+                                                                
+                        }
+                        catch(e)
+                        {
+                          console.log(e);
+                        }                         
+                  } 
+              });
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
   }
   else if (action=="removefromwishlist")
   {
       validateToken(req);
 
-	    if (req.session.user!=undefined)
-	    {
-		  		console.log('Removing from wishlist of user:' + req.session.user);
+      if (req.session.user!=undefined)
+      {
+          console.log('Removing from wishlist of user:' + req.session.user);
 
-		        User.findOne({'uid' : req.session.user}, function (err, user) {		          
-		    			          
-	    					if(err) 
-	    						{
+            User.findOne({'uid' : req.session.user}, function (err, user) {             
+                        
+                if(err) 
+                  {
                     sendResponse(res, 500, "Error getting user");
-	    						}
-	    			        else  
-	    			        {
-        								try
-        								{
+                  }
+                    else  
+                    {
+                        try
+                        {
                           Movie.findOne({'uid' : req.body["movieid"]}, function (err, movie) 
                           {
                                             
-                                                user['wishlist']= removeMovie(movie, user['wishlist']);
+                                                user['wishlist']= removeItem(user['wishlist'], movie, 'movieid');
                                                             
                                                 user.save(function(err, item2) {
 
@@ -1148,21 +1165,21 @@ app.post("/:action", function (req, res)
                                                     
                                                   }
                                                       });                                                       
-                          });							
-        		    			        	
-        								}
-        								catch(e)
-        								{
-        									console.log(e);
-        								}
-			    			        	
-					        }	
-					    });
-	    }
-	    else
-	    {
-	  	  sendResponse(res, 401, "Unauthorized"); 
-	    }
+                          });             
+                                
+                        }
+                        catch(e)
+                        {
+                          console.log(e);
+                        }
+                          
+                  } 
+              });
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
   }
   else if (action=="addshow")
   {
@@ -1253,15 +1270,179 @@ app.post("/:action", function (req, res)
       
       if (req.session.user !=undefined)
       {
-          	console.log('Canceling show:' + req.body.show_id);
+        User.findOne({'uid' : req.session.user }, function (err, user) {          
+                        
 
-            Show.findOne({'uid' : req.body.show_id}).populate({path:'theatre.userid'}).remove(function(err, item2) 
+            Show.findOne({'uid' : req.body.show_id, 'theatre.userid': user._id}).remove(function(err, item2) 
                            {
                              if (err)
-                              	 sendResponse(res, 500, "Error deleting show");
-                              	else 
-                       			 sendResponse(res, 200, "success");
-                       	 	});
+                                 sendResponse(res, 500, "Error deleting show");
+                                else 
+                                {
+                               console.log('Canceling show:' + req.body.show_id);
+                               sendResponse(res, 200, "success");
+                             }
+                          });
+            });
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
+  }
+  else if (action=="addscreen")
+  {
+      validateToken(req);
+      
+      if (req.session.user !=undefined)
+      {
+          console.log('Adding screen for user:' + req.session.user);
+
+            User.findOne({'uid' : req.session.user}, function (err, user) {             
+                        
+                  if(err) 
+                  {
+                    sendResponse(res, 500, "Error getting user");
+                  }
+                  else
+                  {
+                      if(user==null)
+                      {
+                        sendResponse(res, 500, "null user");
+                        return;
+                      }
+                        var screenid = req.body["screen_id"];
+
+                        try
+                        {                                                   
+                                    Count.findOne({}, function (err, count) 
+                                        {
+                                            var screen = new Screen({
+                                            uid: "SCR100000" + count.screen,
+                                            name:req.body["name"],
+                                            address:req.body["address"],
+                                            no_of_seats: req.body["no_of_seats"],
+                                            layout:JSON.parse(req.body["layout"])
+                                            });
+
+                                            var screenObject={};
+                                            screenObject.screenid = screen._id ; 
+
+                                            screen.save(function(err, screen1) {
+                                                  if (err)
+                                                      console.log(err);
+                                                    else {
+                                                                                                            
+                                                      if(user['screens']== undefined )
+                                                       user['screens']=[];
+
+                                                        user['screens'].push(screenObject);
+
+                                                        user.save(function(err, user1) {
+
+                                                          if (err)
+                                                              console.log(err);
+                                                            else {
+
+                                                                count.screen= count.screen+1;
+                                                                count.save(function(err, item) {
+                                                                      if (err)
+                                                                          console.log(err);
+                                                                      else         
+                                                                      {    
+
+                                                                        console.log('Added Screen');                                                       
+                                                                       sendResponse(res, 200, "success"); 
+                                                                     }
+                                                                        });
+                                                              }                                                    
+                                                            });
+                                                      }
+
+                                              });
+                                  
+                              });                                                    
+                                                                
+                        }
+                        catch(e)
+                        {
+                          console.log(e);
+                        }                         
+                  } 
+              });
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
+  }
+  else if (action=="removescreen")
+  {
+      validateToken(req);
+      
+      if (req.session.user !=undefined)
+      {
+            console.log('Removing screen:' + req.body.screen_id);
+             User.findOne({'uid' : req.session.user}, function (err, user) {             
+                        
+                  if(err) 
+                  {
+                    sendResponse(res, 500, "Error getting user");
+                  }
+                  else
+                  {
+                      if(user==null)
+                      {
+                        sendResponse(res, 500, "null user");
+                        return;
+                      }
+                        var screenid = req.body["screen_id"];
+
+                        try
+                        {                         
+                           Screen.findOne({'uid' : screenid}, function (err, screen) {                             
+                           
+                             if (err)
+                                 sendResponse(res, 500, "Error deleting screen");
+                              else 
+                                {
+                                  if(screen==null)
+                                  {
+                                    sendResponse(res, 500, "null screen");
+                                    return;
+                                  }
+
+                                user['screens']= removeItem(user['screens'], screen, 'screenid');
+                                screen.remove(function(err, item2) {
+                                  if (err)
+                                       sendResponse(res, 500, "Error deleting screen");
+                                    else 
+                                     {
+                                       user.save(function(err, user1) {
+                                                          if (err)
+                                                              console.log(err);
+                                                            else {
+
+                                                              sendResponse(res, 200, "success");
+                                                            }
+                                     
+                                        });
+                                
+                                    }
+                              
+                                });
+
+                              }
+                              });            
+                                                                
+                        }
+                        catch(e)
+                        {
+                          console.log(e);
+                        }                         
+                  } 
+              });
+           
       }
       else
       {
@@ -1274,11 +1455,11 @@ app.post("/:action", function (req, res)
   }
 });
 
-function containsMovie(movie, list) 
+function containsItem(list, item, itemid) 
 {
     var i;
     for (i = 0; i < list.length; i++) {
-        if (list[i].movieid.equals(movie._id)) {
+        if (list[i][itemid].equals(item._id)) {
 
             return true;
         }
@@ -1286,19 +1467,19 @@ function containsMovie(movie, list)
     return false;
 }
 
-function removeMovie(movie, list) 
+function removeItem(list, item, itemid) 
 {
     var i;
     var newList=[];
     for (i = 0; i < list.length; i++) {
-        if (!list[i].movieid.equals(movie._id)) {
+        if (!list[i][itemid].equals(item._id)) {
             newList.push(list[i]);
         }
     }
     return newList;
 }
 
-function ContainsItem(list, item) 
+function listContainsItem(list, item) 
 {
     var i;
     for (i = 0; i < list.length; i++) {

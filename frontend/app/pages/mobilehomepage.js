@@ -14,7 +14,7 @@ import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
 import SelectField from 'material-ui/SelectField';
 import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
-import DropDownMenu from 'material-ui/Dropdownmenu';
+import DropDownMenu from 'material-ui/DropDownMenu';
 import List from 'material-ui/List';
 
 import Api from '../constants/api';
@@ -25,6 +25,8 @@ import * as MovieSearchAction from '../actions/moviesearchaction';
 import LoginStore from '../stores/loginstore';
 import MoviesSearchStore from '../stores/moviessearchstore';
 import SnackBarStore from '../stores/snackbarstore';
+
+import appConfig from '../appConfig';
 
 
 const styles = {
@@ -387,12 +389,11 @@ export default class HomePage extends React.Component {
                 <div className="demo-big-content">
 
 					<Layout fixedHeader>
-                        <Header>
-                        	<HeaderRow title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff'}}>WishList</a>}>
-                               
-                                
+                        <Header style={{ backgroundColor:appConfig.baseColor , height:appConfig.headerHeight, margin:'0px', padding:'0px'}}>
+                        	<HeaderRow style={{marginTop:'-10px',marginLeft:'50px', padding:'0px' }} title={<a href="#/" style={{textDecoration: 'none', color: '#ffffff', marginLeft:'20px'}}><img style={{height:'30px', marginTop:'40px'}} src='title1.png' /><img style={{height:'50px', marginTop:'40px'}} src='logo.png' /><img style={{height:'30px', marginTop:'40px', marginLeft:'-10px'}} src='title2.png' /></a>}>
+                                                              
                             </HeaderRow>    
-                            <HeaderRow>
+                            <HeaderRow style={{marginTop:'10px'}}>
                                 <TextField
                                     hintText=""
                                     floatingLabelText={'Search Movies By: '+ this.state.filterValue}
@@ -437,10 +438,10 @@ export default class HomePage extends React.Component {
                             </HeaderRow>
                                                      
                         </Header>
-                        <Drawer title="Menu" > 
+                        <Drawer title="Menu" style={{ marginTop:'0px'}}> 
 
                                 <Divider style={{marginBottom:'10px', marginTop:'-10px'}}/>
-                                <ul style={{listStyle: "none", cursor: 'pointer', height: '100px', textAlign: 'center', backgroundColor:'#1f5dc1', color:'#ffffff'}} onClick={this._openUserOption.bind(this)}>
+                                <ul style={{listStyle: "none", cursor: 'pointer', height: '100px', textAlign: 'center', backgroundColor:appConfig.baseColor, color:'#ffffff'}} onClick={this._openUserOption.bind(this)}>
                                     <li style={{textAlign:'center', display:'inline-block', marginTop:'20px', marginRight:'30px'}}>
                                         <Avatar 
                                             src={this.state.isLoggedin ? this.state.userTypeValue == "user" ? "user.png" : "theatre.jpg" : "login.png"}                                        
