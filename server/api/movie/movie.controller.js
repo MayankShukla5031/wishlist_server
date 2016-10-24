@@ -29,6 +29,26 @@ exports.updateMovie = function(req, res) {
         });
     });
 };
+exports.addToWishList = function(req, res) {
+    Movie.update({_id:req.params.movieId}, {$addToSet:{wish:{userId:req.user._id}}},function(err, movie) {
+        if(err) return handleError(res, err);
+        return res.json(200);
+    });
+};
+
+exports.removeFromWishlist = function(req, res) {
+    Movie.update({_id:req.params.movieId}, {$pull:{wish:{userId:req.user._id}}},function(err, movie) {
+        if(err) return handleError(res, err);
+        return res.json(200);
+    });
+};
+
+exports.getTrending = function(req, res) {
+    Movie.find({}, function(err, movies) {
+        if(err) return handleError(res, err);
+        else res.json(200, movies);
+    });
+};
 
 
 function handleError(res, err) {

@@ -30,6 +30,12 @@ exports.updateShow = function(req, res) {
     });
 };
 
+exports.getUpcoming = function(req, res) {
+    Show.find({showTime:{$gte:new Date()}}, function(err, shows) {
+        if(err) return handleError(res, err);
+        else res.json(200, shows);
+    });
+};
 
 function handleError(res, err) {
     console.log(err);

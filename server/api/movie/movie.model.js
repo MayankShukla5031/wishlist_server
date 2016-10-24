@@ -14,7 +14,7 @@ var MovieSchema = new Schema({
     productionHouse: [{productionHouseId:{type:Schema.Types.ObjectId,ref:'ProductionHouse'}}],
     posterUrl: { type : String, default: "" },
     inMyWishList: Boolean,
-    wishCount:{ type : Number, default: 0 },
+    wish:[{userId:{type:Schema.Types.ObjectId,ref:'User'}}],
     createdAt:Date,
     updatedAt:Date
 });
