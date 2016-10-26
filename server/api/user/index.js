@@ -11,6 +11,6 @@ var multipart = require('connect-multiparty');
 
 // Get user(s)
 router.get('/',                                     isAuth(),                   controller.getAllUsers);
-router.post('/',                                                        controller.createUser);
+router.post('/',                                                                controller.createUser);
 
 module.exports = router;

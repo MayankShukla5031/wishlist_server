@@ -12,6 +12,7 @@ var ShowSchema = new Schema({
     minSeats: {type:Number, default:0},
     bookedUsers: [{userId:{type:Schema.Types.ObjectId,ref:'User'}}],
     movie: [{movieId:{type:Schema.Types.ObjectId,ref:'Movie'}}],
+    isActive: Boolean,
     createdAt:Date,
     updatedAt:Date
 });

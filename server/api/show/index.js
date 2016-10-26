@@ -8,7 +8,9 @@ var router = express.Router();
 
 router.get('/',                         isAuth(),   controller.getShows);
 router.post('/',                        isAuth(),   controller.addShow);
-router.put('/:id',                      isAuth(),   controller.updateShow);
+router.put('/:showId',                  isAuth(),   controller.updateShow);
 router.get('/upcoming',                 isAuth(),   controller.getUpcoming);
+router.get('/cancelShow/:showId',       isAuth(),   controller.cancelShow);
+
 
 module.exports = router;

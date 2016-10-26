@@ -7,13 +7,12 @@ var crypto = require('crypto');
 var MovieSchema = new Schema({
     title: String,
     release:{ type : Date, default: Date.now },
-    cast: [{artistId:{type:Schema.Types.ObjectId,ref:'Artist'}}],
-    director: [{directorId:{type:Schema.Types.ObjectId,ref:'Artist'}}],
-    producer: [{producerId:{type:Schema.Types.ObjectId,ref:'Artist'}}],
-    musicDirector: [{directorId:{type:Schema.Types.ObjectId,ref:'Director'}}],
-    productionHouse: [{productionHouseId:{type:Schema.Types.ObjectId,ref:'ProductionHouse'}}],
+    cast: [{artistId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
+    director: [{directorId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
+    producer: [{producerId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
+    musicDirector: [{directorId:{type:Schema.Types.ObjectId,ref:'Director'}, name: String}],
+    productionHouse: {_id: {type:Schema.Types.ObjectId,ref:'ProductionHouse'}, name:String},
     posterUrl: { type : String, default: "" },
-    inMyWishList: Boolean,
     wish:[{userId:{type:Schema.Types.ObjectId,ref:'User'}}],
     createdAt:Date,
     updatedAt:Date
@@ -27,5 +26,15 @@ indexFields.forEach(function(field) {
     fields[field] = 1;
     MovieSchema.index(fields, {background:true});
 });
+
+var textIndexFields = {
+    'title':'text',
+    'cast.name':'text',
+    'director.name':'text',
+    'producer.name':'text',
+    'musicDirector.name':'text',
+    'productionHouse.name':'text'
+};
+MovieSchema.index(textIndexFields);
 
 module.exports = mongoose.model('Movie', MovieSchema);

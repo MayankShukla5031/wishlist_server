@@ -5,9 +5,7 @@
 module.exports = {
     // MongoDB connection options
     mongo: {
-         uri: 'mongodb://localhost/testDatabase'
-         //  uri: 'mongodb://localhost/bitnudge-dev'
-
+         uri: 'mongodb://localhost/movwish-dev'
     },
     host:'localhost',
     cluster:false

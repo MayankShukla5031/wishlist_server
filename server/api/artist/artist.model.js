@@ -7,9 +7,9 @@ var crypto = require('crypto');
 var ArtistSchema = new Schema({
     name: String,
     dob: {type:Date, default:Date.now},
-    tags: {type:Array, default:[]},
+    searchTags: {type:Array, default:[]}, //Change to search tag
     image: String,
-    skill: String, //acting, directing, musicDirecting, fights, producing
+    tag: {type:Array, default:[]}, //actor, director, musicDirector, producer
     gender: String,
     createdAt:Date,
     updatedAt:Date

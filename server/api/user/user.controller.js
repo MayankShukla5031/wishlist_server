@@ -18,7 +18,7 @@ var fs = require('fs');
  * @return {JSON}
  */
 exports.index = function(req, res) {
-    User.find({isActive:true,systemRole:{$ne:'pvAdmin'}}, '-salt -hashedPassword', function(err, users) {
+    User.find({isActive:true,systemRole:{$ne:'mwAdmin'}}, '-salt -hashedPassword', function(err, users) {
         if (err) return res.send(500, err);
         res.json(200, users);
     });
@@ -33,7 +33,7 @@ exports.getAllUsers=function(req, res){
             projectionObj[field]=1;
         });
     }
-    var queryObj = {systemRole:{$ne:'pvAdmin'},isActive:true};
+    var queryObj = {systemRole:{$ne:'mwAdmin'},isActive:true};
     if(req.query.subset) {
         var subset=JSON.parse(req.query.subset);
         queryObj[subset[0]] = mongoose.Types.ObjectId(subset[1]);
@@ -59,7 +59,7 @@ exports.changePassword = function(req, res, next) {
     var newPass = String(req.body.newPassword);
     User.findById(userId, function(err, user) {
         if (user.authenticate(oldPass)) {
-            changePassword(user,newPass,function(status){
+            changePasswordHelper(user,newPass,function(status){
                 res.send(status);});
 
         } else {
@@ -68,7 +68,7 @@ exports.changePassword = function(req, res, next) {
     });
 };
 
-var changePassword=function(user, newPass, callback){
+var changePasswordHelper=function(user, newPass, callback){
     var passwordexpires = new Date().getTime()+(authParameters.PASSWORD_EXPIRES_IN_MONTHS*30*24*60*60*1000);
     var count = user.passwordHistory.length;
     var passwordExists=false;
@@ -220,7 +220,7 @@ exports.addImage = function(req, res) {
         if (!imageName) {
             res.end();
         } else {
-            var dir = config.root + "/../../uploads/peersview/" + req.body.userId;
+            var dir = config.root + "/../../uploads/wishlist/" + req.body.userId;
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir, 777);
                 var photoDir = dir + "/photo"
@@ -354,8 +354,7 @@ exports.resetPasswordConfirm = function(req, res) {
                     });//Password reset token is invalid or has expired
                 }
 
-                changePassword(user, req.body.password, function(status) {
-                    UserActionController.updateUserAction(req, 'Attempted password reset', {affectedUser: user.email, status: status});
+                changePasswordHelper(user, req.body.password, function(status) {
                     if (status != 200)
                         return res.json({
                             message: status
@@ -390,7 +389,6 @@ exports.resetPasswordConfirm = function(req, res) {
             });
         },
         function(user, done) {
-            console.log("Sending confimation mail to your email id.")
             var mailOptions = {
                 about: mailer.about.RESET_PASSWORD_CONFIRM,
                 to: user.userEmail
@@ -399,7 +397,6 @@ exports.resetPasswordConfirm = function(req, res) {
         }
     ], function(err) {
         if (err) {
-            console.log("Redirecting to homepage...");
             res.redirect('/');
         }
     });

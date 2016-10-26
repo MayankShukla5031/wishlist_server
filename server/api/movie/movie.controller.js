@@ -5,8 +5,25 @@ var mongoose = require('mongoose');
 var Movie = require('./movie.model');
 var async = require('async');
 
+var searchKeyMappings = {
+    title: 'title',
+    artist: 'cast.name',
+    director: 'director.name',
+    producer: 'producer.name',
+    musicDirector: 'musicDirector.name',
+    productionHouse: 'productionHouse.name',
+};
+
 exports.getMovies = function(req, res) {
     Movie.find({}, function(err, movies) {
+        if(err) return handleError(res, err);
+        else res.json(200, movies);
+    });
+};
+
+exports.searchMovies = function(req, res) {
+    var searchQuery = {};
+    Movie.find(searchQuery, function(err, movies) {
         if(err) return handleError(res, err);
         else res.json(200, movies);
     });
@@ -45,6 +62,13 @@ exports.removeFromWishlist = function(req, res) {
 
 exports.getTrending = function(req, res) {
     Movie.find({}, function(err, movies) {
+        if(err) return handleError(res, err);
+        else res.json(200, movies);
+    });
+};
+
+exports.getMyWishlist = function(req, res) {
+    Movie.find({'wish.userId':req.user._id}, function(err, movies) {
         if(err) return handleError(res, err);
         else res.json(200, movies);
     });
