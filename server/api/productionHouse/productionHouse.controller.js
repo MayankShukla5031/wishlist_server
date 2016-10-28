@@ -13,6 +13,8 @@ exports.getProductionHouses = function(req, res) {
 };
 
 exports.addProductionHouse = function(req, res) {
+    req.body.createdAt = new Date();
+    req.body.updatedAt = new Date();
     ProductionHouse.create(req.body, function(err, productionHouse) {
         if (err) return handleError(res, err);
         return res.json(201, productionHouse);

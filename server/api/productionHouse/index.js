@@ -6,8 +6,8 @@ var auth = require('../../auth/auth.service');
 var isAuth = auth.isAuthenticated;
 var router = express.Router();
 
-router.get('/',             isAuth(),   controller.getProductionHouses);
-router.post('/',            isAuth(),   controller.addProductionHouse);
-router.put('/:id',          isAuth(),   controller.updateProductionHouse);
+router.get('/',                controller.getProductionHouses);
+router.post('/',               controller.addProductionHouse);
+router.put('/:id',             controller.updateProductionHouse);
 
 module.exports = router;

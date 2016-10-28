@@ -1,0 +1,21 @@
+<div class="col-sm-3" style="margin-left: 50px">
+    <h3>Add Production House</h3>
+    <form ng-submit="addProductionHouse()">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" ng-model="productionHouse.name"  placeholder="Enter name" required>
+        </div>
+        <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" class="form-control" id="dob"  ng-model="productionHouse.dob" required>
+        </div>
+
+        <div class="form-group">
+            <label for="tags">Tags</label>
+            <select multiple required class="form-control" id="tags" ng-model="productionHouse.tags">
+                <option ng-repeat="tag in tags" value="{{tag}}">{{tag}}</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Production House</button>
+    </form>
+</div>

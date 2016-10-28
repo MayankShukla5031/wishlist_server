@@ -6,13 +6,13 @@ var auth = require('../../auth/auth.service');
 var isAuth = auth.isAuthenticated;
 var router = express.Router();
 
-router.get('/',                                     isAuth(),   controller.getMovies);
-router.get('/search',                               isAuth(),   controller.searchMovies);
-router.post('/',                                    isAuth(),   controller.addMovie);
-router.put('/:id',                                  isAuth(),   controller.updateMovie);
-router.put('/addToWishList/:movieId',               isAuth(),   controller.addToWishList);
-router.put('/removeFromWishlist/:movieId',          isAuth(),   controller.removeFromWishlist);
-router.get('/trending',                             isAuth(),   controller.getTrending);
-router.get('/myWishList',                           isAuth(),   controller.getMyWishlist);
+router.get('/',                                        controller.getMovies);
+router.get('/search',                                  controller.searchMovies);
+router.post('/',                                       controller.addMovie);
+router.put('/:id',                                     controller.updateMovie);
+router.put('/addToWishList/:movieId',                  controller.addToWishList);
+router.put('/removeFromWishlist/:movieId',             controller.removeFromWishlist);
+router.get('/trending',                                controller.getTrending);
+router.get('/myWishList',                              controller.getMyWishlist);
 
 module.exports = router;

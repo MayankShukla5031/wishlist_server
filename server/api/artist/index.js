@@ -6,8 +6,8 @@ var auth = require('../../auth/auth.service');
 var isAuth = auth.isAuthenticated;
 var router = express.Router();
 
-router.get('/',             isAuth(),   controller.getArtists);
-router.post('/',            isAuth(),   controller.addArtist);
-router.put('/:id',          isAuth(),   controller.updateArtist);
+router.get('/',                controller.getArtists);
+router.post('/',               controller.addArtist);
+router.put('/:id',             controller.updateArtist);
 
 module.exports = router;

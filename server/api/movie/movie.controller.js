@@ -30,6 +30,8 @@ exports.searchMovies = function(req, res) {
 };
 
 exports.addMovie = function(req, res) {
+    req.body.createdAt = new Date();
+    req.body.updatedAt = new Date();
     Movie.create(req.body, function(err, movie) {
         if (err) return handleError(res, err);
         return res.json(201, movie);

@@ -6,13 +6,22 @@ var Artist = require('./artist.model');
 var async = require('async');
 
 exports.getArtists = function(req, res) {
-    Artist.find({}, function(err, srtists) {
+    var projectionObj={};
+    if(req.query.select){
+        var select=JSON.parse(req.query.select);
+        select.forEach(function(field){
+            projectionObj[field]=1;
+        });
+    }
+    Artist.find({},projectionObj,  function(err, srtists) {
         if(err) return handleError(res, err);
         else res.json(200, srtists);
     });
 };
 
 exports.addArtist = function(req, res) {
+    req.body.createdAt = new Date();
+    req.body.updatedAt = new Date();
     Artist.create(req.body, function(err, srtist) {
         if (err) return handleError(res, err);
         return res.json(201, srtist);

@@ -1,0 +1,28 @@
+<div class="col-sm-3" style="margin-left: 50px">
+    <h3>Add Artist</h3>
+    <form ng-submit="addArtist()">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" ng-model="artist.name"  placeholder="Enter name" required>
+        </div>
+        <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" class="form-control" id="dob"  ng-model="artist.dob" required>
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select class="form-control" id="gender" required ng-model="artist.gender">
+                <option value="">Please select</option>
+                <option ng-repeat="gender in genders" value="{{gender}}">{{gender}}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="skills">Skills</label>
+            <select multiple required class="form-control" id="skills" ng-model="artist.tags">
+                <option ng-repeat="skill in skills" value="{{skill._id}}">{{skill.name}}</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Artist</button>
+    </form>
+</div>

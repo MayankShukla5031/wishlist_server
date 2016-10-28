@@ -13,6 +13,8 @@ exports.getScreens = function(req, res) {
 };
 
 exports.addScreen = function(req, res) {
+    req.body.createdAt = new Date();
+    req.body.updatedAt = new Date();
     Screen.create(req.body, function(err, screen) {
         if (err) return handleError(res, err);
         return res.json(201, screen);

@@ -9,7 +9,7 @@ var ArtistSchema = new Schema({
     dob: {type:Date, default:Date.now},
     searchTags: {type:Array, default:[]}, //Change to search tag
     image: String,
-    tag: {type:Array, default:[]}, //actor, director, musicDirector, producer
+    tags: {type:Array, default:[]}, //actor, director, musicDirector, producer
     gender: String,
     createdAt:Date,
     updatedAt:Date

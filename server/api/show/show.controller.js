@@ -13,6 +13,8 @@ exports.getShows = function(req, res) {
 };
 
 exports.addShow = function(req, res) {
+    req.body.createdAt = new Date();
+    req.body.updatedAt = new Date();
     Show.create(req.body, function(err, show) {
         if (err) return handleError(res, err);
         return res.json(201, show);
