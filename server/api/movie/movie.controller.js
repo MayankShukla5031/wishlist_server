@@ -22,8 +22,7 @@ exports.getMovies = function(req, res) {
 };
 
 exports.searchMovies = function(req, res) {
-    var searchQuery = {};
-    Movie.find(searchQuery, function(err, movies) {
+    Movie.find({$text:{$search:req.params.key}}, function(err, movies) {
         if(err) return handleError(res, err);
         else res.json(200, movies);
     });

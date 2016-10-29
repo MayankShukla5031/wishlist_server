@@ -17,19 +17,19 @@
         </div>
         <div class="form-group">
             <label for="directors">Directors</label>
-            <select multiple required class="form-control" id="directors" ng-model="movie.directors">
+            <select multiple required class="form-control" id="directors" ng-model="movie.director">
                 <option ng-repeat="director in directors" value="{{director._id}}">{{director.name}}</option>
             </select>
         </div>
         <div class="form-group">
             <label for="musicDirectors">Music Directors</label>
-            <select multiple required class="form-control" id="musicDirectors" ng-model="movie.musicDirectors">
+            <select multiple required class="form-control" id="musicDirectors" ng-model="movie.musicDirector">
                 <option ng-repeat="musicDirector in musicDirectors" value="{{musicDirector._id}}">{{musicDirector.name}}</option>
             </select>
         </div>
         <div class="form-group">
             <label for="producers">Producers</label>
-            <select multiple required class="form-control" id="producers" ng-model="movie.producers">
+            <select multiple required class="form-control" id="producers" ng-model="movie.producer">
                 <option ng-repeat="producer in producers" value="{{producer._id}}">{{producer.name}}</option>
             </select>
         </div>

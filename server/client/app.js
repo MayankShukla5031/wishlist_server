@@ -1,4 +1,9 @@
-var movwishAdminApp = angular.module('movwish', ['ngRoute']);
+var underscore = angular.module('underscore', []);
+underscore.factory('_', ['$window', function($window) {
+    return $window._;
+}]);
+
+var movwishAdminApp = angular.module('movwish', ['ngRoute', 'underscore']);
 
 //UI routes
 movwishAdminApp.config(function($routeProvider) {
@@ -25,7 +30,7 @@ movwishAdminApp.controller('mainController', function($scope) {
     $scope.message = 'Everyone come and see how good I look!';
 });
 
-movwishAdminApp.controller('movieController', function($scope, $http) {
+movwishAdminApp.controller('movieController', function($scope, $http, _) {
     var artists = [], productionHouses=[];
     $scope.movie = {};
     $http.get('/api/artists?select=["name","tags"]').then(function (result) {
@@ -43,12 +48,25 @@ movwishAdminApp.controller('movieController', function($scope, $http) {
         $scope.productionHouses = result.data;
     });
     $scope.addMovie = function () {
-        /*$htp.post('/api/movies', $scope.movie).then(function () {
+        var movie = _.clone($scope.movie);
+        movie.cast = [], movie.director = [], movie.musicDirector = [], movie.producer = [], movie.productionHouse = [];
+        _.forEach(['cast', 'director', 'musicDirector', 'producer' ], function (skill) {
+            _.forEach($scope.movie[skill], function(id){
+                var artist = _.clone(_.find(artists, {_id:id}));
+                artist[skill+'Id'] = artist._id; delete artist.tags; delete artist._id;
+                movie[skill].push(artist);
+            });
+        });
+        _.forEach($scope.movie.productionHouse, function(id){
+            var productionHouse = _.clone(_.find($scope.productionHouses, {_id:id}));
+            movie.productionHouse.push({productionHouseId:productionHouse._id, name:productionHouse.name});
+        });
+        $http.post('/api/movies', movie).then(function () {
             $scope.movie = {};
             alert('Movie added');
         }, function (err) {
             alert('Error in adding movie.');
-        });*/
+        });
     };
 });
 
