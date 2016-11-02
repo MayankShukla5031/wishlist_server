@@ -20,11 +20,23 @@ exports.getArtists = function(req, res) {
 };
 
 exports.addArtist = function(req, res) {
-    req.body.createdAt = new Date();
-    req.body.updatedAt = new Date();
-    Artist.create(req.body, function(err, srtist) {
-        if (err) return handleError(res, err);
-        return res.json(201, srtist);
+    Artist.findOne({name:req.body.name}, function(err, srtist) {
+        if(err) return handleError(res, err);
+        if(srtist){
+            srtist.updatedAt = new Date();
+            srtist.tags = _.union(req.body.tags, srtist.tags);
+            srtist.save(function (err) {
+                if(err) return handleError(res, err);
+                return res.json(200, srtist);
+            });
+        }else{
+            req.body.createdAt = new Date();
+            req.body.updatedAt = new Date();
+            Artist.create(req.body, function(err, srtist) {
+                if (err) return handleError(res, err);
+                return res.json(201, srtist);
+            });
+        }
     });
 };
 

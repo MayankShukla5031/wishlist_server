@@ -73,10 +73,10 @@ movwishAdminApp.controller('movieController', function($scope, $http, _) {
 movwishAdminApp.controller('artistController', function($scope, $http) {
     $scope.genders = ['Male', 'Female'];
     $scope.skills = [{_id:'actor', name:'Actor'}, {_id:'director', name:'Director'}, {_id:'musicDirector', name:'Music Director'}, {_id:'producer', name:'Producer'}];
-    $scope.artist = {name:'Naveen', dob: new Date(), gender:'Male', tags:['Actor']};
+    $scope.artist = {name:'Naveen', dob: new Date(), gender:'Male' , tags:[]};
     $scope.addArtist = function () {
         $http.post('/api/artists', $scope.artist).then(function () {
-            $scope.artist = {};
+            $scope.artist = {dob: new Date(), gender:'Male'};
             alert('Artist added');
         }, function (err) {
             alert('Error in adding artist.');
@@ -85,10 +85,10 @@ movwishAdminApp.controller('artistController', function($scope, $http) {
 });
 movwishAdminApp.controller('productionHouseController', function($scope, $http) {
     $scope.tags = ['Comedy', 'Horror', 'Love'];
-    $scope.productionHouse = {name:'Naveen Films'};
+    $scope.productionHouse = {name:'', dob: new Date(), tags: $scope.tags};
     $scope.addProductionHouse = function () {
         $http.post('/api/productionHouses', $scope.productionHouse).then(function () {
-            $scope.artist = {};
+            $scope.productionHouse = {dob: new Date()};
             alert('ProductionHouse added');
         }, function (err) {
             alert('Error in adding ProductionHouse.');
