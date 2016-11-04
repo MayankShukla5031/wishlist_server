@@ -62,7 +62,14 @@ exports.removeFromWishlist = function(req, res) {
 };
 
 exports.getTrending = function(req, res) {
-    Movie.find({}, function(err, movies) {
+    var projectObj = {title:1, release:1, cast:1, director:1, producer:1,
+        musicDirector:1, productionHouse:1, posterUrl:1, wish:1, createdAt:1, updatedAt:1,
+        wishCount: {$size: { "$ifNull": [ "$wish", [] ] } }};
+    var sortObj= {wishCount: -1};
+    Movie.aggregate([
+        {$project:  projectObj},
+        {$sort:     sortObj}
+    ]).exec(function(err, movies) {
         if(err) return handleError(res, err);
         else res.json(200, movies);
     });

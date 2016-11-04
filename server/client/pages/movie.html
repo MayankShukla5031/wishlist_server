@@ -17,7 +17,7 @@
                 </div>
             </div>
             <select multiple required class="form-control" id="casts" ng-model="movie.cast">
-                <option ng-repeat="actor in actors | filter:actorName" value="{{actor._id}}">{{actor.name}}</option>
+                <option ng-repeat="actor in actors | filter:actorName |orderBy:'name'" value="{{actor._id}}">{{actor.name}}</option>
             </select>
         </div>
         <div class="form-group">

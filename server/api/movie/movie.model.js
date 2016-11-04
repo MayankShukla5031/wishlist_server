@@ -10,7 +10,7 @@ var MovieSchema = new Schema({
     cast: [{castId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
     director: [{directorId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
     producer: [{producerId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
-    musicDirector: [{directorId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
+    musicDirector: [{musicDirectorId:{type:Schema.Types.ObjectId,ref:'Artist'}, name: String}],
     productionHouse: [{productionHouseId: {type:Schema.Types.ObjectId,ref:'ProductionHouse'}, name:String}],
     posterUrl: { type : String, default: "" },
     wish:[{userId:{type:Schema.Types.ObjectId,ref:'User'}}],
