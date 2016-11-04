@@ -10,6 +10,6 @@
 .margin-bottom-10{
     margin-bottom: 10px;
 }
-select{
-    height: 200px;
+select[multiple] {
+    height: 250px;
 }
