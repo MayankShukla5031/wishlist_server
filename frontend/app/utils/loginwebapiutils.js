@@ -14,6 +14,7 @@ module.exports = {
             if(type == 'success'){  
                 dispatcher.dispatch({
                     type:'LOGIN_SUCCESS',
+                    data: data,
                 });
             }
             else{   

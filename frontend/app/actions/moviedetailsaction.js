@@ -9,6 +9,14 @@ module.exports = {
 
 	_cancelMyShow : function(inpulvalues){
 		MovieDetailsWebApiUtils._cancelMyShow(inpulvalues);
+	},
+
+	_addScreen(inpulvalues){
+		MovieDetailsWebApiUtils._addScreen(inpulvalues);
+	},
+
+	_removeScreen(inpulvalues){
+		MovieDetailsWebApiUtils._removeScreen(inpulvalues);
 	}
 	
 }

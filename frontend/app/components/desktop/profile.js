@@ -13,6 +13,7 @@ import Checkbox from 'material-ui/Checkbox';
 // import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 
 import Api from '../../constants/api';
+import LoginStore from '../stores/loginstore';
 
 import * as MovieDetailsAction from '../../actions/moviedetailsaction';
 import * as MyWishListAction from '../../actions/mywishlistaction';
@@ -24,7 +25,7 @@ const styles = {
 		backgroundColor: '#77ADFC',
 		color: 'white',
 		cursor: 'pointer',
-		marginBottom: '10px',
+		marginRight: '10px',
 	},
 	leftMargin: {
 		marginLeft: '10%',
@@ -61,16 +62,25 @@ export default class Profile extends React.Component{
 			columnCount:'',
 			openLayout: false,
 			seats: {},
+			userInfo: LoginStore._getUserInfo() || {},
 		};
+		this._loginStoreChange = this._loginStoreChange.bind(this);
 	}
 
 	componentWillMount(){
+		LoginStore.on('change',this._loginStoreChange); 
 		// MyWishListStore.on('change', this._getWishListStoreData);
 	}
 
 	componentWillUnmount(){
+		 LoginStore.removeListener('change', this._loginStoreChange);
 		// MovieDetailsStore.removeListener('change', this._getMovieDetailsfromStore);
 	}	
+
+	_loginStoreChange(type){
+		 if(type == 'Login_Success'){
+		 }
+	}
 
 	_handleRowCountChange(event, value){
 		if(!isNaN(value)){
@@ -135,13 +145,46 @@ export default class Profile extends React.Component{
 		// });
 	}
 
+	_handleAddScreen(){
+		let layout = {rows: 10, columns: 10};
+		let data = {name: 'ABC', addresss: 'Bangalore', no_of_seats: 120, layout: JSON.stringify(layout)}
+		MovieDetailsAction._addScreen(data);
+	}
+
+	_handleRemoveScreen(){
+		let data = {screen_id: 'SCR10000019'};
+		MovieDetailsAction._removeScreen(data);
+	}
+
+	_setScreenNames(){
+		let screens = this.state.userInfo.screens || [];
+		let uiItems = screens.map((item, index)=>{
+			<Cell col={12}>
+				{item}
+				<FlatButton style={styles.saveButtonStyle} label="Remove Screen" primary={true} onTouchTap={this._handleRemoveScreen.bind(this)} />
+			</Cell>
+		});
+	}
+
 	render(){
 		return(
-			<Paper>
 				<Grid>
 					<Cell col={12}>
-						Theatre Details
+						User Details
+						<Paper>
+							User Name: {this.state.userInfo.username || "Hello"}							
+						</Paper>
 					</Cell>
+					{Api._getKey('user_type') != 'viewer' ?
+						<Cell col={12}>
+							Screens
+							<Paper>
+								<Grid>
+									{this._setScreenNames()}
+								</Grid>
+							</Paper>
+						</Cell>
+					}
 					<Cell col={6}>
 						<TextField
 							hintText="e.g- 100"
@@ -162,13 +205,14 @@ export default class Profile extends React.Component{
 					</Cell>
 					<Cell col={12}>
 						<FlatButton style={styles.saveButtonStyle} label="Preview Layout" primary={true} onTouchTap={this._handleOpenLayoutClick.bind(this)} />
+						<FlatButton style={styles.saveButtonStyle} label="Add Screen" primary={true} onTouchTap={this._handleAddScreen.bind(this)} />
+						<FlatButton style={styles.saveButtonStyle} label="Remove Screen" primary={true} onTouchTap={this._handleRemoveScreen.bind(this)} />
 						<br/>
 						{this.state.openLayout ?
 							this._setTheatreLayout()
 						: ""}
 					</Cell>
 				</Grid>
-			</Paper>
 		);	
 	}
 }

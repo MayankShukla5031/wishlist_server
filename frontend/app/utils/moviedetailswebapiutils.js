@@ -50,6 +50,27 @@ module.exports = {
                 value: false,
             });
         });       
-    }
+    },
 
+    _addScreen: function(query){
+        Api._callAPI(Url.ADD_SCREEN,'post',query,(type,data)=> {
+            if(type == 'success'){  
+                console.log('_addScreen successfully');
+            }
+            else{   
+                 console.log('add screen fail');
+            }
+        });
+    },
+
+    _removeScreen(query){
+         Api._callAPI(Url.REMOVE_SCREEN,'post',query,(type,data)=> {
+            if(type == 'success'){  
+                console.log('_removeScreen successfully');
+            }
+            else{   
+                 console.log('_removeScreen fail');
+            }
+        });
+    },
 }

@@ -5,6 +5,7 @@ class LoginStore extends EventEmitter{
 	constructor(){
 		super();
 		this.showLoader = false;
+		this.UserInfo = [];
 	}
 
 	_setLoaderValue(value){
@@ -15,12 +16,22 @@ class LoginStore extends EventEmitter{
 	_getLoaderValue(){
 		return this.showLoader;
 	}
+
+	_setUserInfo(value){
+		this.UserInfo = value.result;
+		this.emit('change', 'Login_Success');
+	}
+
+	_getUserInfo(){
+		return this.UserInfo;
+	}
 	
 
 	_handleActions(action){
 		switch(action.type){
 			case 'LOGIN_SUCCESS' : {
-				this.emit('change', 'Login_Success');
+				this._getUserInfo(action.data);
+				// this.emit('change', 'Login_Success');
 				break;
 			}
 			case 'USER_REG_SUCCESS': {

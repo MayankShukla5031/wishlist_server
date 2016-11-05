@@ -12,4 +12,6 @@ module.exports = {
 	ADD_SHOW: 'addshow/',
 	UPCOMING_SHOWS: 'getupcomingshows/',
 	CANCEL_SHOW: 'cancelshow',
+	ADD_SCREEN: 'addscreen',
+	REMOVE_SCREEN: 'removescreen',
 }

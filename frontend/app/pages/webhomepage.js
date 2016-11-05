@@ -449,6 +449,10 @@ export default class HomePage extends React.Component {
         console.log(tabName);
     }
 
+    _handleProfileClick(){
+        hashHistory.push('/profile');
+    }
+
     render() {
 
         const LoginOptionAction = [
@@ -539,7 +543,7 @@ export default class HomePage extends React.Component {
                                     animation={PopoverAnimationVertical}
                                 >
                                     <Menu desktop={true}>
-                                        <MenuItem primaryText="Profile" />
+                                        <MenuItem primaryText="Profile" onClick={this._handleProfileClick.bind(this)}/>
                                         <MenuItem primaryText="Settings" />
                                         {this._checkandSetLoginUi()}
                                     </Menu>

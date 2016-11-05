@@ -4,7 +4,7 @@ var PRODBASEURL = "https://wishlist-serverapp.herokuapp.com/";
  
 //var BASEURL = LOCALBASEURL;
 //var BASEURL = TESTBASEURL;
-var BASEURL = PRODBASEURL;
+var BASEURL = TESTBASEURL;
 
 export default BASEURL;
 
