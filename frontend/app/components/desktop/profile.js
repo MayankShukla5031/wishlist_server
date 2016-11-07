@@ -13,7 +13,7 @@ import Checkbox from 'material-ui/Checkbox';
 // import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 
 import Api from '../../constants/api';
-import LoginStore from '../stores/loginstore';
+import LoginStore from '../../stores/loginstore';
 
 import * as MovieDetailsAction from '../../actions/moviedetailsaction';
 import * as MyWishListAction from '../../actions/mywishlistaction';
@@ -63,6 +63,9 @@ export default class Profile extends React.Component{
 			openLayout: false,
 			seats: {},
 			userInfo: LoginStore._getUserInfo() || {},
+			openCreateScreenDialogue: false,
+			screenName: '',
+			cityName: '',
 		};
 		this._loginStoreChange = this._loginStoreChange.bind(this);
 	}
@@ -73,13 +76,17 @@ export default class Profile extends React.Component{
 	}
 
 	componentWillUnmount(){
-		 LoginStore.removeListener('change', this._loginStoreChange);
+		LoginStore.removeListener('change', this._loginStoreChange);
 		// MovieDetailsStore.removeListener('change', this._getMovieDetailsfromStore);
 	}	
 
 	_loginStoreChange(type){
-		 if(type == 'Login_Success'){
-		 }
+		if(type == 'User_Info'){
+		 	let userInfo = LoginStore._getUserInfo();
+			this.setState({
+				userInfo: userInfo,
+			});
+		}
 	}
 
 	_handleRowCountChange(event, value){
@@ -107,6 +114,9 @@ export default class Profile extends React.Component{
 	_setTheatreLayout(){
 		let row = this.state.rowCount;
 		let column = this.state.columnCount;
+		if(row == "" || column == ""){
+			return null;
+		}
 		let uiItems = [];
 		for(let i = 0; i < row; i++){
 			for(let j = 0; j < column; j++){
@@ -146,73 +156,141 @@ export default class Profile extends React.Component{
 	}
 
 	_handleAddScreen(){
-		let layout = {rows: 10, columns: 10};
-		let data = {name: 'ABC', addresss: 'Bangalore', no_of_seats: 120, layout: JSON.stringify(layout)}
+		let layout = {rows: this.state.rowCount, columns: this.state.columnCount};
+		let data = {name: this.state.screenName, addresss: this.state.cityName, no_of_seats: 120, layout: JSON.stringify(layout)}
 		MovieDetailsAction._addScreen(data);
 	}
 
-	_handleRemoveScreen(){
-		let data = {screen_id: 'SCR10000019'};
+	_handleRemoveScreen(screen_id){
+		let data = {screen_id: screen_id};
 		MovieDetailsAction._removeScreen(data);
+	}
+
+	_handleEditScreen(){
+		this.setState({
+			openCreateScreenDialogue: true,
+		});
 	}
 
 	_setScreenNames(){
 		let screens = this.state.userInfo.screens || [];
+		console.log('screens', screens);
 		let uiItems = screens.map((item, index)=>{
-			<Cell col={12}>
-				{item}
-				<FlatButton style={styles.saveButtonStyle} label="Remove Screen" primary={true} onTouchTap={this._handleRemoveScreen.bind(this)} />
-			</Cell>
+			return(<Paper style={{marginBottom: '10px'}}>
+					<Grid>
+						<Cell col={12}>
+							{item.uid}
+							<FlatButton style={styles.saveButtonStyle, {float: 'right'}} label="Edit/View Screen Layout" primary={true} onTouchTap={this._handleEditScreen.bind(this)} />
+							<FlatButton style={styles.saveButtonStyle, {float: 'right'}} label="Remove Screen" primary={true} onTouchTap={this._handleRemoveScreen.bind(this, item.uid)} />
+						</Cell>
+					</Grid>
+				</Paper>
+			);
+		});
+		if(!uiItems.length){
+			uiItems.push(<Paper style={{marginBottom: '10px'}}><Grid><Cell col={12}><p>No Saved Screen Found</p></Cell></Grid></Paper>);
+		}
+		return uiItems;
+	}
+
+	_handleCreateScreenDialogCancel(){
+		this.setState({
+			openCreateScreenDialogue: false,
+		});
+	}
+
+	_handleAddNewScreenClick(){
+		this.setState({
+			openCreateScreenDialogue: true,
+			screenName: '',
+			cityName: '',
+			rowCount: '',
+			columnCount: '',
 		});
 	}
 
 	render(){
+
+		const CreateScreenActionOption = [
+			<FlatButton style={styles.saveButtonStyle} label="Create Screen" primary={true} onTouchTap={this._handleAddScreen.bind(this)} />,
+			<FlatButton style={styles.saveButtonStyle} label="Cancel" primary={true} onTouchTap={this._handleCreateScreenDialogCancel.bind(this)} />
+		];
+
 		return(
+			<div>
+			{Api._getKey('user_type') && Api._getKey('user_type') != 'viewer' ?
+				<Dialog
+                    title="Create Screen"
+                    actions={CreateScreenActionOption}
+                    modal={false}
+                    open={this.state.openCreateScreenDialogue}
+                    autoScrollBodyContent = {true}
+                    onRequestClose={this._handleCreateScreenDialogCancel.bind(this)}
+                    // bodyStyle={Style.AuthorizeTransaction.bodyStyle}
+                    // actionsContainerStyle={Style.AuthorizeTransaction.actionStyle}
+                >
+                    <Grid>
+                    	<Cell col={6}>
+							<TextField
+								hintText="e.g- PVR"
+	                            floatingLabelText="Screen Name"
+	                            floatingLabelStyle={styles.floatingLabelStyle}
+	                            value={this.state.screenName}
+	                            onChange={(event, value)=>{this.setState({screenName: value});}}        
+							/>
+						</Cell>
+						 <Cell col={6}>
+							<TextField
+								hintText="e.g- Hyderabad"
+	                            floatingLabelText="City Name"
+	                            floatingLabelStyle={styles.floatingLabelStyle}
+	                            value={this.state.cityName}
+	                            onChange={(event, value)=>{this.setState({cityName: value});}}        
+							/>
+						</Cell>
+                        <Cell col={6}>
+							<TextField
+								hintText="e.g- 100"
+	                            floatingLabelText="No of Rows"
+	                            floatingLabelStyle={styles.floatingLabelStyle}
+	                            value={this.state.rowCount}
+	                            onChange={this._handleRowCountChange.bind(this)}        
+							/>
+						</Cell>
+						<Cell col={6}>
+							<TextField
+								hintText="e.g- 100"
+	                            floatingLabelText="No of Columns"
+	                            floatingLabelStyle={styles.floatingLabelStyle}
+	                            value={this.state.columnCount}
+	                            onChange={this._handleColumnCountChange.bind(this)}        
+							/>
+						</Cell>
+						{this._setTheatreLayout()}
+					</Grid>
+                </Dialog>
+                : "" 
+            }
 				<Grid>
 					<Cell col={12}>
-						User Details
+						<p>User Details</p>
 						<Paper>
-							User Name: {this.state.userInfo.username || "Hello"}							
+							<Grid>
+								<Cell col={12}>User Name: {this.state.userInfo.username || "Hello"}</Cell>
+							</Grid>							
 						</Paper>
 					</Cell>
-					{Api._getKey('user_type') != 'viewer' ?
+					{Api._getKey('user_type') && Api._getKey('user_type') != 'viewer' ?
 						<Cell col={12}>
-							Screens
-							<Paper>
-								<Grid>
-									{this._setScreenNames()}
-								</Grid>
-							</Paper>
+							<p>Screens</p>
+							{this._setScreenNames()}
+							<FlatButton style={styles.saveButtonStyle} label="Add New Screen" primary={true} onTouchTap={this._handleAddNewScreenClick.bind(this)} />
 						</Cell>
+						: 
+						null
 					}
-					<Cell col={6}>
-						<TextField
-							hintText="e.g- 100"
-                            floatingLabelText="No of Rows"
-                            floatingLabelStyle={styles.floatingLabelStyle}
-                            value={this.state.rowCount}
-                            onChange={this._handleRowCountChange.bind(this)}        
-						/>
-					</Cell>
-					<Cell col={6}>
-						<TextField
-							hintText="e.g- 100"
-                            floatingLabelText="No of Columns"
-                            floatingLabelStyle={styles.floatingLabelStyle}
-                            value={this.state.columnCount}
-                            onChange={this._handleColumnCountChange.bind(this)}        
-						/>
-					</Cell>
-					<Cell col={12}>
-						<FlatButton style={styles.saveButtonStyle} label="Preview Layout" primary={true} onTouchTap={this._handleOpenLayoutClick.bind(this)} />
-						<FlatButton style={styles.saveButtonStyle} label="Add Screen" primary={true} onTouchTap={this._handleAddScreen.bind(this)} />
-						<FlatButton style={styles.saveButtonStyle} label="Remove Screen" primary={true} onTouchTap={this._handleRemoveScreen.bind(this)} />
-						<br/>
-						{this.state.openLayout ?
-							this._setTheatreLayout()
-						: ""}
-					</Cell>
 				</Grid>
+			</div>
 		);	
 	}
 }

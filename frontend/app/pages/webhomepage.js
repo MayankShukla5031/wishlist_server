@@ -543,7 +543,7 @@ export default class HomePage extends React.Component {
                                     animation={PopoverAnimationVertical}
                                 >
                                     <Menu desktop={true}>
-                                        <MenuItem primaryText="Profile" onClick={this._handleProfileClick.bind(this)}/>
+                                       {this.state.isLoggedin ? <MenuItem primaryText="Profile" onClick={this._handleProfileClick.bind(this)}/> : null }
                                         <MenuItem primaryText="Settings" />
                                         {this._checkandSetLoginUi()}
                                     </Menu>

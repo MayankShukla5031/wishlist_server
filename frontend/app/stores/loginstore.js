@@ -17,12 +17,13 @@ class LoginStore extends EventEmitter{
 		return this.showLoader;
 	}
 
-	_setUserInfo(value){
+	_setUserInfo(value, emitString){
 		this.UserInfo = value.result;
-		this.emit('change', 'Login_Success');
+		this.emit('change', emitString);
 	}
 
 	_getUserInfo(){
+		console.log('info', this.UserInfo);
 		return this.UserInfo;
 	}
 	
@@ -30,7 +31,7 @@ class LoginStore extends EventEmitter{
 	_handleActions(action){
 		switch(action.type){
 			case 'LOGIN_SUCCESS' : {
-				this._getUserInfo(action.data);
+				this._setUserInfo(action.data, 'Login_Success');
 				// this.emit('change', 'Login_Success');
 				break;
 			}
@@ -47,8 +48,12 @@ class LoginStore extends EventEmitter{
 				break;
 			}
 			case 'LOADER': {
-				console.log('LoginStore', action.value);
+				// console.log('LoginStore', action.value);
 				this._setLoaderValue(action.value);
+				break;
+			}
+			case 'USER_INFO': {
+				this._setUserInfo(action.data, 'User_Info');
 				break;
 			}
 		}

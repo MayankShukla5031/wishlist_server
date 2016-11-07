@@ -5,6 +5,7 @@ import Dialog from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
 
 import Api from '../constants/api';
 
@@ -41,6 +42,10 @@ const styles = {
         color: 'black'
 
     },
+    checkbox:{
+    	display: 'inline-block',
+    	width: '100px',
+    }
 }
 
 
@@ -104,6 +109,7 @@ export default class TrendingMovies extends React.Component{
 	_getWishListStoreData(type){
 		let text;
 		let closeDialoge = this.state.openTheatreDialogue;
+		console.log('type', type);
 		if(type == 'AddToWishListSuccess'){
 			text = 'Remove from WishList';
 		}else if(type == 'RemoveFromWishListSuccess'){
@@ -122,6 +128,9 @@ export default class TrendingMovies extends React.Component{
 		if(this.state.userType == 'theatre'){
 			MovieDetailsAction._cancelMyShow({show_id:this.state.showId});
 		}else{
+			this.setState({
+				openTheatreDialogue: true,
+			});
 			// let query = {id: this.state.showId}
 			// if(this.state.buttonText == 'Add to WishList'){
 			// 	MyWishListAction._addToWishList(query);
@@ -138,77 +147,39 @@ export default class TrendingMovies extends React.Component{
 	}
 
 	_handleTheatreDetailsDialogSubmit(){
-		let data = Object.assign(this.state.theatreDetails);
-		data['movie_id'] = this.state.movieId;
-		MyWishListAction._addToMyShows(data);
+		
 	}
 
-	_handleCommonDetailChange(type, event, value){
-		let theatreDetails = this.state.theatreDetails;
-        theatreDetails[type] = value;
-        this.setState({
-            theatreDetails: theatreDetails,
-        });
-    }
-
 	_setTheatreDetailsUI(){
-		return(
-                <Grid>
-                   <Cell col={12}>
-                        <TextField
-                            hintText="e.g- mm-dd-yyyy"
-                            floatingLabelText="Show Time"
-                            floatingLabelStyle={styles.floatingLabelStyle}
-                            fullWidth={true}
-                            value={this.state.theatreDetails.show_time || ''}
-                            onChange={this._handleCommonDetailChange.bind(this, 'show_time')}                                  
-                        />
-                    </Cell>
-                    <Cell col={12}>
-                        <TextField
-                            hintText="e.g- 100"
-                            floatingLabelText="Ticket Price"
-                            floatingLabelStyle={styles.floatingLabelStyle}
-                            fullWidth={true}
-                            value={this.state.theatreDetails.ticket_price || ''}
-                            onChange={this._handleCommonDetailChange.bind(this, 'ticket_price')}                                  
-                        />
-                    </Cell>
-                     <Cell col={12}>
-                         <TextField
-                            hintText="e.g- 50"
-                            floatingLabelText="Min Seats"
-                            floatingLabelStyle={styles.floatingLabelStyle}
-                            fullWidth={true}
-                            value={this.state.theatreDetails.min_seats || ''}
-                            onChange={this._handleCommonDetailChange.bind(this, 'min_seats')}                                  
-                        />
-                    </Cell>
-                    <Cell col={12}>
-                         <TextField
-                            hintText="e.g- 50"
-                            floatingLabelText="Total Seats"
-                            floatingLabelStyle={styles.floatingLabelStyle}
-                            fullWidth={true}
-                            value={this.state.theatreDetails.no_of_seats || ''}
-                            onChange={this._handleCommonDetailChange.bind(this, 'no_of_seats')}                                  
-                        />
-                    </Cell>
-                </Grid>
-            );
+		let row = 5;
+		let column = 5;
+		let uiItems = [];
+		for(let i = 0; i < row; i++){
+			for(let j = 0; j < column; j++){
+				uiItems.push(
+					<Checkbox
+						key={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
+						label={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
+				    	style={styles.checkbox}
+				    />						
+				);
+			}
+			uiItems.push(<br/>);
+		}
+		return uiItems;
 	}
 
 	render(){
 		
 		const TheatreAction = [
 			<FlatButton style={styles.cancelButtonStyle} hoverColor="#237BFB" label="Cancel" primary={true} onTouchTap={this._handleTheatreDialogCancel}/>,
-            <FlatButton style={styles.saveButtonStyle}  label="Add to MyShows" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
+            <FlatButton style={styles.saveButtonStyle}  label="Book Ticket" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
 		];
 
 		return(
 			<Paper>
 				<Dialog
-                    title="Details"
+                    title="Select Seat"
                     actions={TheatreAction}
                     modal={false}
                     open={this.state.openTheatreDialogue}
@@ -216,7 +187,7 @@ export default class TrendingMovies extends React.Component{
                     onRequestClose={this._handleTheatreDialogCancel}
                     >
                 	{this._setTheatreDetailsUI()}       
-                </Dialog>                 
+                </Dialog>            
 				<Grid>					
 					<Cell col={6}>
 						<img style={{ width: '60%', marginLeft: '10%'}} src={this.state.movieDetails.movie ? this.state.movieDetails.movie.movieid.poster_url : ''}/>

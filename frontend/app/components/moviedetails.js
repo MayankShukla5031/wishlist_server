@@ -4,9 +4,12 @@ import {Grid, Cell} from 'react-mdl';
 import Dialog from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 
 import Api from '../constants/api';
+import LoginStore from '../stores/loginstore';
 
 import * as MovieDetailsAction from '../actions/moviedetailsaction';
 import * as MyWishListAction from '../actions/mywishlistaction';
@@ -55,6 +58,8 @@ export default class TrendingMovies extends React.Component{
 			userType : Api._getKey('user_type') ? Api._getKey('user_type') : null,
 			openTheatreDialogue : false,
 			theatreDetails: {},
+			ScreenValue: null,
+			userInfo: LoginStore._getUserInfo() || {},
 		};
 		this._handleTheatreDialogCancel = this._handleTheatreDialogCancel.bind(this);
 		this._handleTheatreDetailsDialogSubmit = this._handleTheatreDetailsDialogSubmit.bind(this);
@@ -67,21 +72,32 @@ export default class TrendingMovies extends React.Component{
 		MovieDetailsAction._getMovieDetails({id: id});
 		MovieDetailsStore.on('change',this._getMovieDetailsfromStore); 
 		MyWishListStore.on('change', this._getWishListStoreData);
+		LoginStore.on('change',this._loginStoreChange); 
 	}
 
 	componentWillUnmount(){
 		MovieDetailsStore.removeListener('change', this._getMovieDetailsfromStore);
 		MyWishListStore.removeListener('change', this._getWishListStoreData);
+		LoginStore.removeListener('change', this._loginStoreChange);
 	}
 
 	componentWillReceiveProps(newKey){
 		MovieDetailsAction._getMovieDetails({id: newKey.params.movieId});
 	}
 
+	_loginStoreChange(type){
+		if(type == 'User_Info'){
+			let userInfo = LoginStore._getUserInfo();
+			this.setState({
+				userInfo: userInfo,
+			});
+		}
+	}
+
 	_getMovieDetailsfromStore(type){		
 		if(type == 'MovieDetails'){
 			let details = MovieDetailsStore._getMovieDetails();
-			let text = this.state.userType == "theatre" ? "Add to my Shows" : details.inmywishlist ? "Remove from WishList" : "Add to WishList"; 
+			let text = this.state.userType == "theatre" ? "Create a Show" : details.inmywishlist ? "Remove from WishList" : "Add to WishList"; 
 			this.setState({
 				movieId: this.props.params.movieId,
 				movieDetails: details,
@@ -99,7 +115,7 @@ export default class TrendingMovies extends React.Component{
 		}else if(type == 'RemoveFromWishListSuccess'){
 			text = "Add to WishList"; 
 		}else if(type == 'Movie_Added_in_MyShows'){
-			text = "Cancle the Show";
+			text = "Hidden";
 			closeDialoge = false;
 		}
 		this.setState({
@@ -133,6 +149,7 @@ export default class TrendingMovies extends React.Component{
 	_handleTheatreDetailsDialogSubmit(){
 		let data = Object.assign(this.state.theatreDetails);
 		data['movie_id'] = this.props.params.movieId;
+		data['screen_id'] = this.state.ScreenValue;
 		MyWishListAction._addToMyShows(data);
 	}
 
@@ -187,15 +204,33 @@ export default class TrendingMovies extends React.Component{
                             onChange={this._handleCommonDetailChange.bind(this, 'no_of_seats')}                                  
                         />
                     </Cell>
+                    <Cell col={12}>
+                    	<SelectField 
+                    		fullWidth={true}
+						    value={this.state.ScreenValue} 
+						    floatingLabelText={"Select Screen"}
+						    floatingLabelStyle={styles.floatingLabelStyle}
+					        onChange={(event, index, value)=>{this.setState({ScreenValue: value});}}>	        	
+				    		{this._setScreenName()}
+				        </SelectField>
+                   	</Cell>
                 </Grid>
             );
+	}
+
+	_setScreenName(){
+		let screensName = this.state.userInfo.screens || [];
+		let uiItems = screensName.map((item, index)=>{
+			return(<MenuItem key={index} value={item.uid} primaryText={item.uid} />)
+		});
+		return uiItems;
 	}
 
 	render(){
 		
 		const TheatreAction = [
 			<FlatButton style={styles.cancelButtonStyle} hoverColor="#237BFB" label="Cancel" primary={true} onTouchTap={this._handleTheatreDialogCancel}/>,
-            <FlatButton style={styles.saveButtonStyle}  label="Add to MyShows" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
+            <FlatButton style={styles.saveButtonStyle}  label="Create a Show" primary={true} onTouchTap={this._handleTheatreDetailsDialogSubmit} />,
 		];
 
 		return(
@@ -223,7 +258,7 @@ export default class TrendingMovies extends React.Component{
 						    <p style={styles.leftMargin}>Music Director: {this.state.movieDetails.music_director ? this.state.movieDetails.music_director.join(',') : []}</p>
 						    <p style={styles.leftMargin}>Production House: {this.state.movieDetails.production_house ? this.state.movieDetails.production_house.join(', ') : []}</p>
 						    <p style={styles.leftMargin}>Likes: {this.state.movieDetails.wishcount}</p>			   
-						    <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._addToWishList.bind(this)}/>
+						    {this.state.buttonText != "Hidden" ? <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._addToWishList.bind(this)}/> : ""}
 						</Cell>
 					</Grid>				
 			</Paper>

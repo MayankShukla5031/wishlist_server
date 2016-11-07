@@ -515,7 +515,7 @@ app.get('/:action', function (req, res)
                           }
                             else
                             {
-                                if(containsItem(user['wishlist'], movie, movieid))
+                                if(containsItem(user['wishlist'], movie, 'movieid'))
                                 {
                                             movie.inmywishlist= true;
                                             movie.poster_url= imageServerUrl+"/poster_big?movieid="+movie.uid;                          
@@ -558,6 +558,27 @@ app.get('/:action', function (req, res)
                         show.movie.movieid.poster_url= imageServerUrl+"/poster_big?movieid="+ show.movie.movieid.uid;
                         show.theatre.userid.password='*******'; 
                         res.end(JSON.stringify(show));                         
+                  }                 
+               });
+            }
+            else if(req.query.id.includes("SCR"))
+            {
+              Screen.findOne({'uid' : req.query.id},
+              function (err, screen) {              
+                
+                if(err) 
+                  {
+                    res.end("{}");
+                  }
+                 else  
+                  {     
+                    if(screen== null)
+                        {
+                          sendResponse(res, 500, "Error getting screen");
+                          return;
+                        }                  
+
+                        res.end(JSON.stringify(screen));                         
                   }                 
                });
             }
@@ -974,23 +995,39 @@ app.post("/:action", function (req, res)
     }
     else
     {
-      User.findOne( { $and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} , 
+      User.findOne( { $and:[{ $or:[ {'username':usr}, {'email_id':usr}, {'phone_number':usr}] },{'password':pwd}]} ).populate({path:'screens.screenid'}).exec(
         function(err,user){
 
           if(user!=undefined && user!={}) 
             {
+              console.log(user);
+
               var ret= {};
               ret.result={};
               ret.result.username= user.username;
               ret.result.user_type= user.user_type;
 
               if(user.user_type =='theatre')
-                ret.result.screens= user.screens;
+              {
 
-              ret.result.user_id= user.uid;
-              var token= generateToken(req, user.uid);
-              res.set('Authorization', token);
-              res.end(JSON.stringify(ret));
+                
+                                    ret.result.screens=[];
+
+                                    ret.result.screens= user.screens.map(function(a) {return { 'uid':a.screenid.uid};}); 
+                                    ret.result.user_id= user.uid;
+                                    var token= generateToken(req, user.uid);
+                                    res.set('Authorization', token);
+                                    res.end(JSON.stringify(ret));                                      
+              }
+              else
+              {
+                ret.result.user_id= user.uid;
+                var token= generateToken(req, user.uid);
+                res.set('Authorization', token);
+                res.end(JSON.stringify(ret));
+              }
+
+              
             }
             else
             {
@@ -1233,15 +1270,20 @@ app.post("/:action", function (req, res)
       
       if (req.session.user !=undefined)
       {
-            console.log('Canceling show:' + req.body.show_id);
+        User.findOne({'uid' : req.session.user }, function (err, user) {          
+                        
 
-            Show.findOne({'uid' : req.body.show_id}).populate({path:'theatre.userid'}).remove(function(err, item2) 
+            Show.findOne({'uid' : req.body.show_id, 'theatre.userid': user._id}).remove(function(err, item2) 
                            {
                              if (err)
                                  sendResponse(res, 500, "Error deleting show");
                                 else 
+                                {
+                               console.log('Canceling show:' + req.body.show_id);
                                sendResponse(res, 200, "success");
+                             }
                           });
+            });
       }
       else
       {
@@ -1358,7 +1400,7 @@ app.post("/:action", function (req, res)
 
                         try
                         {                         
-                           Screen.findOne({'_id' : screenid}, function (err, screen) {                             
+                           Screen.findOne({'uid' : screenid}, function (err, screen) {                             
                            
                              if (err)
                                  sendResponse(res, 500, "Error deleting screen");
