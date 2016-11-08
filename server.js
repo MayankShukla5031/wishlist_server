@@ -1322,7 +1322,7 @@ app.post("/:action", function (req, res)
                                             name:req.body["name"],
                                             address:req.body["address"],
                                             no_of_seats: req.body["no_of_seats"],
-                                            layout:JSON.parse(req.body["layout"])
+                                            layout:req.body["layout"]
                                             });
 
                                             var screenObject={};
