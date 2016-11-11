@@ -172,7 +172,7 @@ app.get('/:action', function (req, res)
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
-     if(action=="index")
+    if(action=="index")
     {
       fs.readFile('frontend/public/index.html' , function(err, contents) {
 
@@ -564,7 +564,7 @@ app.get('/:action', function (req, res)
             else if(req.query.id.includes("SCR"))
             {
               Screen.findOne({'uid' : req.query.id},
-              function (err, screen) {              
+              function (err, screen) {
                 
                 if(err) 
                   {
@@ -725,6 +725,9 @@ app.get('/:action', function (req, res)
                               res.end(JSON.stringify(list));
            });       
     }    
+	else if(action== "getupcomingshows")
+    {
+    }
     else
     {
        res.end("unknown request" );
@@ -897,7 +900,6 @@ app.post("/:action", function (req, res)
   }
   else if(action=="register")
   {
-
     if(req.body["username"]== undefined || req.body["username"]=="")
     {
       sendResponse(res, 400, "error: username can not be blank");  
@@ -918,7 +920,8 @@ app.post("/:action", function (req, res)
     {
       sendResponse(res, 400, "error: user type can not be blank");  
     }
-    else{
+    else
+    {
 
           User.findOne({username:req.body["username"]}, function (err, user1) 
                 {
@@ -978,7 +981,7 @@ app.post("/:action", function (req, res)
 
                     }
                 });
-        }     
+    }     
   }
   else if (action=="login")
   {
@@ -1034,7 +1037,7 @@ app.post("/:action", function (req, res)
               sendResponse(res, 400, "error: username or password is invalid");  
             }
       });
-    }     
+    }
   }
   else if(action== "logout")
   {
@@ -1209,46 +1212,62 @@ app.post("/:action", function (req, res)
                         {                         
                            Movie.findOne({'uid' : movieid}, function (err, movie) 
                               {
+
                                 if(movie!=null)
                                   {
-                                    Count.findOne({}, function (err, count) 
-                                        {
 
-                                            var movieObject={};
-                                            movieObject.movieid = movie._id ; 
+									var screenid = req.body["screen_id"];
+			                        console.log(screenid);
 
-                                            var userObject={};
-                                            userObject.userid = user._id   ; 
+									Screen.findOne({'uid' : screenid}, function (err, screen) 
+									    {
 
-                                            var show = new Show({
-                                            uid: "SHO100000" + count.show,
-                                            theatre:userObject,
-                                            show_time: new Date(req.body["show_time"]),
-                                            ticket_price: req.body["ticket_price"],
-                                            no_of_seats: req.body["no_of_seats"],
-                                            min_seats:req.body["min_seats"],
-                                            movie: movieObject
-                                            });
+									      if(screen!=null)
+									        {
+			                                    Count.findOne({}, function (err, count) 
+			                                        {
 
-                                            show.save(function(err, user) {
-                                                  if (err)
-                                                      console.log(err);
-                                                    else {
-                                                      console.log('Added Show');
+			                                            var movieObject={};
+			                                            movieObject.movieid = movie._id ; 
 
-                                                        count.show= count.show+1;
-                                                        count.save(function(err, user) {
-                                                              if (err)
-                                                                  console.log(err);
-                                                                });
+			                                            var userObject={};
+			                                            userObject.userid = user._id   ; 
 
-                                                      sendResponse(res, 200, "success"); 
+			                                            var screenObject={};
+			                                            screenObject.screenid = screen._id;
 
-                                                      }                                                    
-                                                    });
+			                                            var show = new Show({
+			                                            uid: "SHO100000" + count.show,
+			                                            theatre:userObject,
+			                                            show_time: new Date(req.body["show_time"]),
+			                                            ticket_price: req.body["ticket_price"],
+			                                            no_of_seats: req.body["no_of_seats"],
+			                                            min_seats:req.body["min_seats"],
+			                                            screen:screenObject,
+			                                            movie: movieObject
+			                                            });
 
-                                          });
-                                  }
+			                                            show.save(function(err, user) {
+			                                                  if (err)
+			                                                      console.log(err);
+			                                                    else {
+			                                                      console.log('Added Show');
+
+			                                                        count.show= count.show+1;
+			                                                        count.save(function(err, user) {
+			                                                              if (err)
+			                                                                  console.log(err);
+			                                                                });
+
+			                                                      sendResponse(res, 200, "success"); 
+
+			                                                      }                                                    
+			                                                    });
+
+			                                          });
+			                                  		}
+			                              	}
+			                            }
                               });                                                    
                                                                 
                         }
@@ -1441,8 +1460,7 @@ app.post("/:action", function (req, res)
                           console.log(e);
                         }                         
                   } 
-              });
-           
+              });           
       }
       else
       {
