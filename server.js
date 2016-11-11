@@ -724,10 +724,7 @@ app.get('/:action', function (req, res)
                                                                    
                               res.end(JSON.stringify(list));
            });       
-    }    
-	else if(action== "getupcomingshows")
-    {
-    }
+    }  
     else
     {
        res.end("unknown request" );
