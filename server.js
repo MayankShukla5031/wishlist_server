@@ -147,7 +147,7 @@ db.once('open', function callback () {});
     min_seats:  { type : Number , default : 0 },
     movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }},
     screen:{screenid:{ type : ObjectId, ref: 'screencollection' }},
-    seat_selection:[]
+    seat_selection:Object
   } , {collection : 'showcollection'});
 
   var Show = mongoose.model('showcollection', showsSchema);
@@ -730,6 +730,7 @@ app.get('/:action', function (req, res)
     {
           Show.find({'uid' : req.query.id}, function(err, show) {
 
+          console.log(show);
           res.end(show.seat_selection);
            }); 
     }
@@ -1475,7 +1476,49 @@ app.post("/:action", function (req, res)
       }
   }
   else if (action=="bookticket")
-  {
+  { 
+    validateToken(req);
+      
+      if (req.session.user !=undefined)
+      {
+        User.findOne({'uid' : req.session.user }, function (err, user) {          
+                        
+
+            Show.findOne({'uid' : req.body.show_id}, function(err, show) 
+                           {
+                             if (err)
+                                 sendResponse(res, 500, "Error finding show");
+                                else 
+                                {
+                                 var seat_selection= show.seat_selection;
+
+                                 var selected_seats= req.body.selected_seats;
+
+                                  for (i = 0; i < selected_seats.length; i++) {
+
+                                    var rowCol= selected_seats[i];
+                                    seat_selection[rowCol[0]][rowCol[1]]= 2;
+                                  }
+
+                                 show.seat_selection= seat_selection;
+                                                     show.save(function(err, user) {
+                                                        if (err)
+                                                            console.log(err);
+                                                          else {
+                                                           
+                                                            sendResponse(res, 200, "success"); 
+
+                                                            }                                                    
+                                                          });
+
+                                }
+                          });
+            });
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
   }
   else
   {
