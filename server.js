@@ -724,7 +724,14 @@ app.get('/:action', function (req, res)
                                                                    
                               res.end(JSON.stringify(list));
            });       
-    }  
+    } 
+    else if(action== "getshowlayout")
+    { 
+          Show.find({'uid' : req.query.id}, function(err, show) {  
+
+          res.end(show.layout);
+           }); 
+    }
     else
     {
        res.end("unknown request" );
@@ -1464,6 +1471,9 @@ app.post("/:action", function (req, res)
       {
         sendResponse(res, 401, "Unauthorized"); 
       }
+  }
+  else if (action=="bookticket")
+  {
   }
   else
   {
