@@ -146,7 +146,8 @@ db.once('open', function callback () {});
     no_of_seats: { type : Number , default : 0 },
     min_seats:  { type : Number , default : 0 },
     movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }},
-    screen:{screenid:{ type : ObjectId, ref: 'screencollection' }}
+    screen:{screenid:{ type : ObjectId, ref: 'screencollection' }},
+    seat_selection:[]
   } , {collection : 'showcollection'});
 
   var Show = mongoose.model('showcollection', showsSchema);
@@ -726,10 +727,10 @@ app.get('/:action', function (req, res)
            });       
     } 
     else if(action== "getshowlayout")
-    { 
-          Show.find({'uid' : req.query.id}, function(err, show) {  
+    {
+          Show.find({'uid' : req.query.id}, function(err, show) {
 
-          res.end(show.layout);
+          res.end(show.seat_selection);
            }); 
     }
     else
@@ -1248,7 +1249,8 @@ app.post("/:action", function (req, res)
 			                                            no_of_seats: req.body["no_of_seats"],
 			                                            min_seats:req.body["min_seats"],
 			                                            screen:screenObject,
-			                                            movie: movieObject
+			                                            movie: movieObject,
+                                                  seat_selection:screen.layout
 			                                            });
 
 			                                            show.save(function(err, user) {
