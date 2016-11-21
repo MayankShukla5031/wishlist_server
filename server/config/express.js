@@ -63,11 +63,10 @@ module.exports = function(app) {
     var develop=dateMorgan.develop;
     app.use(morgan('develop'));
     if ('production' === env) {
-        app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));
-        app.use(express.static(path.join(config.root, 'public')));
-        app.use("/uploads", express.static(path.join(config.root, '../../uploads')));
-        app.set('adminAppPath', config.root + '/public');
-
+        app.use(express.static(config.root+'\\frontend\\public\\'));
+        app.set('adminAppPath', 'client');
+        app.set('clientAppPath', '../../frontend');
+        app.use(errorHandler()); // Error handler - has to be last
     }else if ('development' === env || 'test' === env) {
         app.use(require('connect-livereload')());
         //app.use(express.static(config.root+'\\server\\client\\'));
