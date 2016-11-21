@@ -45,7 +45,7 @@ module.exports = function(app) {
     app.use(methodOverride());
 
     app.use(cookieParser());
-    app.use(
+    /*app.use(
         session({
             store: new SessionStore({
                 url: 'mongodb://localhost:27017/session',
@@ -54,7 +54,7 @@ module.exports = function(app) {
             cookie: { maxAge: 1200000 },
             secret: 'my secret'
         })
-    );
+    );*/
 
     // app.use(session({ secret: 'session secret key' }));
     app.use(passport.initialize());
@@ -66,12 +66,14 @@ module.exports = function(app) {
         app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));
         app.use(express.static(path.join(config.root, 'public')));
         app.use("/uploads", express.static(path.join(config.root, '../../uploads')));
-        app.set('appPath', config.root + '/public');
+        app.set('adminAppPath', config.root + '/public');
 
     }else if ('development' === env || 'test' === env) {
         app.use(require('connect-livereload')());
-        app.use(express.static(config.root+'\\server\\client\\'));
-        app.set('appPath', 'client');
+        //app.use(express.static(config.root+'\\server\\client\\'));
+        app.use(express.static(config.root+'\\frontend\\public\\'));
+        app.set('adminAppPath', 'client');
+        app.set('clientAppPath', '../../frontend');
         app.use(errorHandler()); // Error handler - has to be last
     }
 };

@@ -1,7 +1,7 @@
 {
   "name": "wishlist",
   "description": "Movies repo",
-  "main": "server/app.js",
+  "main": "server/server.js",
   "dependencies": {
     "async": "^1.5.2",
     "bcrypt-nodejs": "0.0.3",

@@ -29,9 +29,13 @@ module.exports = function(app) {
     app.route('/:url(api|auth|components|app|bower_components|assets)/*')
         .get(errors[404]);
 
+    // app.route('/admin/*')
+    //     .get(function(req, res) {
+    //         res.sendfile(app.get('adminAppPath') + '/index.html');
+    //     });
     // All other routes should redirect to the index.html
     app.route('/*')
         .get(function(req, res) {
-            res.sendfile(app.get('appPath') + '/index.html');
+            res.sendfile(app.get('clientAppPath') + '/index.html');
         });
 };
