@@ -22,6 +22,6 @@ module.exports = {
         uri:    process.env.MONGOLAB_URI ||
         process.env.MONGOHQ_URL ||
         process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||
-        'mongodb://localhost/movwish-prod'
+        'mongodb://movwishAdmin:movwishAdmin@ds031852.mlab.com:31852/movwish'
     },
 };

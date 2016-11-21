@@ -68,7 +68,7 @@ module.exports = function(app) {
         app.set('clientAppPath', '../../frontend');
         app.use(errorHandler()); // Error handler - has to be last
     }else if ('development' === env || 'test' === env) {
-        app.use(require('connect-livereload')());
+        //app.use(require('connect-livereload')());
         //app.use(express.static(config.root+'\\server\\client\\'));
         app.use(express.static(config.root+'\\frontend\\public\\'));
         app.set('adminAppPath', 'client');
