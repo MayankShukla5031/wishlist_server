@@ -40,8 +40,9 @@ function startServer() {
     require('./routes')(app);
     var subfolder = configFile.subfolder;
     // Start server
-    server.listen(config.port, config.ip, function () {
+    server.listen(config.port, function () {
         console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
         console.log(config.ip);
+        console.log(process.env.IP);
     });
 }
