@@ -66,6 +66,7 @@ export default class Profile extends React.Component{
 			openCreateScreenDialogue: false,
 			screenName: '',
 			cityName: '',
+			seatArray: null,
 		};
 		this._loginStoreChange = this._loginStoreChange.bind(this);
 	}
@@ -83,6 +84,7 @@ export default class Profile extends React.Component{
 	_loginStoreChange(type){
 		if(type == 'User_Info'){
 		 	let userInfo = LoginStore._getUserInfo();
+		 	console.log('userInfo', userInfo);
 			this.setState({
 				userInfo: userInfo,
 			});
@@ -91,16 +93,37 @@ export default class Profile extends React.Component{
 
 	_handleRowCountChange(event, value){
 		if(!isNaN(value)){
+			let array = null;
+			if(value != '' && this.state.columnCount != ''){
+				array = new Array();
+				for(let i = 0; i < value; i++){
+					array[i] = new Array();
+					for(let j = 0; j < this.state.columnCount; j++)
+						array[i][j]=0;
+				}
+			}
+			console.log('array', array);
 			this.setState({
-				rowCount: value
+				rowCount: value,
+				seatArray: array,
 			});
 		}
 	}
 
 	_handleColumnCountChange(event, value){
 		if(!isNaN(value)){
+			let array = null;
+			if(value != '' && this.state.rowCount != ''){
+				array = new Array();
+				for(let i = 0; i < this.state.rowCount; i++){
+					array[i] = new Array();
+					for(let j = 0; j < value; j++)
+						array[i][j]=1;
+				}
+			}
 			this.setState({
-				columnCount: value
+				columnCount: value,
+				seatArray: array,
 			});
 		}
 	}
@@ -129,7 +152,7 @@ export default class Profile extends React.Component{
 				    />						
 				);
 			}
-			uiItems.push(<br/>);
+			// uiItems.push(<br/>);
 		}
 		
 			// uiItems.push(
@@ -147,17 +170,18 @@ export default class Profile extends React.Component{
 
 	_handleSeatClick(row, column, event, isInputChecked){
 		// console.log('onclick seats', row, column, isInputChecked);
-		// let seats = this.state.seats;
+		let seats = this.state.seatArray;
+		seats[row][column] = isInputChecked ? 1 : 0;
 		// console.log(seats);
-		// seats[row][column] = isInputChecked ? 1 : 0;
-		// this.setState({
-		// 	seats : seats,
-		// });
+		this.setState({
+			seatArray : seats,
+		});
 	}
 
 	_handleAddScreen(){
-		let layout = {rows: this.state.rowCount, columns: this.state.columnCount};
-		let data = {name: this.state.screenName, addresss: this.state.cityName, no_of_seats: 120, layout: JSON.stringify(layout)}
+		let layout = this.state.seatArray; /*{rows: this.state.rowCount, columns: this.state.columnCount}*/;
+		console.log('seatArray', layout);
+		let data = {name: this.state.screenName, addresss: this.state.cityName, layout: layout}
 		MovieDetailsAction._addScreen(data);
 	}
 
@@ -174,7 +198,7 @@ export default class Profile extends React.Component{
 
 	_setScreenNames(){
 		let screens = this.state.userInfo.screens || [];
-		console.log('screens', screens);
+		// console.log('screens', screens);
 		let uiItems = screens.map((item, index)=>{
 			return(<Paper style={{marginBottom: '10px'}}>
 					<Grid>
@@ -221,8 +245,9 @@ export default class Profile extends React.Component{
 			{Api._getKey('user_type') && Api._getKey('user_type') != 'viewer' ?
 				<Dialog
                     title="Create Screen"
-                    actions={CreateScreenActionOption}
                     modal={false}
+                    contentStyle={{maxWidth: 'none'}}
+                    actions={CreateScreenActionOption}
                     open={this.state.openCreateScreenDialogue}
                     autoScrollBodyContent = {true}
                     onRequestClose={this._handleCreateScreenDialogCancel.bind(this)}
@@ -266,8 +291,8 @@ export default class Profile extends React.Component{
 	                            onChange={this._handleColumnCountChange.bind(this)}        
 							/>
 						</Cell>
-						{this._setTheatreLayout()}
 					</Grid>
+					{this._setTheatreLayout()}
                 </Dialog>
                 : "" 
             }

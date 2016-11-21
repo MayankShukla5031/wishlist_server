@@ -62,23 +62,24 @@ export default class TrendingMovies extends React.Component{
 			openTheatreDialogue : false,
 			theatreDetails: {},
 			userId: Api._getKey('user_id') ? Api._getKey('user_id') : null, 
+			layoutDetails: {},
 		};
 		this._handleTheatreDialogCancel = this._handleTheatreDialogCancel.bind(this);
 		this._handleTheatreDetailsDialogSubmit = this._handleTheatreDetailsDialogSubmit.bind(this);
  		this._getMovieDetailsfromStore = this._getMovieDetailsfromStore.bind(this);
-		this._getWishListStoreData = this._getWishListStoreData.bind(this);
+		// this._getWishListStoreData = this._getWishListStoreData.bind(this);
 	}
 
 	componentWillMount(){
 		let id = this.props.params.showId;
 		MovieDetailsAction._getMovieDetails({id: id});
 		MovieDetailsStore.on('change',this._getMovieDetailsfromStore); 
-		MyWishListStore.on('change', this._getWishListStoreData);
+		// MyWishListStore.on('change', this._getWishListStoreData);
 	}
 
 	componentWillUnmount(){
 		MovieDetailsStore.removeListener('change', this._getMovieDetailsfromStore);
-		MyWishListStore.removeListener('change', this._getWishListStoreData);
+		// MyWishListStore.removeListener('change', this._getWishListStoreData);
 	}
 
 	// componentWillReceiveProps(newKey){
@@ -103,31 +104,19 @@ export default class TrendingMovies extends React.Component{
 				inMyShows: details.in_my_show,
 				buttonText: text
 			});
+		}else if(type == 'Layout_Details'){
+			let layoutDetails = moviedetailsstore._getLayoutDetails();
+			this.setState({
+				layoutDetails: layoutDetails
+			});
 		}
-	}
-
-	_getWishListStoreData(type){
-		let text;
-		let closeDialoge = this.state.openTheatreDialogue;
-		console.log('type', type);
-		if(type == 'AddToWishListSuccess'){
-			text = 'Remove from WishList';
-		}else if(type == 'RemoveFromWishListSuccess'){
-			text = "Add to WishList"; 
-		}else if(type == 'Movie_Added_in_MyShows'){
-			text = "Cancle the Show";
-			closeDialoge = false;
-		}
-		this.setState({
-			buttonText: text,
-			openTheatreDialogue: closeDialoge,
-		});
 	}
 
 	_handleCommonAction(){
 		if(this.state.userType == 'theatre'){
 			MovieDetailsAction._cancelMyShow({show_id:this.state.showId});
 		}else{
+			MovieDetailsAction._getLayout({screen_id: this.state.movieDetails.theatre.screen_id || ''});
 			this.setState({
 				openTheatreDialogue: true,
 			});

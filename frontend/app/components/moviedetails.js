@@ -88,6 +88,7 @@ export default class TrendingMovies extends React.Component{
 	_loginStoreChange(type){
 		if(type == 'User_Info'){
 			let userInfo = LoginStore._getUserInfo();
+			console.log('userInfo', userInfo);
 			this.setState({
 				userInfo: userInfo,
 			});

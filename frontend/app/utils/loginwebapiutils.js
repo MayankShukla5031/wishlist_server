@@ -92,4 +92,20 @@ module.exports = {
         }        
     },
 
+    _getUserInfo(query){
+        let token = Api._getKey('token');
+        if(token){
+            Api._callAPI(Url.USER_INFO, 'get',query,(type,data)=> {
+                if(type == 'success'){
+                    dispatcher.dispatch({
+                        type: 'USER_INFO',   
+                        data: data,                
+                    });
+                }else{
+                   
+                }
+            });
+        }   
+    }
+
 }
