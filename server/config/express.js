@@ -72,7 +72,7 @@ module.exports = function(app) {
         //app.use(express.static(config.root+'\\server\\client\\'));
         app.use(express.static(config.root+'\\frontend\\public\\'));
         app.set('adminAppPath', 'client');
-        app.set('clientAppPath', '../../frontend');
+        app.set('clientAppPath', '../../frontend/public');
         app.use(errorHandler()); // Error handler - has to be last
     }
 };
