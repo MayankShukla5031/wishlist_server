@@ -20,6 +20,7 @@ module.exports = function(app) {
     app.use('/api/productionHouses', require('./api/productionHouse'));
     app.use('/api/screens', require('./api/screen'));
     app.use('/api/shows', require('./api/show'));
+    app.use('/admin', require('./api/admin'));
     app.use('/auth', require('./auth'));
     app.route('/config')
     .get(function(req, res) {
@@ -29,11 +30,6 @@ module.exports = function(app) {
     app.route('/:url(api|auth|components|app|bower_components|assets)/*')
         .get(errors[404]);
 
-    // app.route('/admin/*')
-    //     .get(function(req, res) {
-    //         res.sendfile(app.get('adminAppPath') + '/index.html');
-    //     });
-    // All other routes should redirect to the index.html
     app.route('/*')
         .get(function(req, res) {
             res.sendfile(path.resolve(app.get('clientAppPath')) + '/index.html');
