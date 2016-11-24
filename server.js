@@ -635,7 +635,10 @@ app.get('/:action', function (req, res)
           User.findOne({'uid' : req.session.user }, function (err, user) {          
         
           user.password='******';
-          res.end(JSON.stringify(user));          
+          var ret= {};
+          ret.result=user;
+              
+          res.end(JSON.stringify(ret));          
           });
         }
           else 
@@ -1017,12 +1020,10 @@ app.post("/:action", function (req, res)
               ret.result.user_type= user.user_type;
 
               if(user.user_type =='theatre')
-              {
-
-                
+              {                
                                     ret.result.screens=[];
 
-                                    ret.result.screens= user.screens.map(function(a) {return { 'uid':a.screenid.uid};}); 
+                                    ret.result.screens= user.screens.map(function(a) {return { 'screenid':a.screenid.uid};}); 
                                     ret.result.user_id= user.uid;
                                     var token= generateToken(req, user.uid);
                                     res.set('Authorization', token);
@@ -1242,17 +1243,25 @@ app.post("/:action", function (req, res)
 			                                            var screenObject={};
 			                                            screenObject.screenid = screen._id;
 
+                                                    var seats=0;
+                                                  for(i=0;i<screen.layout.length;i++)
+                                                    for (j=0;j<screen.layout[i].length;j++)
+                                                      if(screen.layout[i][j]=='1')
+                                                        seats++;
+
 			                                            var show = new Show({
 			                                            uid: "SHO100000" + count.show,
 			                                            theatre:userObject,
 			                                            show_time: new Date(req.body["show_time"]),
 			                                            ticket_price: req.body["ticket_price"],
-			                                            no_of_seats: req.body["no_of_seats"],
+			                                            no_of_seats: seats,
 			                                            min_seats:req.body["min_seats"],
 			                                            screen:screenObject,
 			                                            movie: movieObject,
                                                   seat_selection:screen.layout
 			                                            });
+
+
 
 			                                            show.save(function(err, user) {
 			                                                  if (err)
