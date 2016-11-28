@@ -15,4 +15,5 @@ module.exports = {
 	ADD_SCREEN: 'addscreen',
 	REMOVE_SCREEN: 'removescreen',
 	USER_INFO: 'userprofile',
+	GET_SCREEN_LAYOUT: 'getshowlayout',
 }

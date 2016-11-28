@@ -10,17 +10,15 @@ import Checkbox from 'material-ui/Checkbox';
 import Api from '../constants/api';
 
 import * as MovieDetailsAction from '../actions/moviedetailsaction';
-import * as MyWishListAction from '../actions/mywishlistaction';
+// import * as MyWishListAction from '../actions/mywishlistaction';
 import MovieDetailsStore from '../stores/moviedetailsstore';
-import MyWishListStore from '../stores/mywishliststore';
+// import MyWishListStore from '../stores/mywishliststore';
 
 const styles = {
 	saveButtonStyle:{
 		backgroundColor: '#77ADFC',
 		color: 'white',
-		marginLeft: '20px',
 		cursor: 'pointer',
-		marginLeft: '10%',
 	},
 	leftMargin: {
 		marginLeft: '10%',
@@ -40,7 +38,6 @@ const styles = {
     cancelButtonStyle: {
         backgroundColor: '#ffffff',
         color: 'black'
-
     },
     checkbox:{
     	display: 'inline-block',
@@ -91,6 +88,7 @@ export default class TrendingMovies extends React.Component{
 		if(type == 'MovieDetails'){
 			let text = "";
 			let details = MovieDetailsStore._getMovieDetails();
+			console.log('movieDetails', details);
 			if(this.state.userType == "theatre"){
 				text = details.theatre.userid.uid == this.state.userId ? "Cancel Show" : "";
 			}else{
@@ -104,8 +102,9 @@ export default class TrendingMovies extends React.Component{
 				inMyShows: details.in_my_show,
 				buttonText: text
 			});
-		}else if(type == 'Layout_Details'){
-			let layoutDetails = moviedetailsstore._getLayoutDetails();
+		}else if(type == 'SCREEN_LAYOUT_DETAILS'){
+			let layoutDetails = moviedetailsstore._getScreenLayout();
+			console.log('layoutDetails', layoutDetails);
 			this.setState({
 				layoutDetails: layoutDetails
 			});
@@ -116,7 +115,7 @@ export default class TrendingMovies extends React.Component{
 		if(this.state.userType == 'theatre'){
 			MovieDetailsAction._cancelMyShow({show_id:this.state.showId});
 		}else{
-			MovieDetailsAction._getLayout({screen_id: this.state.movieDetails.theatre.screen_id || ''});
+			MovieDetailsAction._getLayout({id: this.state.showId || ''});
 			this.setState({
 				openTheatreDialogue: true,
 			});

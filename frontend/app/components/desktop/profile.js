@@ -16,9 +16,7 @@ import Api from '../../constants/api';
 import LoginStore from '../../stores/loginstore';
 
 import * as MovieDetailsAction from '../../actions/moviedetailsaction';
-import * as MyWishListAction from '../../actions/mywishlistaction';
 import MovieDetailsStore from '../../stores/moviedetailsstore';
-import MyWishListStore from '../../stores/mywishliststore';
 
 const styles = {
 	saveButtonStyle:{
@@ -49,7 +47,7 @@ const styles = {
     },
     checkbox:{
     	display: 'inline-block',
-    	width: '100px',
+    	width: '30px',
     }
 }
 
@@ -61,33 +59,53 @@ export default class Profile extends React.Component{
 			rowCount: '',
 			columnCount:'',
 			openLayout: false,
-			seats: {},
+			// seats: {},
 			userInfo: LoginStore._getUserInfo() || {},
 			openCreateScreenDialogue: false,
 			screenName: '',
 			cityName: '',
 			seatArray: null,
+			screenDetails: {},
 		};
 		this._loginStoreChange = this._loginStoreChange.bind(this);
+		this._movieDetailStoreChange = this._movieDetailStoreChange.bind(this);
 	}
 
 	componentWillMount(){
 		LoginStore.on('change',this._loginStoreChange); 
-		// MyWishListStore.on('change', this._getWishListStoreData);
+		MovieDetailsStore.on('change', this._movieDetailStoreChange);
 	}
 
 	componentWillUnmount(){
 		LoginStore.removeListener('change', this._loginStoreChange);
-		// MovieDetailsStore.removeListener('change', this._getMovieDetailsfromStore);
+		MovieDetailsStore.removeListener('change', this._movieDetailStoreChange);
 	}	
 
 	_loginStoreChange(type){
 		if(type == 'User_Info'){
 		 	let userInfo = LoginStore._getUserInfo();
-		 	console.log('userInfo', userInfo);
 			this.setState({
 				userInfo: userInfo,
 			});
+		}
+	}
+
+	_movieDetailStoreChange(type){
+		if(type == 'ADD_SCREEN_SUCCESS'){
+			this.setState({
+				openCreateScreenDialogue: false,
+			});
+		}else if(type == 'SCREEN_DETAILS'){
+			let screenDetails = MovieDetailsStore._getScreenDetail();
+			this.setState({
+				screenDetails: screenDetails,
+				screenName: screenDetails.name,
+				cityName: screenDetails.cityName || "",
+				rowCount: screenDetails.layout.length,
+				columnCount: screenDetails.layout.length ? screenDetails.layout[0].length : 0,
+				seatArray: screenDetails.layout,
+			});
+			// console.log('screenDetails', screenDetails.layout);	
 		}
 	}
 
@@ -99,10 +117,10 @@ export default class Profile extends React.Component{
 				for(let i = 0; i < value; i++){
 					array[i] = new Array();
 					for(let j = 0; j < this.state.columnCount; j++)
-						array[i][j]=0;
+						array[i][j]=1;
 				}
 			}
-			console.log('array', array);
+			// console.log('array', array);
 			this.setState({
 				rowCount: value,
 				seatArray: array,
@@ -142,17 +160,20 @@ export default class Profile extends React.Component{
 		}
 		let uiItems = [];
 		for(let i = 0; i < row; i++){
+			uiItems.push(<p key={'row-' + i} style={{marginRight: '10px', display: 'inline-block',}}>{String.fromCharCode('A'.charCodeAt()+i)}</p>);
 			for(let j = 0; j < column; j++){
 				uiItems.push(
 					<Checkbox
-						key={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
-						label={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
+						key={'column-' + i + " - " + j}
+						defaultChecked={this.state.seatArray[i][j] == "1"? true : false}
+						// key={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
+						// label={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
 				    	style={styles.checkbox}
 				    	onCheck={this._handleSeatClick.bind(this,i,j)}
 				    />						
 				);
 			}
-			// uiItems.push(<br/>);
+			uiItems.push(<br/>);
 		}
 		
 			// uiItems.push(
@@ -180,17 +201,19 @@ export default class Profile extends React.Component{
 
 	_handleAddScreen(){
 		let layout = this.state.seatArray; /*{rows: this.state.rowCount, columns: this.state.columnCount}*/;
-		console.log('seatArray', layout);
+		// console.log('seatArray', layout);
 		let data = {name: this.state.screenName, addresss: this.state.cityName, layout: layout}
 		MovieDetailsAction._addScreen(data);
 	}
 
 	_handleRemoveScreen(screen_id){
+		console.log(screen_id);
 		let data = {screen_id: screen_id};
 		MovieDetailsAction._removeScreen(data);
 	}
 
-	_handleEditScreen(){
+	_handleEditScreen(screen_id){
+		MovieDetailsAction._getScreenDetails({id: screen_id});
 		this.setState({
 			openCreateScreenDialogue: true,
 		});
@@ -203,9 +226,9 @@ export default class Profile extends React.Component{
 			return(<Paper style={{marginBottom: '10px'}}>
 					<Grid>
 						<Cell col={12}>
-							{item.uid}
-							<FlatButton style={styles.saveButtonStyle, {float: 'right'}} label="Edit/View Screen Layout" primary={true} onTouchTap={this._handleEditScreen.bind(this)} />
-							<FlatButton style={styles.saveButtonStyle, {float: 'right'}} label="Remove Screen" primary={true} onTouchTap={this._handleRemoveScreen.bind(this, item.uid)} />
+							{item.screenid}
+							<FlatButton style={styles.saveButtonStyle, {float: 'right'}} label="Edit/View Screen Layout" primary={true} onTouchTap={this._handleEditScreen.bind(this, item.screenid)} />
+							<FlatButton style={styles.saveButtonStyle, {float: 'right'}} label="Remove Screen" primary={true} onTouchTap={this._handleRemoveScreen.bind(this, item.screenid)} />
 						</Cell>
 					</Grid>
 				</Paper>
@@ -292,7 +315,7 @@ export default class Profile extends React.Component{
 							/>
 						</Cell>
 					</Grid>
-					{this._setTheatreLayout()}
+					<div style={{whiteSpace: 'nowrap'}}>{this._setTheatreLayout()}</div>
                 </Dialog>
                 : "" 
             }

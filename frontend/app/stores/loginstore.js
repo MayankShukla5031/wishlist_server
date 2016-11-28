@@ -18,12 +18,13 @@ class LoginStore extends EventEmitter{
 	}
 
 	_setUserInfo(value, emitString){
-		this.UserInfo = value.result;
+		this.UserInfo = value;
 		this.emit('change', emitString);
+		// console.log('emitted', value);
 	}
 
 	_getUserInfo(){
-		console.log('info', this.UserInfo);
+		// console.log('info', this.UserInfo);
 		return this.UserInfo;
 	}
 	
@@ -53,6 +54,7 @@ class LoginStore extends EventEmitter{
 				break;
 			}
 			case 'USER_INFO': {
+				// console.log('store data');
 				this._setUserInfo(action.data, 'User_Info');
 				break;
 			}

@@ -146,7 +146,8 @@ db.once('open', function callback () {});
     no_of_seats: { type : Number , default : 0 },
     min_seats:  { type : Number , default : 0 },
     movie:{movieid:{ type : ObjectId, ref: 'moviecollection' }},
-    screen:{screenid:{ type : ObjectId, ref: 'screencollection' }}
+    screen:{screenid:{ type : ObjectId, ref: 'screencollection' }},
+    seat_selection:Object
   } , {collection : 'showcollection'});
 
   var Show = mongoose.model('showcollection', showsSchema);
@@ -172,7 +173,7 @@ app.get('/:action', function (req, res)
    var action= req.params.action;
    console.log('Received GET Req:' + action);
 
-     if(action=="index")
+    if(action=="index")
     {
       fs.readFile('frontend/public/index.html' , function(err, contents) {
 
@@ -564,7 +565,7 @@ app.get('/:action', function (req, res)
             else if(req.query.id.includes("SCR"))
             {
               Screen.findOne({'uid' : req.query.id},
-              function (err, screen) {              
+              function (err, screen) {
                 
                 if(err) 
                   {
@@ -724,7 +725,15 @@ app.get('/:action', function (req, res)
                                                                    
                               res.end(JSON.stringify(list));
            });       
-    }    
+    } 
+    else if(action== "getshowlayout")
+    {
+          Show.find({'uid' : req.query.id}, function(err, show) {
+
+          console.log(show);
+          res.end(show.seat_selection);
+           }); 
+    }
     else
     {
        res.end("unknown request" );
@@ -897,7 +906,6 @@ app.post("/:action", function (req, res)
   }
   else if(action=="register")
   {
-
     if(req.body["username"]== undefined || req.body["username"]=="")
     {
       sendResponse(res, 400, "error: username can not be blank");  
@@ -918,7 +926,8 @@ app.post("/:action", function (req, res)
     {
       sendResponse(res, 400, "error: user type can not be blank");  
     }
-    else{
+    else
+    {
 
           User.findOne({username:req.body["username"]}, function (err, user1) 
                 {
@@ -978,7 +987,7 @@ app.post("/:action", function (req, res)
 
                     }
                 });
-        }     
+    }     
   }
   else if (action=="login")
   {
@@ -1034,7 +1043,7 @@ app.post("/:action", function (req, res)
               sendResponse(res, 400, "error: username or password is invalid");  
             }
       });
-    }     
+    }
   }
   else if(action== "logout")
   {
@@ -1209,46 +1218,64 @@ app.post("/:action", function (req, res)
                         {                         
                            Movie.findOne({'uid' : movieid}, function (err, movie) 
                               {
+
                                 if(movie!=null)
                                   {
-                                    Count.findOne({}, function (err, count) 
-                                        {
 
-                                            var movieObject={};
-                                            movieObject.movieid = movie._id ; 
+									var screenid = req.body["screen_id"];
+			                        console.log(screenid);
 
-                                            var userObject={};
-                                            userObject.userid = user._id   ; 
+									Screen.findOne({'uid' : screenid}, function (err, screen) 
+									    {
 
-                                            var show = new Show({
-                                            uid: "SHO100000" + count.show,
-                                            theatre:userObject,
-                                            show_time: new Date(req.body["show_time"]),
-                                            ticket_price: req.body["ticket_price"],
-                                            no_of_seats: req.body["no_of_seats"],
-                                            min_seats:req.body["min_seats"],
-                                            movie: movieObject
-                                            });
+									      if(screen!=null)
+									        {
+			                                    Count.findOne({}, function (err, count) 
+			                                        {
 
-                                            show.save(function(err, user) {
-                                                  if (err)
-                                                      console.log(err);
-                                                    else {
-                                                      console.log('Added Show');
+			                                            var movieObject={};
+			                                            movieObject.movieid = movie._id ; 
 
-                                                        count.show= count.show+1;
-                                                        count.save(function(err, user) {
-                                                              if (err)
-                                                                  console.log(err);
-                                                                });
+			                                            var userObject={};
+			                                            userObject.userid = user._id   ; 
 
-                                                      sendResponse(res, 200, "success"); 
+			                                            var screenObject={};
+			                                            screenObject.screenid = screen._id;
 
-                                                      }                                                    
-                                                    });
+			                                            var show = new Show({
+			                                            uid: "SHO100000" + count.show,
+			                                            theatre:userObject,
+			                                            show_time: new Date(req.body["show_time"]),
+			                                            ticket_price: req.body["ticket_price"],
+			                                            no_of_seats: req.body["no_of_seats"],
+			                                            min_seats:req.body["min_seats"],
+			                                            screen:screenObject,
+			                                            movie: movieObject,
+                                                  seat_selection:screen.layout
+			                                            });
 
-                                          });
-                                  }
+			                                            show.save(function(err, user) {
+			                                                  if (err)
+			                                                      console.log(err);
+			                                                    else {
+			                                                      console.log('Added Show');
+
+			                                                        count.show= count.show+1;
+			                                                        count.save(function(err, user) {
+			                                                              if (err)
+			                                                                  console.log(err);
+			                                                                });
+
+			                                                      sendResponse(res, 200, "success"); 
+
+			                                                      }                                                    
+			                                                    });
+
+			                                          });
+			                                  }
+			                              	
+			                            });
+								}
                               });                                                    
                                                                 
                         }
@@ -1322,7 +1349,7 @@ app.post("/:action", function (req, res)
                                             name:req.body["name"],
                                             address:req.body["address"],
                                             no_of_seats: req.body["no_of_seats"],
-                                            layout:JSON.parse(req.body["layout"])
+                                            layout:req.body["layout"]
                                             });
 
                                             var screenObject={};
@@ -1441,8 +1468,52 @@ app.post("/:action", function (req, res)
                           console.log(e);
                         }                         
                   } 
-              });
-           
+              });           
+      }
+      else
+      {
+        sendResponse(res, 401, "Unauthorized"); 
+      }
+  }
+  else if (action=="bookticket")
+  { 
+    validateToken(req);
+      
+      if (req.session.user !=undefined)
+      {
+        User.findOne({'uid' : req.session.user }, function (err, user) {          
+                        
+
+            Show.findOne({'uid' : req.body.show_id}, function(err, show) 
+                           {
+                             if (err)
+                                 sendResponse(res, 500, "Error finding show");
+                                else 
+                                {
+                                 var seat_selection= show.seat_selection;
+
+                                 var selected_seats= req.body.selected_seats;
+
+                                  for (i = 0; i < selected_seats.length; i++) {
+
+                                    var rowCol= selected_seats[i];
+                                    seat_selection[rowCol[0]][rowCol[1]]= 2;
+                                  }
+
+                                 show.seat_selection= seat_selection;
+                                                     show.save(function(err, user) {
+                                                        if (err)
+                                                            console.log(err);
+                                                          else {
+                                                           
+                                                            sendResponse(res, 200, "success"); 
+
+                                                            }                                                    
+                                                          });
+
+                                }
+                          });
+            });
       }
       else
       {

@@ -14,7 +14,7 @@ module.exports = {
             if(type == 'success'){  
                 dispatcher.dispatch({
                     type:'LOGIN_SUCCESS',
-                    data: data,
+                    data: data.result,
                 });
             }
             else{   
@@ -99,7 +99,7 @@ module.exports = {
                 if(type == 'success'){
                     dispatcher.dispatch({
                         type: 'USER_INFO',   
-                        data: data,                
+                        data: data.result,                
                     });
                 }else{
                    
