@@ -634,11 +634,26 @@ app.get('/:action', function (req, res)
         {
           User.findOne({'uid' : req.session.user }, function (err, user) {          
         
-          user.password='******';
-          var ret= {};
-          ret.result=user;
+          if(user!=undefined && user!={}) 
+            {
+              console.log(user);
+
+              var ret= {};
+              ret.result={};
+              ret.result.username= user.username;
+              ret.result.user_type= user.user_type;
+
+              if(user.user_type =='theatre')
+              {                
+                 ret.result.screens=[];
+                 ret.result.screens= user.screens.map(function(a) {return { 'screenid':a.screenid.uid};});                                                      
+              }
               
-          res.end(JSON.stringify(ret));          
+                ret.result.user_id= user.uid;
+                res.end(JSON.stringify(ret));
+              
+              
+            }        
           });
         }
           else 
@@ -1021,22 +1036,14 @@ app.post("/:action", function (req, res)
 
               if(user.user_type =='theatre')
               {                
-                                    ret.result.screens=[];
-
-                                    ret.result.screens= user.screens.map(function(a) {return { 'screenid':a.screenid.uid};}); 
-                                    ret.result.user_id= user.uid;
-                                    var token= generateToken(req, user.uid);
-                                    res.set('Authorization', token);
-                                    res.end(JSON.stringify(ret));                                      
+                  ret.result.screens=[];
+                  ret.result.screens= user.screens.map(function(a) {return { 'screenid':a.screenid.uid};});                                                      
               }
-              else
-              {
+              
                 ret.result.user_id= user.uid;
                 var token= generateToken(req, user.uid);
                 res.set('Authorization', token);
                 res.end(JSON.stringify(ret));
-              }
-
               
             }
             else
