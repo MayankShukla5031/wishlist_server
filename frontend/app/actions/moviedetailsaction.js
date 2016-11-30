@@ -3,20 +3,27 @@ import MovieDetailsWebApiUtils from "../utils/moviedetailswebapiutils";
 
 module.exports = {
 
-	_getMovieDetails : function(inpulvalues){
-		MovieDetailsWebApiUtils._getMovieDetails(inpulvalues);
+	_getMovieDetails : function(query){
+		MovieDetailsWebApiUtils._getMovieDetails(query);
 	},
 
-	_cancelMyShow : function(inpulvalues){
-		MovieDetailsWebApiUtils._cancelMyShow(inpulvalues);
+	_cancelMyShow : function(query){
+		MovieDetailsWebApiUtils._cancelMyShow(query);
 	},
 
-	_addScreen(inpulvalues){
-		MovieDetailsWebApiUtils._addScreen(inpulvalues);
+	_addScreen(query){
+		MovieDetailsWebApiUtils._addScreen(query);
 	},
 
-	_removeScreen(inpulvalues){
-		MovieDetailsWebApiUtils._removeScreen(inpulvalues);
-	}
+	_removeScreen(query){
+		MovieDetailsWebApiUtils._removeScreen(query);
+	},
 	
+	_getScreenDetails(query){
+		MovieDetailsWebApiUtils._getScreenDetails(query);
+	},
+
+	_getLayout(query){
+		MovieDetailsWebApiUtils._getLayout(query);
+	}
 }

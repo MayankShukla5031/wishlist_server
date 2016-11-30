@@ -61,6 +61,7 @@ export default class TrendingMovies extends React.Component{
 			ScreenValue: null,
 			userInfo: LoginStore._getUserInfo() || {},
 		};
+		this._loginStoreChange = this._loginStoreChange.bind(this);
 		this._handleTheatreDialogCancel = this._handleTheatreDialogCancel.bind(this);
 		this._handleTheatreDetailsDialogSubmit = this._handleTheatreDetailsDialogSubmit.bind(this);
  		this._getMovieDetailsfromStore = this._getMovieDetailsfromStore.bind(this);
@@ -88,6 +89,7 @@ export default class TrendingMovies extends React.Component{
 	_loginStoreChange(type){
 		if(type == 'User_Info'){
 			let userInfo = LoginStore._getUserInfo();
+			console.log('userInfo', userInfo);
 			this.setState({
 				userInfo: userInfo,
 			});
@@ -194,7 +196,7 @@ export default class TrendingMovies extends React.Component{
                             onChange={this._handleCommonDetailChange.bind(this, 'min_seats')}                                  
                         />
                     </Cell>
-                    <Cell col={12}>
+                    {/*<Cell col={12}>
                          <TextField
                             hintText="e.g- 50"
                             floatingLabelText="Total Seats"
@@ -203,7 +205,7 @@ export default class TrendingMovies extends React.Component{
                             value={this.state.theatreDetails.no_of_seats || ''}
                             onChange={this._handleCommonDetailChange.bind(this, 'no_of_seats')}                                  
                         />
-                    </Cell>
+                    </Cell>*/}
                     <Cell col={12}>
                     	<SelectField 
                     		fullWidth={true}
@@ -220,8 +222,9 @@ export default class TrendingMovies extends React.Component{
 
 	_setScreenName(){
 		let screensName = this.state.userInfo.screens || [];
+		console.log(screensName);
 		let uiItems = screensName.map((item, index)=>{
-			return(<MenuItem key={index} value={item.uid} primaryText={item.uid} />)
+			return(<MenuItem key={index} value={item.screenid} primaryText={item.screenid} />)
 		});
 		return uiItems;
 	}

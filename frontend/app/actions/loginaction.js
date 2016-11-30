@@ -19,6 +19,10 @@ module.exports = {
 
 	_checkLogin: function(){
 		LoginWebApiUtils._checkLogin();
+	},
+
+	_getUserInfo: function(){
+		LoginWebApiUtils._getUserInfo("");
 	}
 
 }

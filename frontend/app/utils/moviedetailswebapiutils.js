@@ -55,22 +55,87 @@ module.exports = {
     _addScreen: function(query){
         Api._callAPI(Url.ADD_SCREEN,'post',query,(type,data)=> {
             if(type == 'success'){  
-                console.log('_addScreen successfully');
+                dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  "Screen added successfully"
+                });
+                this._getUserInfo("");
+                dispatcher.dispatch({
+                    type: 'ADD_SCREEN_SUCCESS',
+                });
             }
             else{   
-                 console.log('add screen fail');
+                dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  "Something went wrong, Kindly try after some time"
+                });
             }
         });
     },
 
     _removeScreen(query){
-         Api._callAPI(Url.REMOVE_SCREEN,'post',query,(type,data)=> {
+        Api._callAPI(Url.REMOVE_SCREEN,'post',query,(type,data)=> {
             if(type == 'success'){  
-                console.log('_removeScreen successfully');
+                dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  "Screen removed successfully"
+                });
+                this._getUserInfo("");
             }
             else{   
-                 console.log('_removeScreen fail');
+                dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  "Something went wrong, Kindly try after some time"
+                });
             }
         });
     },
+
+    _getUserInfo(query){
+        let token = Api._getKey('token');
+        if(token){
+            Api._callAPI(Url.USER_INFO, 'get',query,(type,data)=> {
+                if(type == 'success'){
+                    dispatcher.dispatch({
+                        type: 'USER_INFO',   
+                        data: data.result,                
+                    });
+                }else{
+                   
+                }
+            });
+        }   
+    },
+
+    _getScreenDetails(query){
+        Api._callAPI(Url.GET_MOVIE_DETAILS,'GET',query,(type,data)=> {
+            if(type == 'success'){  
+                dispatcher.dispatch({
+                    type: 'SCREEN_DETAILS',
+                    data:  data,
+                });
+            }else{   
+                dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  "Something went wrong, Kindly try after some time"
+                });
+            }
+        });
+    },
+
+    _getLayout(query){
+        Api._callAPI(Url.GET_SCREEN_LAYOUT,'GET',query,(type,data)=> {
+            if(type == 'success'){  
+                dispatcher.dispatch({
+                    type: 'SCREEN_LAYOUT_DETAILS',
+                    data:  data,
+                });
+            }else{   
+                dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  "Something went wrong, Kindly try after some time"
+                });
+            }
+        });
+    }
 }

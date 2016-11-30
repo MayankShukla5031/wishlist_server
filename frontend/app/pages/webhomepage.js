@@ -106,6 +106,7 @@ export default class HomePage extends React.Component {
         LoginStore.on('change',this._loginStoreChange); 
         MoviesSearchStore.on('change',this._getMovieList); 
         SnackBarStore.on('change', this._snackbarStoreChange);
+        LoginAction._getUserInfo();
         LoginAction._checkLogin();
     }
 
@@ -451,6 +452,9 @@ export default class HomePage extends React.Component {
 
     _handleProfileClick(){
         hashHistory.push('/profile');
+        this.setState({
+            openUserOption:false,
+        });
     }
 
     render() {
