@@ -633,8 +633,10 @@ app.get('/:action', function (req, res)
       
       if( req.session.user != undefined)
         {
-          User.findOne({'uid' : req.session.user }, function (err, user) {          
-        
+                  
+          User.findOne({'uid' : req.session.user } ).populate({path:'screens.screenid'}).exec(
+          function(err,user){
+
           if(user!=undefined && user!={}) 
             {
 
