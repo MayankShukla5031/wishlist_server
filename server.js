@@ -172,6 +172,7 @@ app.get('/:action', function (req, res)
 {
    var action= req.params.action;
    console.log('Received GET Req:' + action);
+   console.log('Req Body: '+ req.body);
 
     if(action=="index")
     {
@@ -650,8 +651,7 @@ app.get('/:action', function (req, res)
               }
               
                 ret.result.user_id= user.uid;
-                res.end(JSON.stringify(ret));
-              
+                res.end(JSON.stringify(ret));             
               
             }        
           });
@@ -762,6 +762,7 @@ app.post("/:action", function (req, res)
 {
   var action= req.params.action;
   console.log('Received POST Req:' + action);
+  console.log('Req Body: '+ req.body);
 
   if(action=="add")
   {
@@ -1360,6 +1361,14 @@ app.post("/:action", function (req, res)
                         {                                                   
                                     Count.findOne({}, function (err, count) 
                                         {
+
+                                            var layout = req.body["layout"];
+                                            var seats=0;
+                                                  for(i=0;i<layout.length;i++)
+                                                    for (j=0;j<layout[i].length;j++)
+                                                      if(layout[i][j]=='1')
+                                                        seats++;
+
                                             var screen = new Screen({
                                             uid: "SCR100000" + count.screen,
                                             name:req.body["name"],
