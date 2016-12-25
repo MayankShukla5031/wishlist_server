@@ -1375,8 +1375,8 @@ app.post("/:action", function (req, res)
                                             uid: "SCR100000" + count.screen,
                                             name:req.body["name"],
                                             address:req.body["address"],
-                                            no_of_seats: req.body["no_of_seats"],
-                                            layout:seats
+                                            no_of_seats: seats,
+                                            layout:layout
                                             });
 
                                             var screenObject={};
