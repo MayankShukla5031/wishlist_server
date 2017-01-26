@@ -41,7 +41,7 @@ const styles = {
     },
     checkbox:{
     	display: 'inline-block',
-    	width: '100px',
+    	width: '30px',
     }
 }
 
@@ -60,6 +60,7 @@ export default class TrendingMovies extends React.Component{
 			theatreDetails: {},
 			userId: Api._getKey('user_id') ? Api._getKey('user_id') : null, 
 			layoutDetails: {},
+			bookedTicketLayout: {}
 		};
 		this._handleTheatreDialogCancel = this._handleTheatreDialogCancel.bind(this);
 		this._handleTheatreDetailsDialogSubmit = this._handleTheatreDetailsDialogSubmit.bind(this);
@@ -100,7 +101,9 @@ export default class TrendingMovies extends React.Component{
 				movieId: details.movie.movieid.uid,
 				movieDetails: details,
 				inMyShows: details.in_my_show,
-				buttonText: text
+				buttonText: text,
+				layoutDetails: details.seat_selection,
+				bookedTicketLayout: JSON.parse(JSON.stringify(details.seat_selection)),
 			});
 		}else if(type == 'SCREEN_LAYOUT_DETAILS'){
 			let layoutDetails = moviedetailsstore._getScreenLayout();
@@ -115,7 +118,7 @@ export default class TrendingMovies extends React.Component{
 		if(this.state.userType == 'theatre'){
 			MovieDetailsAction._cancelMyShow({show_id:this.state.showId});
 		}else{
-			MovieDetailsAction._getLayout({id: this.state.showId || ''});
+			//MovieDetailsAction._getLayout({id: this.state.showId || ''});
 			this.setState({
 				openTheatreDialogue: true,
 			});
@@ -139,22 +142,33 @@ export default class TrendingMovies extends React.Component{
 	}
 
 	_setTheatreDetailsUI(){
-		let row = 5;
-		let column = 5;
+		let row = this.state.layoutDetails.length ? this.state.layoutDetails.length : 0;
+		let column = this.state.layoutDetails.length ? this.state.layoutDetails[0].length : 0;
 		let uiItems = [];
 		for(let i = 0; i < row; i++){
+			uiItems.push(<p key={'row-' + i} style={{marginRight: '10px', display: 'inline-block',}}>{String.fromCharCode('A'.charCodeAt()+i)}</p>);
 			for(let j = 0; j < column; j++){
 				uiItems.push(
 					<Checkbox
-						key={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
-						label={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
+						key={'column-' + i + " - " + j}
+						defaultChecked={this.state.layoutDetails[i][j] == "1"? true : false}
+						disabled={this.state.layoutDetails[i][j] == '1'? true : false}
+						// key={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
+						// label={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
 				    	style={styles.checkbox}
+				    	onCheck={this._handleSeatClick.bind(this,i,j)}
 				    />						
 				);
 			}
 			uiItems.push(<br/>);
 		}
 		return uiItems;
+	}
+
+	_handleSeatClick(row, column, event, isInputChecked){
+		let bookedTicketLayout = this.state.bookedTicketLayout;
+		bookedTicketLayout[row][column] = isInputChecked ? 1 : 0;
+		this.setState({bookedTicketLayout});
 	}
 
 	render(){
@@ -174,7 +188,7 @@ export default class TrendingMovies extends React.Component{
                     autoScrollBodyContent = {true}
                     onRequestClose={this._handleTheatreDialogCancel}
                     >
-                	{this._setTheatreDetailsUI()}       
+                	<div style={{whiteSpace: 'nowrap'}}>{this._setTheatreDetailsUI()}</div>      
                 </Dialog>            
 				<Grid>					
 					<Cell col={6}>
