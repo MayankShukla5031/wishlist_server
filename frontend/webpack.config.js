@@ -1,4 +1,3 @@
-
 var webpack = require('webpack');
 
 if (process.argv.indexOf('-p') !== -1) {

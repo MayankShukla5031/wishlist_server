@@ -185,9 +185,9 @@ export default class TrendingMovies extends React.Component{
 					    <p style={styles.leftMargin}>Min Seats: {this.state.movieDetails.min_seats}</p>	
 					    <p style={styles.leftMargin}>Total Seats: {this.state.movieDetails.no_of_seats}</p>	
 					    <p style={styles.leftMargin}>Ticket Price: {this.state.movieDetails.ticket_price}</p>	
-					    <p style={styles.leftMargin}>Show Time: {new Date(this.state.movieDetails.show_time).toDateString() || ""}</p>					   
+					    <p style={styles.leftMargin}>Show Time: {this.state.movieDetails.show_time ? new Date(this.state.movieDetails.show_time).toDateString() : ""}</p>					   
 					    <p style={styles.leftMargin}>Theatre: {this.state.movieDetails.theatre ? this.state.movieDetails.theatre.userid.username : ''}</p>
-					    {this.state.buttonText != "" ? <FlatButton style={styles.saveButtonStyle} label={this.state.buttonText} onClick={this._handleCommonAction.bind(this)}/> : "" }
+					    {this.state.buttonText != "" ? <FlatButton style={Object.assign(styles.saveButtonStyle, {marginLeft: '10%'})} label={this.state.buttonText} onClick={this._handleCommonAction.bind(this)}/> : "" }
 					</Cell>
 				</Grid>
 			</Paper>

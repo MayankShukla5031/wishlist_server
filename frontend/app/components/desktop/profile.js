@@ -56,7 +56,7 @@ export default class Profile extends React.Component{
 	constructor(){
 		super();
 		this.state = {
-			rowCount: '',
+			rowCount:'',
 			columnCount:'',
 			openLayout: false,
 			// seats: {},
@@ -66,6 +66,7 @@ export default class Profile extends React.Component{
 			cityName: '',
 			seatArray: null,
 			screenDetails: {},
+			hideCreateOption: false,
 		};
 		this._loginStoreChange = this._loginStoreChange.bind(this);
 		this._movieDetailStoreChange = this._movieDetailStoreChange.bind(this);
@@ -100,7 +101,7 @@ export default class Profile extends React.Component{
 			this.setState({
 				screenDetails: screenDetails,
 				screenName: screenDetails.name,
-				cityName: screenDetails.cityName || "",
+				cityName: screenDetails.address || "",
 				rowCount: screenDetails.layout.length,
 				columnCount: screenDetails.layout.length ? screenDetails.layout[0].length : 0,
 				seatArray: screenDetails.layout,
@@ -200,23 +201,14 @@ export default class Profile extends React.Component{
 	}
 
 	_handleAddScreen(){
-		let layout = this.state.seatArray; /*{rows: this.state.rowCount, columns: this.state.columnCount}*/;
-		// console.log('seatArray', layout);
-		let data = {name: this.state.screenName, addresss: this.state.cityName, layout: layout}
+		let layout = this.state.seatArray; 
+		let data = {address: this.state.cityName, name: this.state.screenName, address: this.state.cityName, layout: layout}
 		MovieDetailsAction._addScreen(data);
 	}
 
 	_handleRemoveScreen(screen_id){
-		console.log(screen_id);
 		let data = {screen_id: screen_id};
 		MovieDetailsAction._removeScreen(data);
-	}
-
-	_handleEditScreen(screen_id){
-		MovieDetailsAction._getScreenDetails({id: screen_id});
-		this.setState({
-			openCreateScreenDialogue: true,
-		});
 	}
 
 	_setScreenNames(){
@@ -240,6 +232,19 @@ export default class Profile extends React.Component{
 		return uiItems;
 	}
 
+	_handleEditScreen(screen_id){
+		MovieDetailsAction._getScreenDetails({id: screen_id});
+		this.setState({
+			hideCreateOption: true,
+			openCreateScreenDialogue: true,
+			screenDetails: {},
+			screenName: '',
+			cityName: "",
+			rowCount: '',
+			columnCount: '',
+		});
+	}
+
 	_handleCreateScreenDialogCancel(){
 		this.setState({
 			openCreateScreenDialogue: false,
@@ -248,6 +253,7 @@ export default class Profile extends React.Component{
 
 	_handleAddNewScreenClick(){
 		this.setState({
+			hideCreateOption: false,
 			openCreateScreenDialogue: true,
 			screenName: '',
 			cityName: '',
@@ -259,8 +265,8 @@ export default class Profile extends React.Component{
 	render(){
 
 		const CreateScreenActionOption = [
-			<FlatButton style={styles.saveButtonStyle} label="Create Screen" primary={true} onTouchTap={this._handleAddScreen.bind(this)} />,
-			<FlatButton style={styles.saveButtonStyle} label="Cancel" primary={true} onTouchTap={this._handleCreateScreenDialogCancel.bind(this)} />
+			<FlatButton style={styles.saveButtonStyle} label="Cancel" primary={true} onTouchTap={this._handleCreateScreenDialogCancel.bind(this)}/>,
+			!this.state.hideCreateOption ? <FlatButton style={styles.saveButtonStyle} label="Create Screen" primary={true} onTouchTap={this._handleAddScreen.bind(this)}/>:''
 		];
 
 		return(
