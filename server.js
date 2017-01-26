@@ -751,7 +751,7 @@ app.get('/:action', function (req, res)
           Show.find({'uid' : req.query.id}, function(err, show) {
 
           console.log(show);
-          res.end(show.seat_selection);
+          res.end(JSON.stringify(show.seat_selection));
            }); 
     }
     else
