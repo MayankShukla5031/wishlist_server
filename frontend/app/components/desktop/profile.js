@@ -118,7 +118,7 @@ export default class Profile extends React.Component{
 				for(let i = 0; i < value; i++){
 					array[i] = new Array();
 					for(let j = 0; j < this.state.columnCount; j++)
-						array[i][j]=1;
+						array[i][j]=0;
 				}
 			}
 			// console.log('array', array);
@@ -137,7 +137,7 @@ export default class Profile extends React.Component{
 				for(let i = 0; i < this.state.rowCount; i++){
 					array[i] = new Array();
 					for(let j = 0; j < value; j++)
-						array[i][j]=1;
+						array[i][j]=0;
 				}
 			}
 			this.setState({
@@ -166,7 +166,7 @@ export default class Profile extends React.Component{
 				uiItems.push(
 					<Checkbox
 						key={'column-' + i + " - " + j}
-						defaultChecked={this.state.seatArray[i][j] == "1"? true : false}
+						defaultChecked={this.state.seatArray[i][j] == "0"? true : false}
 						// key={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
 						// label={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
 				    	style={styles.checkbox}
@@ -193,7 +193,7 @@ export default class Profile extends React.Component{
 	_handleSeatClick(row, column, event, isInputChecked){
 		// console.log('onclick seats', row, column, isInputChecked);
 		let seats = this.state.seatArray;
-		seats[row][column] = isInputChecked ? 1 : 0;
+		seats[row][column] = isInputChecked ? 0 : -1;
 		// console.log(seats);
 		this.setState({
 			seatArray : seats,

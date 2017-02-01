@@ -25,7 +25,7 @@ injectTapEventPlugin();
 
 
 ReactDOM.render((
-	<MuiThemeProvider muiTheme={darkMuiTheme}>
+	<MuiThemeProvider muiTheme={getMuiTheme()}>
 		<Router history={hashHistory}>
 		    <Route path="/" component={window.innerWidth > 700 ? WebHomePage : MobileHomePage}>
 		    	<IndexRoute component={TrendingMovies}/>

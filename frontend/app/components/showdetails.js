@@ -89,7 +89,6 @@ export default class TrendingMovies extends React.Component{
 		if(type == 'MovieDetails'){
 			let text = "";
 			let details = MovieDetailsStore._getMovieDetails();
-			console.log('movieDetails', details);
 			if(this.state.userType == "theatre"){
 				text = details.theatre.userid.uid == this.state.userId ? "Cancel Show" : "";
 			}else{
@@ -107,9 +106,14 @@ export default class TrendingMovies extends React.Component{
 			});
 		}else if(type == 'SCREEN_LAYOUT_DETAILS'){
 			let layoutDetails = moviedetailsstore._getScreenLayout();
-			console.log('layoutDetails', layoutDetails);
 			this.setState({
 				layoutDetails: layoutDetails
+			});
+		}else if(type == 'TICKET_BOOKED'){
+			let id = this.props.params.showId;
+			MovieDetailsAction._getMovieDetails({id: id});
+			this.setState({
+				openTheatreDialogue : false,
 			});
 		}
 	}
@@ -138,7 +142,17 @@ export default class TrendingMovies extends React.Component{
 	}
 
 	_handleTheatreDetailsDialogSubmit(){
-		
+		let bookedTicketLayout = this.state.bookedTicketLayout;
+		let query = [];
+		bookedTicketLayout.forEach((item, i)=>{
+			item.forEach((el, j)=>{
+				if(el == 2){
+					let a = {row: i, column: j};
+					query.push(a);
+				}
+			});
+		});
+		MovieDetailsAction._bookTicket({selected_seats: JSON.stringify(query), show_id: this.state.showId});
 	}
 
 	_setTheatreDetailsUI(){
@@ -152,7 +166,7 @@ export default class TrendingMovies extends React.Component{
 					<Checkbox
 						key={'column-' + i + " - " + j}
 						defaultChecked={this.state.layoutDetails[i][j] == "1"? true : false}
-						disabled={this.state.layoutDetails[i][j] == '1'? true : false}
+						disabled={this.state.layoutDetails[i][j] == '1' || this.state.layoutDetails[i][j] == '-1' ? true : false}
 						// key={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
 						// label={i + "-" + String.fromCharCode('a'.charCodeAt()+j)}
 				    	style={styles.checkbox}
@@ -167,7 +181,7 @@ export default class TrendingMovies extends React.Component{
 
 	_handleSeatClick(row, column, event, isInputChecked){
 		let bookedTicketLayout = this.state.bookedTicketLayout;
-		bookedTicketLayout[row][column] = isInputChecked ? 1 : 0;
+		bookedTicketLayout[row][column] = isInputChecked ? 2 : 0;
 		this.setState({bookedTicketLayout});
 	}
 

@@ -16,4 +16,5 @@ module.exports = {
 	REMOVE_SCREEN: 'removescreen',
 	USER_INFO: 'userprofile',
 	GET_SCREEN_LAYOUT: 'getshowlayout',
+	BOOK_TICKET: 'bookticket',
 }

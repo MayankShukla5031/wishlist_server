@@ -54,6 +54,10 @@ class MovieDetailsStore extends EventEmitter{
 				this._setScreenLayout(action.data);
 				break;
 			}
+			case 'TICKET_BOOKED' : {
+				this.emit('change', 'TICKET_BOOKED');
+				break;
+			}
 		}
 	}
 }

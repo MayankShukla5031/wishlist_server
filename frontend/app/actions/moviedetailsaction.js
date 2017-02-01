@@ -25,5 +25,9 @@ module.exports = {
 
 	_getLayout(query){
 		MovieDetailsWebApiUtils._getLayout(query);
+	},
+
+	_bookTicket(query){
+		MovieDetailsWebApiUtils._bookTicket(query);	
 	}
 }

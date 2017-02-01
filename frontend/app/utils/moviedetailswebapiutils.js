@@ -137,5 +137,21 @@ module.exports = {
                 });
             }
         });
+    },
+
+    _bookTicket(query){
+        Api._callAPI(Url.BOOK_TICKET,'post',query,(type,data)=> {
+            if(type == 'success'){  
+                dispatcher.dispatch({
+                    type: 'TICKET_BOOKED',
+                    //data:  data,
+                });
+            }else{   
+                dispatcher.dispatch({
+                    type: 'SNACKBAR',
+                    msg:  "Something went wrong, Kindly try after some time"
+                });
+            }
+        });  
     }
 }
