@@ -1519,22 +1519,20 @@ app.post("/:action", function (req, res)
                                 {
                                  var seat_selection= show.seat_selection;
 
-                                 var selected_seats= req.body.selected_seats;
+                                 var selected_seats= JSON.parse(req.body.selected_seats);
 
                                   for (i = 0; i < selected_seats.length; i++) {
-
-                                    var rowCol= selected_seats[i];
-                                    seat_selection[rowCol[0]][rowCol[1]]= 2;
+                                    seat_selection[selected_seats[i].row][selected_seats[i].column]= 2;
                                   }
 
+                                console.log(JSON.stringify(seat_selection));
+                                show.seat_selection= null;
                                  show.seat_selection= seat_selection;
                                                      show.save(function(err, user) {
                                                         if (err)
                                                             console.log(err);
-                                                          else {
-                                                           
+                                                          else {                                                           
                                                             sendResponse(res, 200, "success"); 
-
                                                             }                                                    
                                                           });
 
