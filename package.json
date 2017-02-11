@@ -3,6 +3,7 @@
   "description": "movies app",
   "main": "server.js",
   "dependencies": {
+    "mongoose":"^4.8.2",
     "body-parser": "^1.15.2",
     "express": "^4.13.3",
     "jsonwebtoken": "7.1.9",
